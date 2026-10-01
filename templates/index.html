@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>E&E Opti Lab Console</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 50px; }
+    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; }
     .app-header { background: #ffffff; border-bottom: 2px solid #cbd5e1; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
     .brand-badge { background: #2563eb; color: #ffffff; font-weight: 900; font-size: 18px; padding: 8px 16px; border-radius: 12px; }
     
@@ -41,9 +42,11 @@
     .kanban-col { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 18px; min-height: 400px; }
     .kanban-card { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
     .diagram-row-top, .diagram-row-bottom { display: flex; flex-direction: row; gap: 14px; padding: 12px; overflow-x: auto; max-width: 100%; white-space: nowrap; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; }
-    .node-box { border-radius: 12px; padding: 10px 12px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; min-width: 140px; min-height: 115px; white-space: normal; word-wrap: break-word; transition: transform 0.15s; background: #ffffff; }
+    .node-box { border-radius: 12px; padding: 10px 12px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; min-width: 140px; min-height: 115px; position: relative; background: #ffffff; transition: transform 0.15s; }
+    .node-box.shaker-large { min-width: 260px; min-height: 150px; font-size: 14px; font-weight: 900; border: 3px solid #6366f1; background: #f5f3ff; }
     .node-box:hover { transform: translateY(-3px); }
     .node-box img { max-width: 55px; height: 40px; border-radius: 4px; margin-bottom: 6px; object-fit: contain; }
+    .due-badge { position: absolute; top: -8px; right: -6px; background: #dc2626; color: #fff; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4); }
     .type-chamber { border: 2px solid #ca8a04; background: #fefef0; color: #713f12; }
     .type-cycler { border: 2px solid #c2410c; background: #fffbf7; color: #7c2d12; }
     .pathway-horizontal { background: #22c55e; border: 4px solid #eab308; height: 28px; width: 100%; border-radius: 4px; margin: 10px 0; }
@@ -67,12 +70,26 @@
     .badge-status.green { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
     .badge-status.yellow { background: #fef3c7; color: #b45309; border: 1px solid #fde047; }
     .badge-status.red { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
-    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 12px; }
     .modal-card { background: #ffffff; padding: 24px; border-radius: 18px; max-width: 720px; width: 100%; border: 1px solid #cbd5e1; max-height: 90vh; overflow-y: auto; position: relative; }
-    
     .modal-close-icon { position: absolute; top: 16px; right: 20px; font-size: 22px; font-weight: 900; color: #94a3b8; border: none; background: none; cursor: pointer; }
     .modal-close-icon:hover { color: #dc2626; }
     .hidden { display: none !important; }
+
+    @media (max-width: 1024px) {
+      .app-wrapper { flex-direction: column; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 2px solid #e2e8f0; flex-direction: row; overflow-x: auto; padding: 10px; gap: 8px; }
+      .nav-section-title { display: none; }
+      .nav-btn { width: auto; white-space: nowrap; padding: 8px 12px; }
+      .stat-grid { grid-template-columns: repeat(2, 1fr); }
+      .donut-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .stat-grid { grid-template-columns: 1fr; }
+      .content-area { padding: 12px; }
+      .app-header { flex-direction: column; align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -106,7 +123,7 @@
       <button onclick="switchTab('analytics')" id="btn-analytics" class="nav-btn">📈 Unified Analytics</button>
       <button onclick="switchTab('history')" id="btn-history" class="nav-btn">📜 Task Audit History</button>
       <div class="nav-section-title">SHIFT EXECUTION WORKBENCH</div>
-      <button onclick="switchShift('Shift A')" id="btn-shift-a" class="nav-btn">☀️ Shift A (6 AM–2 PM)</button>
+      <button onclick="switchShift('Shift A')" id="btn-shift-a" class="nav-btn">☀️️ Shift A (6 AM–2 PM)</button>
       <button onclick="switchShift('Shift B')" id="btn-shift-b" class="nav-btn">🌤️ Shift B (2 PM–10 PM)</button>
       <button onclick="switchShift('Shift C')" id="btn-shift-c" class="nav-btn">🌙 Shift C (10 PM–6 AM)</button>
       <button onclick="switchTab('checksheet')" id="btn-checksheet" class="nav-btn">📝 5S & Chamber Checksheets</button>
@@ -170,7 +187,7 @@
           <table class="task-table">
             <thead>
               <tr>
-                <th>TASK ID</th><th>PRIO</th><th>BIN NO.</th><th>TRF REF</th><th>DVP TEST NAME</th><th>OBJECTIVE & COMPONENT</th><th>ENGINEER</th><th>PROGRESS</th><th>STATUS</th><th>SHIFT</th><th>TRF STATUS</th><th>ACTION</th>
+                <th>TASK ID</th><th>PRIO</th><th>BIN NO.</th><th>TRF REF</th><th>DVP TEST NAME</th><th>TEST OBJECTIVE</th><th>ENGINEER</th><th>PROGRESS</th><th>STATUS</th><th>SHIFT</th><th>ACTION</th>
               </tr>
             </thead>
             <tbody id="dash-task-table-body"></tbody>
@@ -700,10 +717,45 @@
   <div id="inspector-modal" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('inspector-modal')" class="modal-close-icon">&times;</button>
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px;">
-        <h3 id="modal-node-title" style="font-size: 16px; font-weight: 900; color: #0f172a;">Lab View Hardware Telemetry Inspector</h3>
+      <h3 id="modal-node-title" style="font-size: 15px; font-weight: 900; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">Equipment Inspector</h3>
+      
+      <!-- PM & Calibration Alert & Form -->
+      <div style="background: #fffbf7; border: 1px solid #fed7aa; padding: 12px; border-radius: 8px; margin-bottom: 14px;">
+        <h4 style="font-size: 12px; font-weight: 900; color: #c2410c; margin-bottom: 6px;">📅 PM & CALIBRATION DUE DATES</h4>
+        <div id="modal-due-status" style="font-size: 11px; font-weight: 800; margin-bottom: 8px;"></div>
+        
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">NEXT PM DATE</label>
+            <input type="date" id="modal-pm-date" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">CALIBRATION DUE DATE</label>
+            <input type="date" id="modal-calib-date" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+          </div>
+          <button onclick="saveEquipmentDatesInModal()" style="padding: 6px 12px; background: #d97706; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 10px; cursor: pointer;">
+            UPDATE DATES
+          </button>
+        </div>
       </div>
-      <div id="modal-packs-content" style="display: flex; flex-direction: column; gap: 12px;"></div>
+
+      <!-- Chamber Daily Checklist -->
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px;">
+        <h4 style="font-size: 12px; font-weight: 900; color: #2563eb; margin-bottom: 8px;">🧪 DAILY CHAMBER MAINTENANCE CHECK</h4>
+        <div style="font-size: 11px; font-weight: 800;">
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-1" checked> Clean test chamber (Front, side and back)</label>
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-2" checked> Check door sealing for leakage</label>
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-3" checked> Check for abnormal noise</label>
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-4" checked> Check DM water level</label>
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-5" checked> Check wiring routing & insulation</label>
+          <label style="display: block; margin: 4px 0;"><input type="checkbox" id="m-ch-6" checked> Temp & humidity profile achieving</label>
+        </div>
+        <button onclick="submitChamberCheckInModal()" style="margin-top: 10px; padding: 8px; width: 100%; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer;">
+          SUBMIT CHAMBER DAILY LOG
+        </button>
+      </div>
+
+      <div id="modal-packs-content"></div>
     </div>
   </div>
 
@@ -748,6 +800,7 @@
     let labStore = {};
     let chartInstances = {};
     let bpBuilderSteps = [];
+    let selectedChamberId = "";
 
     document.getElementById('stamp-date').value = new Date().toISOString().split('T')[0];
 
@@ -846,143 +899,6 @@
       switchTab('workbench');
     }
 
-    /* --- CHECKSHEET SUBMISSIONS --- */
-    async function submit5SChecksheet() {
-      const operator = document.getElementById('fives-operator').value;
-      if (!operator) return alert("Please enter Associate Name for 5S!");
-
-      const payload = {
-        lab_name: activeLab,
-        shift: document.getElementById('fives-shift').value,
-        submitted_by: operator,
-        verified_by: document.getElementById('fives-verifier').value,
-        fives_data: {
-          sort_1: document.getElementById('cs-5s-1').checked,
-          sort_2: document.getElementById('cs-5s-2').checked,
-          sort_3: document.getElementById('cs-5s-3').checked,
-          sort_4: document.getElementById('cs-5s-4').checked,
-          setInOrder_1: document.getElementById('cs-5s-5').checked,
-          setInOrder_2: document.getElementById('cs-5s-6').checked,
-          shine_1: document.getElementById('cs-5s-7').checked,
-          shine_2: document.getElementById('cs-5s-8').checked,
-          standardize_1: document.getElementById('cs-5s-9').checked,
-          standardize_2: document.getElementById('cs-5s-10').checked,
-          sustain_1: document.getElementById('cs-5s-11').checked,
-          sustain_2: document.getElementById('cs-5s-12').checked
-        }
-      };
-
-      const res = await fetch('/api/5s-submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      alert('✅ ' + data.message);
-    }
-
-    async function submitChamberChecksheet() {
-      const chamberName = document.getElementById('ch-name').value;
-      const operator = document.getElementById('ch-operator').value;
-      if (!operator) return alert("Please enter Inspector Name for Chamber Check!");
-
-      const payload = {
-        chamber_name: chamberName,
-        shift: document.getElementById('ch-shift').value,
-        submitted_by: operator,
-        checks_data: {
-          cleanChamber: document.getElementById('ch-c1').checked,
-          doorSealing: document.getElementById('ch-c2').checked,
-          abnormalNoise: document.getElementById('ch-c3').checked,
-          waterLevel: document.getElementById('ch-c4').checked,
-          waterLeakage: document.getElementById('ch-c5').checked,
-          wiringRouting: document.getElementById('ch-c6').checked,
-          dustFree: document.getElementById('ch-c7').checked,
-          profileAchieving: document.getElementById('ch-c8').checked
-        }
-      };
-
-      const res = await fetch('/api/chamber-check-submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      alert('✅ ' + data.message);
-    }
-
-    async function updateEquipmentDates() {
-      const chamberName = document.getElementById('ch-name').value;
-      const pm = document.getElementById('ch-pm-date').value;
-      const calib = document.getElementById('ch-calib-date').value;
-
-      if (!pm && !calib) return alert("Please select PM or Calibration date to update.");
-
-      const res = await fetch('/api/equipment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          equipment_name: chamberName,
-          pm_date: pm,
-          calibration_due_date: calib
-        })
-      });
-      const data = await res.json();
-      alert('✅ ' + data.message);
-    }
-
-    function addBlueprintBuilderStep() {
-      bpBuilderSteps.push({ name: "", unit: "Days", target: 10 });
-      renderBlueprintBuilderSteps();
-    }
-
-    function renderBlueprintBuilderSteps() {
-      const deck = document.getElementById('flow-bp-step-deck');
-      deck.innerHTML = '';
-      bpBuilderSteps.forEach((s, idx) => {
-        deck.innerHTML += `
-          <div style="display:flex; gap:6px; align-items:center; background:#ffffff; padding:6px; border-radius:6px; border:1px solid #cbd5e1;">
-            <span style="font-weight:900; font-size:11px;">Step ${idx+1}.</span>
-            <input type="text" value="${s.name}" onchange="bpBuilderSteps[${idx}].name=this.value" placeholder="Subtask Name" style="flex-grow:1; padding:4px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
-            <select onchange="bpBuilderSteps[${idx}].unit=this.value" style="padding:4px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
-              <option value="Days">Days</option><option value="Hours">Hours</option><option value="Cycles">Cycles</option>
-            </select>
-            <input type="number" value="${s.target}" onchange="bpBuilderSteps[${idx}].target=this.value" style="width:60px; padding:4px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
-            <button onclick="bpBuilderSteps.splice(${idx},1); renderBlueprintBuilderSteps();" style="background:#fee2e2; color:#b91c1c; border:none; border-radius:4px; font-weight:900; padding:2px 6px; cursor:pointer;">✕</button>
-          </div>
-        `;
-      });
-    }
-
-    async function saveTestFlowBlueprint() {
-      const name = document.getElementById('flow-bp-name').value;
-      if (!name || bpBuilderSteps.length === 0) {
-        alert("Please enter a blueprint name and add at least one step.");
-        return;
-      }
-      await fetch('/api/blueprints/save', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ dept: activeLab, name: name, steps: bpBuilderSteps })
-      });
-      document.getElementById('flow-bp-name').value = '';
-      bpBuilderSteps = [];
-      renderBlueprintBuilderSteps();
-      alert("Test Flow Blueprint Saved Successfully!");
-      fetchLabData();
-    }
-
-    function loadSelectedBlueprintSteps() {
-      const bpKey = document.getElementById('m-saved-bp-dropdown').value;
-      if (!bpKey || !labStore.blueprints[bpKey]) return;
-      const steps = labStore.blueprints[bpKey];
-      const deck = document.getElementById('m-generated-steps-deck');
-      deck.innerHTML = '';
-      steps.forEach((s, idx) => {
-        deck.insertAdjacentHTML('beforeend', createStepRowHTML(idx + 1, s.name, s.unit, s.target));
-      });
-    }
-
     function renderDashboardTable() {
       const body = document.getElementById('dash-task-table-body');
       body.innerHTML = '';
@@ -999,34 +915,33 @@
 
       document.getElementById('dash-results-count').innerText = `Displaying ${filtered.length} Results`;
       if (filtered.length === 0) {
-        body.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#94a3b8; font-weight:800; padding:20px;">No matching DVP tasks created in ${activeLab}. Add a team member and create a task.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#94a3b8; font-weight:800; padding:20px;">No matching DVP tasks created in ${activeLab}. Add a team member and create a task.</td></tr>`;
         return;
       }
 
       filtered.forEach(t => {
-        const stepCount = t.subtasks.length;
+        const stepCount = t.subtasks ? t.subtasks.length : 0;
         
         body.innerHTML += `
           <tr>
             <td style="font-weight:900; color:#2563eb;">${t.task_id}</td>
             <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:900;">${t.prio}</span></td>
             <td style="font-weight:900; color:#7c3aed; font-family:monospace;">${t.bin}</td>
-            <td>${t.trf_ref}</td>
+            <td>${t.trf_ref || '-'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
                 <b>${t.dvp_name}</b>
                 <button onclick="toggleSubtasks('${t.task_id}')" class="btn-step-toggle">+ (${stepCount} Steps)</button>
               </div>
             </td>
-            <td style="max-width:200px; font-weight:700;">
-              <div>${t.objective}</div>
-              <span style="font-size:10px; color:#7c3aed; font-weight:800;">Hardware: ${t.component || 'General'}</span>
+            <td style="max-width:240px;">
+              <div style="font-weight:800; color:#0f172a;">🎯 ${t.objective || 'No objective specified'}</div>
+              ${t.component && t.component !== 'General Hardware' ? `<span style="font-size:10px; color:#7c3aed; font-weight:800;">Component: ${t.component}</span>` : ''}
             </td>
-            <td style="font-weight:800;">${t.engineer}</td>
+            <td style="font-weight:800;">${t.engineer || 'Unassigned'}</td>
             <td style="font-weight:900; color:#2563eb;">${t.progress}%</td>
             <td><span class="badge-status ${t.status==='Completed'?'green':'yellow'}">${t.status}</span></td>
-            <td style="color:#2563eb; font-weight:800;">${t.shift}</td>
-            <td style="font-style:italic; color:#64748b;">${t.trf_status}</td>
+            <td style="color:#2563eb; font-weight:800;">${t.shift || 'Shift A'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
                 <button onclick="openObservationsInspector('${t.task_id}')" class="btn-eye-obs" title="View Observations">👁️</button>
@@ -1035,7 +950,7 @@
             </td>
           </tr>
           <tr id="sub-row-${t.task_id}" class="hidden">
-            <td colspan="12" style="padding: 0 8px;">
+            <td colspan="11" style="padding: 0 8px;">
               <div class="subtask-container">
                 ${t.subtasks.map(st => {
                   const currentShift = st.shift || "None";
@@ -1079,8 +994,155 @@
       });
     }
 
+    function checkDueDays(dateStr) {
+      if (!dateStr) return null;
+      const target = new Date(dateStr);
+      const today = new Date();
+      const diffTime = target - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays;
+    }
+
+    function renderDigitalTwin() {
+      if (!labStore.twin) return;
+      document.getElementById('twin-title').innerText = labStore.twin.title;
+      const topDeck = document.getElementById('top-row-deck');
+      const bottomDeck = document.getElementById('bottom-row-deck');
+      const pathway = document.getElementById('twin-pathway');
+      topDeck.innerHTML = ''; bottomDeck.innerHTML = '';
+
+      if (!labStore.twin.top_row || labStore.twin.top_row.length === 0) {
+        topDeck.innerHTML = `<div style="padding:20px; color:#94a3b8; font-weight:800; text-align:center; width:100%;">No hardware rigs registered in ${activeLab}.</div>`;
+      } else {
+        labStore.twin.top_row.forEach(item => {
+          const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[item.id] || {} : {};
+          const pmDays = checkDueDays(maint.pm_date);
+          const calibDays = checkDueDays(maint.calibration_due_date);
+          
+          let isDueSoon = (pmDays !== null && pmDays <= 15) || (calibDays !== null && calibDays <= 15);
+          let isShaker = item.type === 'shaker-large';
+
+          topDeck.innerHTML += `
+            <div class="node-box ${isShaker ? 'shaker-large' : 'type-chamber'}" onclick='openChamberInspector("${item.id}", "${item.name}")'>
+              ${isDueSoon ? `<span class="due-badge">⚠️ PM/CAL DUE</span>` : ''}
+              <div>${item.name}</div>
+            </div>
+          `;
+        });
+      }
+
+      if (!labStore.twin.bottom_row || labStore.twin.bottom_row.length === 0) {
+        bottomDeck.style.display = "none";
+        pathway.style.display = "none";
+      } else {
+        bottomDeck.style.display = "flex";
+        pathway.style.display = "block";
+        labStore.twin.bottom_row.forEach(item => {
+          bottomDeck.innerHTML += `<div class="node-box type-cycler" onclick='openChamberInspector("${item.id}", "${item.name}")'><div>${item.name}</div></div>`;
+        });
+      }
+    }
+
+    function openChamberInspector(nodeId, nodeName) {
+      selectedChamberId = nodeId;
+      document.getElementById('modal-node-title').innerText = `${nodeName} — Telemetry & Maintenance Inspector`;
+      
+      const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[nodeId] || {} : {};
+      document.getElementById('modal-pm-date').value = maint.pm_date || '';
+      document.getElementById('modal-calib-date').value = maint.calibration_due_date || '';
+
+      const pmDays = checkDueDays(maint.pm_date);
+      const calibDays = checkDueDays(maint.calibration_due_date);
+
+      let statusHTML = '';
+      if (pmDays !== null && pmDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ PM Due in ${pmDays} Days! </span>`;
+      if (calibDays !== null && calibDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ Calibration Due in ${calibDays} Days!</span>`;
+      if (!statusHTML) statusHTML = `<span style="color:#16a34a;">✅ Equipment PM & Calibration within valid interval.</span>`;
+      
+      document.getElementById('modal-due-status').innerHTML = statusHTML;
+
+      const container = document.getElementById('modal-packs-content');
+      container.innerHTML = `<div style="font-size:11px; font-weight:800; color:#64748b;">No active battery packs currently mounted.</div>`;
+
+      openModal('inspector-modal');
+    }
+
+    async function saveEquipmentDatesInModal() {
+      const pm = document.getElementById('modal-pm-date').value;
+      const calib = document.getElementById('modal-calib-date').value;
+
+      await fetch('/api/equipment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          dept: activeLab,
+          equipment_name: selectedChamberId,
+          pm_date: pm,
+          calibration_due_date: calib
+        })
+      });
+
+      alert(`✅ Updated PM & Calibration dates for ${selectedChamberId}!`);
+      fetchLabData();
+      closeModal('inspector-modal');
+    }
+
+    async function submitChamberCheckInModal() {
+      const payload = {
+        dept: activeLab,
+        chamber_name: selectedChamberId,
+        shift: activeShift,
+        submitted_by: 'Inspector',
+        checks_data: {
+          clean: document.getElementById('m-ch-1').checked,
+          sealing: document.getElementById('m-ch-2').checked,
+          noise: document.getElementById('m-ch-3').checked,
+          water: document.getElementById('m-ch-4').checked,
+          wiring: document.getElementById('m-ch-5').checked,
+          profile: document.getElementById('m-ch-6').checked
+        }
+      };
+
+      await fetch('/api/chamber-check-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      alert(`✅ Chamber Daily Check Logged for ${selectedChamberId}!`);
+      fetchLabData();
+      closeModal('inspector-modal');
+    }
+
+    async function submit5SChecksheet() {
+      const operator = document.getElementById('fives-operator').value;
+      if (!operator) return alert("Please enter Associate Name for 5S!");
+
+      const payload = {
+        lab_name: activeLab,
+        shift: document.getElementById('fives-shift').value,
+        submitted_by: operator,
+        verified_by: document.getElementById('fives-verifier').value,
+        fives_data: {
+          s1: document.getElementById('cs-5s-1').checked,
+          s2: document.getElementById('cs-5s-2').checked,
+          s3: document.getElementById('cs-5s-3').checked,
+          s4: document.getElementById('cs-5s-4').checked,
+          s5: document.getElementById('cs-5s-5').checked
+        }
+      };
+
+      const res = await fetch('/api/5s-submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      alert('✅ ' + data.message);
+    }
+
     async function deleteSingleTask(taskId) {
-      if (confirm(`Are you sure you want to delete task ${taskId}? This action cannot be undone.`)) {
+      if (confirm(`Delete task ${taskId}?`)) {
         await fetch('/api/tasks/delete', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
@@ -1367,126 +1429,6 @@
       });
       closeModal('modal-extra-task');
       fetchLabData();
-    }
-
-    function renderDigitalTwin() {
-      document.getElementById('twin-title').innerText = labStore.twin.title;
-      const topDeck = document.getElementById('top-row-deck');
-      const bottomDeck = document.getElementById('bottom-row-deck');
-      const twinPathway = document.getElementById('twin-pathway');
-      topDeck.innerHTML = ''; bottomDeck.innerHTML = '';
-      if (!labStore.twin.bottom_row || labStore.twin.bottom_row.length === 0) {
-        bottomDeck.style.display = "none";
-        twinPathway.style.display = "none";
-      } else {
-        bottomDeck.style.display = "flex";
-        twinPathway.style.display = "block";
-      }
-      labStore.twin.top_row.forEach(item => {
-        let activeCount = 0;
-        labStore.tasks.forEach(t => {
-          t.subtasks.forEach(st => {
-            if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
-          });
-        });
-        topDeck.innerHTML += `
-          <div class="node-box type-chamber" onclick='openChamberInspector("${item.id}","${item.name}")'>
-            ${item.img ? `<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">` : ''}
-            <div>${item.name}</div>
-            <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-              ${activeCount > 0 ? `🟢 ${activeCount} Pack${activeCount > 1 ? 's' : ''} Active` : 'Idle'}
-            </div>
-          </div>
-        `;
-      });
-      if (labStore.twin.bottom_row && labStore.twin.bottom_row.length > 0) {
-        labStore.twin.bottom_row.forEach(item => {
-          let activeCount = 0;
-          labStore.tasks.forEach(t => {
-            t.subtasks.forEach(st => {
-              if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
-            });
-          });
-          bottomDeck.innerHTML += `
-            <div class="node-box type-cycler" onclick='openChamberInspector("${item.id}","${item.name}")'>
-              ${item.img ? `<img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">` : ''}
-              <div>${item.name}</div>
-              <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-                ${activeCount > 0 ? `🟢 ${activeCount} Pack${activeCount > 1 ? 's' : ''} Active` : 'Idle'}
-              </div>
-            </div>
-          `;
-        });
-      }
-    }
-
-    function openChamberInspector(nodeId, nodeName) {
-      document.getElementById('modal-node-title').innerText = `${nodeName} — Live Telemetry & Multi-Pack Inspector`;
-      const container = document.getElementById('modal-packs-content');
-      container.innerHTML = '';
-      let activePacks = [];
-      labStore.tasks.forEach(t => {
-        t.subtasks.forEach(st => {
-          if (st.chamber === nodeId || st.cycler === nodeId) {
-            activePacks.push({
-              taskId: t.task_id,
-              bin: t.bin,
-              dvpName: t.dvp_name,
-              objective: t.objective,
-              component: t.component || "General Hardware",
-              engineer: t.engineer || "Unassigned",
-              stepName: st.name,
-              stepId: st.sub_id,
-              status: st.status,
-              logged: st.logged,
-              target: st.target,
-              unit: st.unit,
-              incharge: st.incharge,
-              associate: st.associate,
-              shift: st.shift,
-              chamber: st.chamber,
-              cycler: st.cycler,
-              channel: st.neware_channel,
-              grafana: st.grafana || "https://grafana.optilab.internal"
-            });
-          }
-        });
-      });
-      if (activePacks.length === 0) {
-        container.innerHTML = `<div style="padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 12px; font-weight: 700; color: #64748b; text-align: center;">No active battery packs or subtasks assigned to ${nodeName}.</div>`;
-      } else {
-        container.innerHTML = `<div style="font-size: 11px; font-weight: 900; color: #2563eb; margin-bottom: 8px;">TOTAL ACTIVE PACKS MOUNTED IN ${nodeName.toUpperCase()}: ${activePacks.length}</div>`;
-        
-        activePacks.forEach((p, idx) => {
-          container.innerHTML += `
-            <div style="padding: 16px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; border-radius: 12px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 10px;">
-                <div>
-                  <span style="font-weight: 900; font-size: 13px; color: #0f172a;">Pack #${idx + 1}: ${p.bin}</span>
-                  <span style="margin-left: 8px; font-size: 10px; font-weight: 800; color: #7c3aed; background: #f3e8ff; padding: 2px 6px; border-radius: 4px;">Task: ${p.taskId}</span>
-                </div>
-                <span class="badge-status ${p.status==='Completed'?'green':'yellow'}">${p.status}</span>
-              </div>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 8px;">
-                <div><b>DVP Test Name:</b> ${p.dvpName}</div>
-                <div><b>Hardware Component:</b> ${p.component}</div>
-                <div><b>Active Test Step:</b> ${p.stepName} (${p.stepId})</div>
-                <div><b>Test Objective:</b> ${p.objective}</div>
-                <div><b>Chamber Rig:</b> ${p.chamber}</div>
-                <div><b>Charge Cycler:</b> ${p.cycler} ${p.channel ? '(Ch: '+p.channel+')' : ''}</div>
-                <div><b>Logged Progress:</b> <span style="color:#16a34a; font-weight:900;">${p.logged} / ${p.target} ${p.unit}</span></div>
-                <div><b>Lead Engineer:</b> ${p.engineer}</div>
-                <div><b>Shift Incharge:</b> ${p.incharge}</div>
-                <div><b>Assigned Associate:</b> ${p.associate} (${p.shift})</div>
-              </div>
-              <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
-                <a href="${p.grafana}" target="_blank" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 11px; padding: 8px 14px; border-radius: 8px; text-decoration: none; display: inline-block;">📊 OPEN PACK TELEMETRY IN GRAFANA ➔</a>
-              </div>
-            </div>
-          `;
-        });
-      }
-      openModal('inspector-modal');
     }
 
     async function loadRoster() {
