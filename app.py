@@ -1,16 +1,17 @@
 import os
+import io
 import json
 import psycopg2
-from psycopg2.extras import RealDictCursor
-from flask import Flask, render_template, jsonify, request
+from psycopg2.extras import RealDictCursor, Json
+from flask import Flask, render_template, jsonify, request, send_file
 from datetime import datetime
+import pandas as pd
 
 app = Flask(__name__)
 
-# Check for Render PostgreSQL Database URL
+# Environment & Database Configuration
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
-
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
 
 DIGITAL_TWINS = {
@@ -84,20 +85,66 @@ LAB_DATA = {
 }
 
 # ==============================================================================
-# DATABASE OR LOCAL PERSISTENCE SWITCHER
+# DATABASE OR LOCAL PERSISTENCE ENGINE
 # ==============================================================================
+def get_db_connection():
+    if DATABASE_URL:
+        return psycopg2.connect(DATABASE_URL)
+    return None
 
 def init_db():
     if DATABASE_URL:
         try:
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = get_db_connection()
             cursor = conn.cursor()
+            
+            # 1. Main JSON Store for Lab Operating State
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS opti_lab_store (
                     id VARCHAR(50) PRIMARY KEY,
                     data JSONB NOT NULL
                 );
             """)
+            
+            # 2. Lab-Level 5S Submissions
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS lab_fives_submissions (
+                    id SERIAL PRIMARY KEY,
+                    lab_name VARCHAR(50),
+                    shift VARCHAR(20),
+                    submitted_by VARCHAR(100),
+                    verified_by VARCHAR(100),
+                    fives_data JSONB,
+                    notes TEXT,
+                    status VARCHAR(20) DEFAULT 'Pass',
+                    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+
+            # 3. Individual Chamber Daily Check Submissions
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chamber_daily_submissions (
+                    id SERIAL PRIMARY KEY,
+                    chamber_name VARCHAR(100),
+                    shift VARCHAR(20),
+                    submitted_by VARCHAR(100),
+                    checks_data JSONB,
+                    notes TEXT,
+                    status VARCHAR(20) DEFAULT 'Pass',
+                    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+
+            # 4. Equipment Master Register (PM & Calibration Due Dates)
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS equipment_master (
+                    id SERIAL PRIMARY KEY,
+                    equipment_name VARCHAR(100) UNIQUE NOT NULL,
+                    pm_date DATE,
+                    calibration_due_date DATE
+                );
+            """)
+
             conn.commit()
             cursor.close()
             conn.close()
@@ -107,11 +154,11 @@ def init_db():
 def save_data_to_file():
     if DATABASE_URL:
         try:
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute("""
-                INSERT INTO opti_lab_store (id, data) 
-                VALUES ('master', %s) 
+                INSERT INTO opti_lab_store (id, data)
+                VALUES ('master', %s)
                 ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
             """, (json.dumps(LAB_DATA),))
             conn.commit()
@@ -130,7 +177,7 @@ def load_data_from_file():
     global LAB_DATA
     if DATABASE_URL:
         try:
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = get_db_connection()
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
             row = cursor.fetchone()
@@ -170,13 +217,12 @@ def calculate_dashboard_metrics(tasks):
     total_running = 0
     total_awaiting_res = 0
     total_awaiting_eng = 0
-    
+   
     cat_counts = {
         "450": {"running": 0, "complete": 0},
         "DIESEL": {"running": 0, "complete": 0},
         "EL": {"running": 0, "complete": 0}
     }
-
     stoppage_breakdown = {"no_parts": 0, "chamber_down": 0, "fixture_adjust": 0}
     shift_completion = {"Shift A": {"completed": 0, "assigned": 0}, "Shift B": {"completed": 0, "assigned": 0}, "Shift C": {"completed": 0, "assigned": 0}}
     incharge_stats = {}
@@ -186,7 +232,7 @@ def calculate_dashboard_metrics(tasks):
         cat = t.get("category", "450")
         if cat not in cat_counts:
             cat_counts[cat] = {"running": 0, "complete": 0}
-            
+           
         if t["status"] in ["Completed", "Awaiting Report"]:
             total_complete += 1
             cat_counts[cat]["complete"] += 1
@@ -239,7 +285,7 @@ def calculate_dashboard_metrics(tasks):
     }
 
 # ==============================================================================
-# API ROUTES
+# ROUTE ENDPOINTS
 # ==============================================================================
 
 @app.route("/")
@@ -252,7 +298,7 @@ def get_lab_data(dept_name):
     tasks = LAB_DATA[dept]["tasks"]
     metrics = calculate_dashboard_metrics(tasks)
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
-    
+   
     return jsonify({
         "dept": dept,
         "components": dept_components,
@@ -271,16 +317,16 @@ def delete_single_task():
     data = request.json or {}
     dept = data.get("dept", "Battery Lab")
     task_id = data.get("task_id")
-    
+   
     if dept in LAB_DATA and task_id:
         original_count = len(LAB_DATA[dept]["tasks"])
         LAB_DATA[dept]["tasks"] = [t for t in LAB_DATA[dept]["tasks"] if t["task_id"] != task_id]
-        
+       
         if len(LAB_DATA[dept]["tasks"]) < original_count:
             log_audit_event(dept, "Task Deleted", f"Permanently removed task {task_id}.")
             save_data_to_file()
             return jsonify({"success": True})
-            
+           
     return jsonify({"success": False, "message": "Task not found"}), 400
 
 @app.route("/api/lab/reset", methods=["POST"])
@@ -331,11 +377,11 @@ def add_component():
 def create_master_task():
     data = request.json or {}
     dept = data.get("dept", "Battery Lab")
-    
+   
     if dept in LAB_DATA:
         task_id = f"TSK-{len(LAB_DATA[dept]['tasks']) + 400001}"
         steps = data.get("steps", [])
-        
+       
         subtasks = []
         for idx, s in enumerate(steps):
             subtasks.append({
@@ -356,7 +402,7 @@ def create_master_task():
                 "grafana": "",
                 "observations": []
             })
-            
+           
         new_task = {
             "task_id": task_id,
             "prio": data.get("prio", "P1"),
@@ -375,7 +421,7 @@ def create_master_task():
             "trf_status": "Testing Active",
             "subtasks": subtasks
         }
-        
+       
         LAB_DATA[dept]["tasks"].append(new_task)
         log_audit_event(dept, "Master Task Created", f"Task {task_id} ({data.get('bin')}) generated with {len(subtasks)} steps.", data.get('engineer', 'Lead Engineer'))
         save_data_to_file()
@@ -388,7 +434,7 @@ def update_subtask():
     dept = data.get("dept", "Battery Lab")
     task_id = data.get("task_id")
     sub_id = data.get("sub_id")
-    
+   
     if dept in LAB_DATA:
         for t in LAB_DATA[dept]["tasks"]:
             if t["task_id"] == task_id:
@@ -398,18 +444,18 @@ def update_subtask():
                         st["incharge"] = data.get("incharge", st["incharge"])
                         st["shift"] = data.get("shift", st["shift"])
                         st["assign_date"] = data.get("assign_date", st["assign_date"])
-                        
+                       
                         st["chamber"] = data.get("chamber", st.get("chamber", "Chamber-1"))
                         st["cycler"] = data.get("cycler", st.get("cycler", "None"))
                         st["neware_channel"] = data.get("neware_channel", st.get("neware_channel", ""))
                         st["grafana"] = data.get("grafana", st.get("grafana", ""))
-                        
+                       
                         add_p = float(data.get("add_progress", 0))
                         st["logged"] += add_p
-                        
+                       
                         status = data.get("status", st["status"])
                         st["status"] = status
-                        
+                       
                         notes = data.get("notes", "").strip()
                         if notes:
                             st["observations"].append({
@@ -421,16 +467,16 @@ def update_subtask():
                                 "channel": st["neware_channel"],
                                 "notes": notes
                             })
-                            
+                           
                         if st["logged"] >= st["target"]:
                             st["status"] = "Completed"
-                            
+                           
                         total_target = sum(s["target"] for s in t["subtasks"])
                         total_logged = sum(s["logged"] for s in t["subtasks"])
                         t["progress"] = int((total_logged / total_target) * 100) if total_target > 0 else 0
                         if all(s["status"] == "Completed" for s in t["subtasks"]):
                             t["status"] = "Completed"
-                            
+                           
                         log_audit_event(dept, "Subtask Progress Logged", f"{sub_id} on {t['task_id']} updated (+{add_p} {st['unit']}). Status: {status}. Equipment: {st['chamber']} & {st['cycler']} (Ch: {st['neware_channel']}).", st["associate"])
                         save_data_to_file()
                         return jsonify({"success": True, "subtask": st, "task_progress": t["progress"]})
@@ -496,7 +542,7 @@ def update_roster_cell():
     emp_id = data.get("emp_id")
     day_idx = data.get("day_idx")
     new_shift = data.get("new_shift")
-    
+   
     if dept in LAB_DATA:
         for p in LAB_DATA[dept]["personnel"]:
             if p["id"] == emp_id:
@@ -515,7 +561,7 @@ def stamp_roster():
     name = data.get("name")
     shift = data.get("shift")
     date_str = data.get("date")
-    
+   
     if dept in LAB_DATA and name and date_str:
         key = f"{name}_{date_str}"
         LAB_DATA[dept]["roster_stamps"][key] = shift
@@ -542,72 +588,100 @@ def add_extra_task():
         return jsonify({"success": True, "extra": extra})
     return jsonify({"success": False}), 400
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
-    # =========================================================
-# NEW FEATURES: CHECKSHEETS & EXCEL EXPORT
-# =========================================================
-import io
-import pandas as pd
+# ==============================================================================
+# CHECKSHEETS & EXCEL EXPORT ENGINE
+# ==============================================================================
 
-def init_checksheet_tables():
-    try:
-        conn = get_db_connection()
+@app.route('/api/5s-submit', methods=['POST'])
+def submit_5s():
+    data = request.json or {}
+    conn = get_db_connection()
+    if conn:
         cur = conn.cursor()
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS master_shift_submissions (
-                id SERIAL PRIMARY KEY,
-                shift VARCHAR(20),
-                equipment_name VARCHAR(100),
-                submitted_by VARCHAR(100),
-                fives_data JSONB,
-                tools_data JSONB,
-                chamber_checklist JSONB,
-                status VARCHAR(20) DEFAULT 'Pass',
-                submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );
-        ''')
+            INSERT INTO lab_fives_submissions 
+            (lab_name, shift, submitted_by, verified_by, fives_data, notes, status)
+            VALUES (%s, %s, %s, %s, %s, %s, %s);
+        ''', (
+            data.get('lab_name', 'Battery Lab'),
+            data.get('shift', 'Shift A'),
+            data.get('submitted_by', 'Operator'),
+            data.get('verified_by', ''),
+            Json(data.get('fives_data', {})),
+            data.get('notes', ''),
+            data.get('status', 'Pass')
+        ))
         conn.commit()
         cur.close()
         conn.close()
-    except Exception as e:
-        print("Checksheet Table Init Error:", e)
+        return jsonify({"status": "success", "message": f"5S Check Sheet for {data.get('lab_name')} ({data.get('shift')}) recorded!"})
+    return jsonify({"status": "warning", "message": "Database not configured. Using local session mode."})
 
-init_checksheet_tables()
-
-@app.route('/api/master-shift-submit', methods=['POST'])
-def submit_master_shift():
-    data = request.json
+@app.route('/api/chamber-check-submit', methods=['POST'])
+def submit_chamber_check():
+    data = request.json or {}
     conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute('''
-        INSERT INTO master_shift_submissions 
-        (shift, equipment_name, submitted_by, fives_data, tools_data, chamber_checklist, status)
-        VALUES (%s, %s, %s, %s, %s, %s, %s);
-    ''', (
-        data['shift'],
-        data['equipment_name'],
-        data['submitted_by'],
-        psycopg2.extras.Json(data['fives']),
-        psycopg2.extras.Json(data['tools']),
-        psycopg2.extras.Json(data['chamber_checks']),
-        data.get('status', 'Pass')
-    ))
-    conn.commit()
-    cur.close()
-    conn.close()
-    return jsonify({"status": "success", "message": f"{data['shift']} submission recorded!"})
+    if conn:
+        cur = conn.cursor()
+        cur.execute('''
+            INSERT INTO chamber_daily_submissions 
+            (chamber_name, shift, submitted_by, checks_data, notes, status)
+            VALUES (%s, %s, %s, %s, %s, %s);
+        ''', (
+            data.get('chamber_name', 'Chamber-1'),
+            data.get('shift', 'Shift A'),
+            data.get('submitted_by', 'Operator'),
+            Json(data.get('checks_data', {})),
+            data.get('notes', ''),
+            data.get('status', 'Pass')
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "success", "message": f"Daily Check Sheet for {data.get('chamber_name')} ({data.get('shift')}) recorded!"})
+    return jsonify({"status": "warning", "message": "Database not configured. Using local session mode."})
+
+@app.route('/api/equipment', methods=['POST'])
+def update_equipment():
+    data = request.json or {}
+    conn = get_db_connection()
+    if conn:
+        cur = conn.cursor()
+        cur.execute('''
+            INSERT INTO equipment_master (equipment_name, pm_date, calibration_due_date)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (equipment_name) 
+            DO UPDATE SET 
+                pm_date = EXCLUDED.pm_date,
+                calibration_due_date = EXCLUDED.calibration_due_date;
+        ''', (
+            data.get('equipment_name'),
+            data.get('pm_date') or None,
+            data.get('calibration_due_date') or None
+        ))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {data.get('equipment_name')}!"})
+    return jsonify({"status": "warning", "message": "Database not configured."})
 
 @app.route('/api/export-excel', methods=['GET'])
 def export_excel():
     conn = get_db_connection()
-    df = pd.read_sql_query('SELECT * FROM master_shift_submissions ORDER BY submitted_at DESC;', conn)
-    conn.close()
-
     output = io.BytesIO()
-    with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        df.to_excel(writer, sheet_name='Shift Checksheet Logs', index=False)
     
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        if conn:
+            df_5s = pd.read_sql_query('SELECT * FROM lab_fives_submissions ORDER BY submitted_at DESC;', conn)
+            df_chamber = pd.read_sql_query('SELECT * FROM chamber_daily_submissions ORDER BY submitted_at DESC;', conn)
+            conn.close()
+        else:
+            df_5s = pd.DataFrame([{"info": "No database attached"}])
+            df_chamber = pd.DataFrame([{"info": "No database attached"}])
+            
+        df_5s.to_excel(writer, sheet_name='Lab 5S Logs', index=False)
+        df_chamber.to_excel(writer, sheet_name='Chamber Daily Logs', index=False)
+   
     output.seek(0)
     return send_file(
         output,
@@ -615,3 +689,6 @@ def export_excel():
         as_attachment=True,
         download_name='OptiLab_Master_Shift_Checksheets.xlsx'
     )
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
