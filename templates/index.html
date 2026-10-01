@@ -8,56 +8,58 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 50px; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #f8fafc; color: #0f172a; padding-bottom: 40px; -webkit-tap-highlight-color: transparent; }
     
-    .app-header { background: #ffffff; border-bottom: 2px solid #cbd5e1; padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-    .brand-badge { background: #2563eb; color: #ffffff; font-weight: 900; font-size: 18px; padding: 8px 16px; border-radius: 12px; }
+    .app-header { background: #ffffff; border-bottom: 2px solid #cbd5e1; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .brand-badge { background: #2563eb; color: #ffffff; font-weight: 900; font-size: 16px; padding: 6px 14px; border-radius: 10px; }
     
-    .app-wrapper { display: flex; min-height: calc(100vh - 70px); }
-    .sidebar { width: 270px; background: #ffffff; border-right: 2px solid #e2e8f0; padding: 20px; display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
-    .content-area { flex-grow: 1; padding: 24px; max-width: 1400px; width: 100%; overflow-x: auto; }
+    .app-wrapper { display: flex; min-height: calc(100vh - 60px); }
+    .sidebar { width: 240px; background: #ffffff; border-right: 2px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+    .content-area { flex-grow: 1; padding: 20px; max-width: 1400px; width: 100%; overflow-x: auto; }
     
-    .nav-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 14px; font-weight: 800; font-size: 12px; color: #475569; border-radius: 8px; border: none; cursor: pointer; background: transparent; text-align: left; }
+    .nav-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; font-weight: 800; font-size: 12px; color: #475569; border-radius: 8px; border: none; cursor: pointer; background: transparent; text-align: left; }
     .nav-btn:hover { background: #f1f5f9; color: #0f172a; }
     .nav-btn.active { background: #eff6ff; color: #2563eb; border-left: 4px solid #2563eb; font-weight: 900; }
-    .nav-section-title { font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+    .nav-section-title { font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
     
-    .card { background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 20px; }
-    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
-    .stat-card { background: #ffffff; padding: 16px 20px; border-radius: 14px; border: 1px solid #cbd5e1; text-align: left; }
+    .card { background: #ffffff; padding: 16px 20px; border-radius: 12px; border: 1px solid #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 16px; }
+    .card-header { font-size: 14px; font-weight: 900; color: #0f172a; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+    .stat-card { background: #ffffff; padding: 14px 16px; border-radius: 12px; border: 1px solid #cbd5e1; text-align: left; }
     .stat-card.active-blue { border: 2px solid #2563eb; }
-    .stat-label { font-size: 11px; font-weight: 900; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; }
-    .stat-value { font-size: 32px; font-weight: 900; color: #1e293b; margin-top: 4px; }
+    .stat-label { font-size: 10px; font-weight: 900; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 28px; font-weight: 900; color: #1e293b; margin-top: 4px; }
     
-    .donut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
-    .donut-box { background: #ffffff; padding: 16px; border-radius: 14px; border: 1px solid #cbd5e1; height: 210px; text-align: center; }
+    .donut-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 16px; }
+    .donut-box { background: #ffffff; padding: 12px; border-radius: 12px; border: 1px solid #cbd5e1; height: 190px; text-align: center; }
     
     .task-table { width: 100%; border-collapse: collapse; font-size: 12px; background: #ffffff; }
-    .task-table th { background: #f8fafc; font-weight: 900; color: #334155; text-transform: uppercase; font-size: 10px; padding: 12px 10px; border-bottom: 2px solid #e2e8f0; text-align: left; }
-    .task-table td { padding: 12px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    .task-table th { background: #f8fafc; font-weight: 900; color: #334155; text-transform: uppercase; font-size: 10px; padding: 10px; border-bottom: 2px solid #e2e8f0; text-align: left; }
+    .task-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
 
-    .subtask-container { background: #fdfdfd; border-left: 4px solid #8b5cf6; padding: 12px; margin: 6px 0 12px 0; border-radius: 0 8px 8px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
-    .subtask-row { display: grid; grid-template-columns: minmax(150px, 1.8fr) 70px 110px minmax(130px, 1fr) minmax(90px, 0.8fr) minmax(110px, 0.9fr) minmax(110px, 0.9fr) 115px 55px; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; }
+    .subtask-container { background: #fdfdfd; border-left: 4px solid #8b5cf6; padding: 10px; margin: 4px 0 8px 0; border-radius: 0 8px 8px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+    .subtask-row { display: grid; grid-template-columns: minmax(150px, 1.8fr) 70px 110px minmax(130px, 1fr) minmax(90px, 0.8fr) minmax(110px, 0.9fr) minmax(110px, 0.9fr) 115px 55px; gap: 8px; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e2e8f0; }
 
-    .kanban-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .kanban-col { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 18px; min-height: 400px; }
-    .kanban-card { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+    .kanban-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .kanban-col { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 14px; min-height: 380px; }
+    .kanban-card { background: #ffffff; border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; border-radius: 10px; padding: 10px; margin-bottom: 10px; }
 
-    .diagram-row-top, .diagram-row-bottom { display: flex; flex-direction: row; gap: 14px; padding: 12px; overflow-x: auto; max-width: 100%; white-space: nowrap; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; }
+    .diagram-row-top, .diagram-row-bottom { display: flex; flex-direction: row; gap: 12px; padding: 12px; overflow-x: auto; max-width: 100%; white-space: nowrap; border-radius: 8px; background: #f8fafc; border: 1px solid #cbd5e1; }
     
-    .node-box { border-radius: 12px; padding: 10px 12px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.08); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; min-width: 140px; min-height: 125px; position: relative; background: #ffffff; transition: transform 0.15s; }
-    .node-box.shaker-large { min-width: 260px; min-height: 155px; font-size: 14px; font-weight: 900; border: 3px solid #6366f1; background: #f5f3ff; }
-    .node-box:hover { transform: translateY(-3px); }
-    .node-box img, .node-box .node-icon-placeholder { width: 50px; height: 42px; border-radius: 6px; margin-bottom: 6px; object-fit: contain; }
-    .node-icon-placeholder { display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .node-box { border-radius: 12px; padding: 10px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; min-width: 135px; min-height: 120px; position: relative; background: #ffffff; transition: transform 0.15s; }
+    .node-box.shaker-large { min-width: 250px; min-height: 150px; font-size: 13px; font-weight: 900; border: 3px solid #6366f1; background: #f5f3ff; }
+    .node-box:hover { transform: translateY(-2px); }
+    .node-box img, .node-box .node-icon-placeholder { width: 48px; height: 40px; border-radius: 6px; margin-bottom: 4px; object-fit: contain; }
+    .node-icon-placeholder { display: flex; align-items: center; justify-content: center; font-size: 24px; }
     
     .due-badge { position: absolute; top: -8px; right: -6px; background: #dc2626; color: #fff; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4); }
     .type-chamber { border: 2px solid #ca8a04; background: #fefef0; color: #713f12; }
     .type-cycler { border: 2px solid #c2410c; background: #fffbf7; color: #7c2d12; }
 
-    .pathway-horizontal { background: #22c55e; border: 4px solid #eab308; height: 28px; width: 100%; border-radius: 4px; margin: 10px 0; }
+    .pathway-horizontal { background: #22c55e; border: 3px solid #eab308; height: 24px; width: 100%; border-radius: 4px; margin: 10px 0; }
 
-    .roster-scroll-container { width: 100%; overflow-x: auto; position: relative; max-height: 550px; }
+    .roster-scroll-container { width: 100%; overflow-x: auto; position: relative; max-height: 520px; }
     .roster-table { border-collapse: separate; border-spacing: 0; width: max-content; font-size: 11px; background: #ffffff; }
     .roster-table th, .roster-table td { border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; padding: 6px; text-align: center; white-space: nowrap; }
     .roster-table th { position: sticky; top: 0; background: #f1f5f9; z-index: 20; font-weight: 900; color: #334155; }
@@ -68,12 +70,12 @@
     .col-freeze-4 { position: sticky; left: 300px; background: #ffffff !important; z-index: 10; width: 90px; min-width: 90px; border-right: 3px solid #64748b !important; }
     .roster-table th.col-freeze-1, .roster-table th.col-freeze-2, .roster-table th.col-freeze-3, .roster-table th.col-freeze-4 { z-index: 30; background: #e2e8f0 !important; }
     .roster-cell-clickable { cursor: pointer; transition: transform 0.1s; }
-    .roster-cell-clickable:hover { transform: scale(1.15); z-index: 15; position: relative; }
+    .roster-cell-clickable:hover { transform: scale(1.1); z-index: 15; position: relative; }
     
-    .badge-shift-a { background: #fef3c7; color: #d97706; padding: 3px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
-    .badge-shift-b { background: #dbeafe; color: #2563eb; padding: 3px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
-    .badge-shift-c { background: #f3e8ff; color: #7c3aed; padding: 3px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
-    .badge-shift-off { background: #f1f5f9; color: #94a3b8; padding: 3px 6px; border-radius: 4px; font-weight: 700; display: inline-block; }
+    .badge-shift-a { background: #fef3c7; color: #d97706; padding: 2px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
+    .badge-shift-b { background: #dbeafe; color: #2563eb; padding: 2px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
+    .badge-shift-c { background: #f3e8ff; color: #7c3aed; padding: 2px 6px; border-radius: 4px; font-weight: 800; display: inline-block; }
+    .badge-shift-off { background: #f1f5f9; color: #94a3b8; padding: 2px 6px; border-radius: 4px; font-weight: 700; display: inline-block; }
 
     .badge-status { padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 10px; text-align: center; display: inline-block; }
     .badge-status.green { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
@@ -87,16 +89,19 @@
     .pillar-5s { background: #eef2ff; color: #3730a3; border-left: 5px solid #4f46e5; font-weight: 900; }
 
     .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 12px; }
-    .modal-card { background: #ffffff; padding: 24px; border-radius: 18px; max-width: 720px; width: 100%; border: 1px solid #cbd5e1; max-height: 90vh; overflow-y: auto; position: relative; }
-    .modal-close-icon { position: absolute; top: 16px; right: 20px; font-size: 22px; font-weight: 900; color: #94a3b8; border: none; background: none; cursor: pointer; }
+    .modal-card { background: #ffffff; padding: 20px; border-radius: 16px; max-width: 720px; width: 100%; border: 1px solid #cbd5e1; max-height: 90vh; overflow-y: auto; position: relative; }
+    .modal-close-icon { position: absolute; top: 14px; right: 18px; font-size: 20px; font-weight: 900; color: #94a3b8; border: none; background: none; cursor: pointer; }
     .modal-close-icon:hover { color: #dc2626; }
 
-    .btn-step-toggle { background: #f3e8ff; color: #7c3aed; border: 1px solid #c084fc; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+    .btn-step-toggle { background: #f3e8ff; color: #7c3aed; border: 1px solid #c084fc; font-weight: 900; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
     .btn-assign-step { background: #2563eb; color: #ffffff; font-weight: 900; font-size: 10px; padding: 6px 8px; border-radius: 6px; border: none; cursor: pointer; text-align: center; white-space: nowrap; }
     .btn-log-step { background: #7c3aed; color: #ffffff; font-weight: 900; font-size: 10px; padding: 6px 8px; border-radius: 6px; border: none; cursor: pointer; text-align: center; white-space: nowrap; }
     .btn-eye-obs { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; font-size: 13px; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: 900; }
     .btn-delete-task { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 13px; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: 900; }
     .btn-delete-task:hover { background: #dc2626; color: #ffffff; }
+
+    .btn-primary { background: #2563eb; color: #ffffff; font-weight: 800; font-size: 12px; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; }
+    .btn-primary:hover { background: #1d4ed8; }
 
     .hidden { display: none !important; }
 
@@ -120,17 +125,14 @@
 
   <!-- App Header -->
   <div class="app-header">
-    <div style="display: flex; align-items: center; gap: 15px;">
+    <div style="display: flex; align-items: center; gap: 12px;">
       <div class="brand-badge">⚡ OPTI LAB</div>
-      <div>
-        <h1 style="font-size: 18px; font-weight: 900; color: #0f172a;">E&E OPTI LAB CONSOLE</h1>
-        <p style="font-size: 11px; font-weight: 700; color: #64748b;">Enterprise Multi-Lab Execution & Audit Operating System</p>
-      </div>
+      <h1 style="font-size: 16px; font-weight: 900; color: #0f172a;">E&E OPTI LAB CONSOLE</h1>
     </div>
     
     <div style="display: flex; align-items: center; gap: 12px;">
-      <button onclick="clearAllSystemData()" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 800; font-size: 11px; padding: 8px 14px; border-radius: 8px; cursor: pointer;">🚨 Reset System Data</button>
-      <select id="global-lab-select" onchange="switchLabScope()" style="background: #f8fafc; border: 2px solid #2563eb; font-weight: 900; font-size: 13px; padding: 8px 16px; border-radius: 10px; color: #2563eb;">
+      <button onclick="clearAllSystemData()" style="background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 800; font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer;">🚨 Reset System Data</button>
+      <select id="global-lab-select" onchange="switchLabScope()" style="background: #f8fafc; border: 2px solid #2563eb; font-weight: 900; font-size: 12px; padding: 6px 14px; border-radius: 8px; color: #2563eb;">
         <option value="Battery Lab">🔋 Battery Lab</option>
         <option value="Cell Lab">🧪 Cell Lab</option>
         <option value="Vibration Team">⚡ Vibration Team</option>
@@ -140,7 +142,7 @@
   </div>
 
   <div class="app-wrapper">
-    <!-- Navigation Sidebar -->
+    <!-- Sidebar -->
     <div class="sidebar">
       <div class="nav-section-title">ENGINEERS WORKSPACE</div>
       <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active">📊 Live Dashboard</button>
@@ -149,7 +151,7 @@
       <button onclick="switchTab('analytics')" id="btn-analytics" class="nav-btn">📈 Unified Analytics</button>
       <button onclick="switchTab('history')" id="btn-history" class="nav-btn">📜 Task Audit History</button>
       
-      <div class="nav-section-title">SHIFT EXECUTION WORKBENCH</div>
+      <div class="nav-section-title">SHIFT EXECUTION</div>
       <button onclick="switchShift('Shift A')" id="btn-shift-a" class="nav-btn">☀️ Shift A (6 AM–2 PM)</button>
       <button onclick="switchShift('Shift B')" id="btn-shift-b" class="nav-btn">🌤️ Shift B (2 PM–10 PM)</button>
       <button onclick="switchShift('Shift C')" id="btn-shift-c" class="nav-btn">🌙 Shift C (10 PM–6 AM)</button>
@@ -165,18 +167,18 @@
       <!-- 1. LIVE DASHBOARD -->
       <div id="tab-dashboard">
         <div class="card" style="display: flex; gap: 12px; align-items: center;">
-          <input type="text" id="dash-search" oninput="renderDashboardTable()" placeholder="🔍 Search TRF, BIN, or Objective..." style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; width: 250px;">
+          <input type="text" id="dash-search" oninput="renderDashboardTable()" placeholder="🔍 Search TRF, BIN, or Objective..." style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; width: 250px; font-size: 12px;">
           
-          <select id="filter-component" onchange="renderDashboardTable()" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800;">
-            <option value="All">Component: All Components</option>
+          <select id="filter-component" onchange="renderDashboardTable()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 12px;">
+            <option value="All">All Components</option>
           </select>
-          <select id="filter-status" onchange="renderDashboardTable()" style="padding: 8px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800;">
-            <option value="All">Status: All States</option>
+          <select id="filter-status" onchange="renderDashboardTable()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 12px;">
+            <option value="All">All States</option>
             <option value="Running">Running</option>
             <option value="Completed">Completed</option>
             <option value="Blocked">Blocked / Parts Missing</option>
           </select>
-          <span id="dash-results-count" style="font-size: 11px; font-weight: 800; color: #64748b; margin-left: auto;">Displaying 0 Results</span>
+          <span id="dash-results-count" style="font-size: 11px; font-weight: 800; color: #64748b; margin-left: auto;">0 Results</span>
         </div>
 
         <div class="stat-grid">
@@ -199,19 +201,19 @@
         </div>
 
         <div class="card" id="category-distribution-card">
-          <div style="font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 12px;" id="cat-card-title">📦 BATTERY PACK CATEGORY CALCULATED DISTRIBUTION</div>
+          <div class="card-header" id="cat-card-title">BATTERY PACK CATEGORY DISTRIBUTION</div>
           <div class="donut-grid" id="cat-donut-deck">
             <div class="donut-box">
-              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 6px;">450 STATUS</div>
-              <canvas id="chart-450" style="max-height: 150px;"></canvas>
+              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 4px;">450 STATUS</div>
+              <canvas id="chart-450" style="max-height: 140px;"></canvas>
             </div>
             <div class="donut-box">
-              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 6px;">DIESEL STATUS</div>
-              <canvas id="chart-diesel" style="max-height: 150px;"></canvas>
+              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 4px;">DIESEL STATUS</div>
+              <canvas id="chart-diesel" style="max-height: 140px;"></canvas>
             </div>
             <div class="donut-box">
-              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 6px;">EL STATUS</div>
-              <canvas id="chart-el" style="max-height: 150px;"></canvas>
+              <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 4px;">EL STATUS</div>
+              <canvas id="chart-el" style="max-height: 140px;"></canvas>
             </div>
           </div>
         </div>
@@ -230,55 +232,48 @@
 
       <!-- 2. TASK PLANNER & FLOW BUILDER -->
       <div id="tab-planner" class="hidden">
-        <div class="card" style="background: #fdfdfd; border: 1px solid #cbd5e1;">
-          <div style="font-size: 13px; font-weight: 900; color: #7c3aed; margin-bottom: 8px;">🔄 REUSABLE TEST FLOW BLUEPRINT BUILDER</div>
-          <p style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 12px;">Build standard test sequences (e.g. DVP Endurance Profile) and save them to select from when creating tasks.</p>
+        <div class="card">
+          <div class="card-header" style="color: #7c3aed;">Flow Blueprint Builder</div>
           
           <div style="display: flex; gap: 10px; margin-bottom: 12px;">
-            <input type="text" id="flow-bp-name" placeholder="Blueprint Flow Name (e.g., 1000-Day Thermal Endurance Flow)" style="flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 12px;">
+            <input type="text" id="flow-bp-name" placeholder="Blueprint Flow Name (e.g. Thermal Endurance Flow)" style="flex-grow: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 12px;">
             <button onclick="addBlueprintBuilderStep()" style="background: #7c3aed; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 800; cursor: pointer;">+ Add Step</button>
           </div>
           <div id="flow-bp-step-deck" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;"></div>
-          <button onclick="saveTestFlowBlueprint()" style="background: #16a34a; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 900; cursor: pointer;">💾 SAVE FLOW BLUEPRINT</button>
+          <button onclick="saveTestFlowBlueprint()" style="background: #16a34a; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 900; cursor: pointer;">💾 Save Blueprint</button>
         </div>
 
         <div class="card" style="background: #f8fafc;">
-          <div style="font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 12px;">⚙️ DEPARTMENT COMPONENT REGISTER</div>
-          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
-            <input type="text" id="inp-new-comp" placeholder="Register New Component (e.g. BMS-Gen3-Controller)" style="flex-grow: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 12px;">
-            <button onclick="saveNewComponent()" style="background: #2563eb; color: #ffffff; font-weight: 800; font-size: 12px; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;">Add Component</button>
+          <div class="card-header">Department Component Register</div>
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+            <input type="text" id="inp-new-comp" placeholder="Register Component (e.g. BMS-Gen3-Controller)" style="flex-grow: 1; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 12px;">
+            <button onclick="saveNewComponent()" class="btn-primary">Add Component</button>
           </div>
           <div id="comp-list-deck" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
         </div>
 
         <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <h2 style="font-size: 18px; font-weight: 900; color: #0f172a;">Task Planner & Master Generator</h2>
-            <p style="font-size: 12px; font-weight: 700; color: #64748b;">Draft master DVP tasks and load saved flow sequences.</p>
-          </div>
-          <button onclick="openModal('modal-create-task')" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 13px; padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer;">+ CREATE NEW MASTER DVP TASK</button>
+          <div class="card-header" style="margin-bottom:0;">Task Planner & Master Generator</div>
+          <button onclick="openModal('modal-create-task')" class="btn-primary">+ Create Master DVP Task</button>
         </div>
       </div>
 
       <!-- 3. SHIFT ROSTER -->
       <div id="tab-roster" class="hidden">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px;">
-            <div>
-              <h2 style="font-size: 18px; font-weight: 900; color: #0f172a;">30-DAY SHIFT ROSTER MATRIX</h2>
-              <p style="font-size: 12px; font-weight: 700; color: #64748b;">🔒 Name columns locked on left. Click day cells (D1 to D30) to toggle shifts without page refresh.</p>
-            </div>
-            <button onclick="openModal('modal-add-personnel')" style="background: #2563eb; color: #ffffff; font-weight: 800; font-size: 12px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;">+ ADD TEAM MEMBER</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px;">
+            <div class="card-header" style="margin-bottom:0;">30-Day Shift Roster Matrix</div>
+            <button onclick="openModal('modal-add-personnel')" class="btn-primary">+ Add Team Member</button>
           </div>
 
-          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; gap: 15px; align-items: flex-end;">
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px; margin-bottom: 16px; display: flex; gap: 12px; align-items: flex-end;">
             <div style="flex-grow: 1;">
-              <label style="font-size: 10px; font-weight: 900; color: #475569;">ASSOCIATE / SHIFT INCHARGE NAME</label>
-              <select id="stamp-person" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; margin-top: 4px;"></select>
+              <label style="font-size: 10px; font-weight: 900; color: #475569;">ASSOCIATE / INCHARGE</label>
+              <select id="stamp-person" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; margin-top: 2px; font-size: 11px;"></select>
             </div>
-            <div style="width: 150px;">
-              <label style="font-size: 10px; font-weight: 900; color: #475569;">PLANNED SHIFT</label>
-              <select id="stamp-shift" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; margin-top: 4px;">
+            <div style="width: 130px;">
+              <label style="font-size: 10px; font-weight: 900; color: #475569;">SHIFT</label>
+              <select id="stamp-shift" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; margin-top: 2px; font-size: 11px;">
                 <option value="None">None</option>
                 <option value="Shift A">Shift A</option>
                 <option value="Shift B">Shift B</option>
@@ -286,11 +281,11 @@
                 <option value="OFF">OFF</option>
               </select>
             </div>
-            <div style="width: 180px;">
-              <label style="font-size: 10px; font-weight: 900; color: #475569;">SHIFT PLAN DATE</label>
-              <input type="date" id="stamp-date" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; margin-top: 4px;">
+            <div style="width: 150px;">
+              <label style="font-size: 10px; font-weight: 900; color: #475569;">DATE</label>
+              <input type="date" id="stamp-date" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; margin-top: 2px; font-size: 11px;">
             </div>
-            <button onclick="submitRosterStamp()" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 12px; padding: 10px 24px; border-radius: 8px; border: none; cursor: pointer;">STAMP SHIFT PLAN</button>
+            <button onclick="submitRosterStamp()" class="btn-primary">Stamp Plan</button>
           </div>
 
           <div class="roster-scroll-container">
@@ -304,46 +299,44 @@
 
       <!-- 4. UNIFIED ANALYTICS -->
       <div id="tab-analytics" class="hidden">
-        <div style="font-size: 13px; font-weight: 900; color: #334155; margin-bottom: 10px;">📊 SHIFT EFFICIENCY & 3M STOPPAGE TREND GRAPHS</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-          <div class="card" style="height: 260px;">
-            <div style="font-size: 11px; font-weight: 900; color: #475569; text-align: center; margin-bottom: 8px;">Shift Tasks Completed Comparison</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="card" style="height: 240px;">
+            <div class="card-header" style="justify-content: center;">Shift Tasks Completed</div>
             <canvas id="chart-shift-comparison"></canvas>
           </div>
-          <div class="card" style="height: 260px;">
-            <div style="font-size: 11px; font-weight: 900; color: #475569; text-align: center; margin-bottom: 8px;">3M Floor Stoppages Breakdown</div>
+          <div class="card" style="height: 240px;">
+            <div class="card-header" style="justify-content: center;">Floor Stoppages Breakdown</div>
             <canvas id="chart-3m-breakdown"></canvas>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
           <div class="card">
-            <div style="font-size: 12px; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">☀️ SHIFT EFFICIENCY SCORECARD</div>
-            <div id="scorecard-shifts" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="font-size: 11px; font-weight: 900; color: #1e3a8a; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">SHIFT EFFICIENCY</div>
+            <div id="scorecard-shifts" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
           <div class="card">
-            <div style="font-size: 12px; font-weight: 900; color: #6b21a8; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">👑 INCHARGE ALLOCATION PERFORMANCE</div>
-            <div id="scorecard-incharges" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="font-size: 11px; font-weight: 900; color: #6b21a8; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">INCHARGE PERFORMANCE</div>
+            <div id="scorecard-incharges" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
           <div class="card">
-            <div style="font-size: 12px; font-weight: 900; color: #9a3412; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">🏆 ASSOCIATE OUTPUT & THROUGHPUT</div>
-            <div id="scorecard-associates" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <div style="font-size: 11px; font-weight: 900; color: #9a3412; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 10px;">ASSOCIATE OUTPUT</div>
+            <div id="scorecard-associates" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
         </div>
 
         <div class="card" style="padding: 0; overflow: hidden;">
-          <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-size: 13px; font-weight: 900; color: #0f172a;">🗓️️ MONTHLY ASSOCIATE ATTENDANCE & PUNCH LEDGER MATRIX</h3>
-            <span style="font-size: 10px; font-weight: 800; color: #64748b;">Present / Absent Ledger</span>
+          <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+            <div class="card-header" style="margin-bottom:0;">Attendance Ledger</div>
           </div>
           <table class="task-table">
             <thead>
               <tr>
-                <th>ASSOCIATE NAME</th>
-                <th>ROSTERED DAYS</th>
-                <th>PRESENT (P)</th>
-                <th>ABSENT (A)</th>
-                <th>LEAVES (L)</th>
+                <th>ASSOCIATE</th>
+                <th>ROSTERED</th>
+                <th>PRESENT</th>
+                <th>ABSENT</th>
+                <th>LEAVES</th>
                 <th>ATTENDANCE %</th>
                 <th>STATUS</th>
               </tr>
@@ -356,76 +349,69 @@
       <!-- 5. TASK AUDIT HISTORY LOG -->
       <div id="tab-history" class="hidden">
         <div class="card">
-          <h2 style="font-size: 18px; font-weight: 900; color: #0f172a; margin-bottom: 4px;">Master Audit History Stream</h2>
-          <p style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 15px;">Immutable timeline log of task creations, subtask progress logs, chamber assignments, and attendance punches.</p>
-          <div id="audit-history-deck" style="display: flex; flex-direction: column; gap: 10px;"></div>
+          <div class="card-header">Master Audit History Stream</div>
+          <div id="audit-history-deck" style="display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
       </div>
 
       <!-- 6. SHIFT WORKBENCH & KANBAN -->
       <div id="tab-workbench" class="hidden">
-        <div class="card" style="background: #eff6ff; border: 1px solid #bfdbfe; margin-bottom: 15px; padding: 14px 20px;">
+        <div class="card" style="background: #eff6ff; border: 1px solid #bfdbfe; margin-bottom: 12px; padding: 12px 16px;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 12px; font-weight: 900; color: #1e3a8a;">⏱️ SHIFT ATTENDANCE CHECK-IN / CHECK-OUT:</span>
-              <select id="punch-employee-name" style="padding: 6px 12px; border: 1px solid #93c5fd; border-radius: 6px; font-weight: 800; font-size: 11px;"></select>
-              <select id="punch-status" style="padding: 6px 12px; border: 1px solid #93c5fd; border-radius: 6px; font-weight: 800; font-size: 11px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 11px; font-weight: 900; color: #1e3a8a;">ATTENDANCE PUNCH:</span>
+              <select id="punch-employee-name" style="padding: 6px; border: 1px solid #93c5fd; border-radius: 6px; font-weight: 800; font-size: 11px;"></select>
+              <select id="punch-status" style="padding: 6px; border: 1px solid #93c5fd; border-radius: 6px; font-weight: 800; font-size: 11px;">
                 <option value="Present">Present</option>
                 <option value="Late">Late Entry</option>
                 <option value="On Leave">On Leave</option>
               </select>
             </div>
-            <div style="display: flex; gap: 8px;">
-              <button onclick="submitAttendancePunch('Check In')" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 11px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;">CHECK IN ➔</button>
-              <button onclick="submitAttendancePunch('Check Out')" style="background: #dc2626; color: #ffffff; font-weight: 900; font-size: 11px; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;">CHECK OUT 🛑</button>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="submitAttendancePunch('Check In')" style="background: #16a34a; color: #ffffff; font-weight: 900; font-size: 10px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;">CHECK IN ➔</button>
+              <button onclick="submitAttendancePunch('Check Out')" style="background: #dc2626; color: #ffffff; font-weight: 900; font-size: 10px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;">CHECK OUT 🛑</button>
             </div>
           </div>
         </div>
 
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <div>
-            <h2 id="workbench-shift-title" style="font-size: 18px; font-weight: 900; color: #0f172a;">SHIFT WORKBENCH — SHIFT A</h2>
-            <p style="font-size: 12px; font-weight: 700; color: #64748b;">Filtered Execution Workspace. Showing tasks explicitly assigned to active shift.</p>
-          </div>
-          <div style="display: flex; gap: 10px;">
-            <button onclick="openModal('modal-extra-task')" style="background: #2563eb; color: #ffffff; font-weight: 800; font-size: 12px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;">+ LOG EXTRA UNPLANNED TASK</button>
-            <button onclick="switchTab('checksheet')" style="background: #d97706; color: #ffffff; font-weight: 900; font-size: 12px; padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer;">📋 5S CHECKSHEET PANEL</button>
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 id="workbench-shift-title" style="font-size: 16px; font-weight: 900; color: #0f172a;">SHIFT WORKBENCH — SHIFT A</h2>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="openModal('modal-extra-task')" class="btn-primary">+ Log Extra Task</button>
+            <button onclick="switchTab('checksheet')" style="background: #d97706; color: #ffffff; font-weight: 900; font-size: 11px; padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer;">📋 5S Panel</button>
           </div>
         </div>
 
         <div class="kanban-grid">
           <div class="kanban-col">
-            <h3 style="font-size: 14px; font-weight: 900; color: #334155; border-bottom: 2px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 15px;">📋 TO DO</h3>
+            <div style="font-size: 12px; font-weight: 900; color: #334155; border-bottom: 2px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 12px;">TO DO</div>
             <div id="kb-todo-deck"></div>
           </div>
           <div class="kanban-col" style="background: #f0fdf4; border-color: #bbf7d0;">
-            <h3 style="font-size: 14px; font-weight: 900; color: #15803d; border-bottom: 2px solid #86efac; padding-bottom: 8px; margin-bottom: 15px;">🟢 IN PROGRESS / RUNNING</h3>
+            <div style="font-size: 12px; font-weight: 900; color: #15803d; border-bottom: 2px solid #86efac; padding-bottom: 6px; margin-bottom: 12px;">IN PROGRESS</div>
             <div id="kb-running-deck"></div>
           </div>
           <div class="kanban-col" style="background: #fef2f2; border-color: #fecaca;">
-            <h3 style="font-size: 14px; font-weight: 900; color: #b91c1c; border-bottom: 2px solid #fca5a5; padding-bottom: 8px; margin-bottom: 15px;">🛑 BLOCKED / ROLLOVER (3M)</h3>
+            <div style="font-size: 12px; font-weight: 900; color: #b91c1c; border-bottom: 2px solid #fca5a5; padding-bottom: 6px; margin-bottom: 12px;">BLOCKED / ROLLOVER</div>
             <div id="kb-blocked-deck"></div>
           </div>
         </div>
       </div>
 
-      <!-- 7. BEAUTIFUL COLOR-CODED LAB 5S CHECKSHEET TAB -->
+      <!-- 7. CLEAN LAB 5S CHECKSHEET TAB -->
       <div id="tab-checksheet" class="hidden">
-        <div class="card" style="border: 2px solid #2563eb; background: #ffffff;">
-          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
-            <div>
-              <h2 style="font-size: 18px; font-weight: 900; color: #2563eb;">✨ 🧹 LAB 5S AUDIT & SHIFT HANDOVER SHEET</h2>
-              <p style="font-size: 11px; font-weight: 700; color: #64748b; margin-top: 2px;">Color-coded 5S workplace standard compliance register.</p>
-            </div>
-            <button onclick="window.open('/api/export-excel', '_blank')" style="padding: 10px 18px; background: #16a34a; color: #fff; border: none; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);">
-              📥 EXPORT 30-DAY CHECKSHEET EXCEL
+        <div class="card" style="border: 2px solid #2563eb;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="font-size: 16px; font-weight: 900; color: #2563eb;">🧹 LAB 5S AUDIT SHEET</h2>
+            <button onclick="window.open('/api/export-excel', '_blank')" style="padding: 8px 14px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer;">
+              📥 Export Excel
             </button>
           </div>
 
-          <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0;">
+          <div style="display: flex; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
             <div>
-              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 4px;">ACTIVE SHIFT *</label>
-              <select id="fives-shift" style="padding: 8px 12px; border: 2px solid #2563eb; border-radius: 6px; font-weight: 900; font-size: 11px;">
+              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 2px;">ACTIVE SHIFT *</label>
+              <select id="fives-shift" style="padding: 6px 10px; border: 1px solid #2563eb; border-radius: 6px; font-weight: 900; font-size: 11px;">
                 <option value="Shift A">Shift A (6 AM–2 PM)</option>
                 <option value="Shift B">Shift B (2 PM–10 PM)</option>
                 <option value="Shift C">Shift C (10 PM–6 AM)</option>
@@ -433,94 +419,89 @@
             </div>
 
             <div>
-              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 4px;">COMPLETED BY (ASSOCIATE) *</label>
-              <input id="fives-operator" placeholder="Enter Full Name" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 11px;" />
+              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 2px;">ASSOCIATE *</label>
+              <input id="fives-operator" placeholder="Full Name" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 11px;" />
             </div>
 
             <div>
-              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 4px;">VERIFIED BY (SHIFT INCHARGE) *</label>
-              <input id="fives-verifier" placeholder="Enter Incharge Name" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 11px;" />
+              <label style="display: block; font-size: 10px; font-weight: 900; color: #475569; margin-bottom: 2px;">SHIFT INCHARGE *</label>
+              <input id="fives-verifier" placeholder="Incharge Name" style="padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 800; font-size: 11px;" />
             </div>
           </div>
 
           <div style="overflow-x: auto;">
-            <table class="task-table" style="border: 1px solid #cbd5e1; margin-bottom: 16px; border-radius: 8px; overflow: hidden;">
+            <table class="task-table" style="border: 1px solid #cbd5e1; margin-bottom: 14px; border-radius: 6px; overflow: hidden;">
               <thead>
                 <tr style="background: #0f172a; color: #ffffff;">
-                  <th style="width: 140px; color: #ffffff;">5S PILLAR</th>
-                  <th style="color: #ffffff;">TASK DESCRIPTION</th>
-                  <th style="width: 80px; text-align: center; color: #ffffff;">CHECK</th>
+                  <th style="width: 130px; color: #ffffff;">PILLAR</th>
+                  <th style="color: #ffffff;">CHECKITEM</th>
+                  <th style="width: 70px; text-align: center; color: #ffffff;">PASS</th>
                 </tr>
               </thead>
               <tbody>
-                <!-- 1S SORT -->
                 <tr class="pillar-1s">
-                  <td rowspan="4" style="vertical-align: middle; text-align: center; font-size: 13px;">1. SORT<br><span style="font-size: 10px; font-weight: 700;">(Seiri)</span></td>
-                  <td style="color: #0f172a;">Cleared all unnecessary materials, unused tools, and inactive prototypes from active workbenches.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-1" checked style="width: 18px; height: 18px;"></td>
+                  <td rowspan="4" style="vertical-align: middle; text-align: center; font-size: 12px;">1. SORT</td>
+                  <td style="color: #0f172a;">Cleared unnecessary materials, unused tools, and inactive prototypes.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-1" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Disposed of daily chemical waste, used wipes, and empty containers in appropriate hazardous waste bins.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-2" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Disposed of chemical waste, wipes, and containers.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-2" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Moved damaged, bloated, or tested batteries to designated fire-safe quarantine zones.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-3" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Moved damaged or tested batteries to fire-safe quarantine.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-3" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Ensured all batteries in storage are tagged and grouped by project.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-4" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Batteries in storage tagged and grouped.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-4" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
-                <!-- 2S SET IN ORDER -->
                 <tr class="pillar-2s" style="border-top: 2px solid #cbd5e1;">
-                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 13px;">2. SET IN ORDER<br><span style="font-size: 10px; font-weight: 700;">(Seiton)</span></td>
-                  <td style="color: #0f172a;">Placed all hand tools (Torque gun, tool bits, torque wrenches) back on designated shadow boards.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-5" checked style="width: 18px; height: 18px;"></td>
+                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">2. SET IN ORDER</td>
+                  <td style="color: #0f172a;">Hand tools returned to shadow boards.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-5" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-2s">
-                  <td style="color: #0f172a;">Neatly coiled and secured all cables and dashboard on battery testing cyclers.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-6" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Coiled and secured cables and cycler dashboards.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-6" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
-                <!-- 3S SHINE -->
                 <tr class="pillar-3s" style="border-top: 2px solid #cbd5e1;">
-                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 13px;">3. SHINE<br><span style="font-size: 10px; font-weight: 700;">(Seiso)</span></td>
-                  <td style="color: #0f172a;">Inspected working table, battery cycler contacts, and probes for dirt or corrosion.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-7" checked style="width: 18px; height: 18px;"></td>
+                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">3. SHINE</td>
+                  <td style="color: #0f172a;">Inspected tables, contacts, and probes for dirt.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-7" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-3s">
-                  <td style="color: #0f172a;">Checked floor for minor spills, dropped components, or tripping hazards.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-8" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Floor clean from spills or hazards.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-8" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
-                <!-- 4S STANDARDIZE -->
                 <tr class="pillar-4s" style="border-top: 2px solid #cbd5e1;">
-                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 13px;">4. STANDARDIZE<br><span style="font-size: 10px; font-weight: 700;">(Seiketsu)</span></td>
-                  <td style="color: #0f172a;">Verified that all newly built battery packs are clearly labeled with standard naming conventions.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-9" checked style="width: 18px; height: 18px;"></td>
+                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">4. STANDARDIZE</td>
+                  <td style="color: #0f172a;">New battery packs clearly labeled.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-9" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-4s">
-                  <td style="color: #0f172a;">Updated and signed off on daily equipment usage logs and testing registers.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-10" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Updated equipment logs and registers.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-10" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
-                <!-- 5S SUSTAIN -->
                 <tr class="pillar-5s" style="border-top: 2px solid #cbd5e1;">
-                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 13px;">5. SUSTAIN<br><span style="font-size: 10px; font-weight: 700;">(Shitsuke)</span></td>
-                  <td style="color: #0f172a;">Inspected PPE (safety glasses, thermal gloves) for damage and stored properly.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-11" checked style="width: 18px; height: 18px;"></td>
+                  <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">5. SUSTAIN</td>
+                  <td style="color: #0f172a;">PPE inspected and stored.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-11" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-5s">
-                  <td style="color: #0f172a;">Ensured emergency equipment (fire extinguishers, sand buckets, spill kits) is unobstructed.[cite: 7]</td>
-                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-12" checked style="width: 18px; height: 18px;"></td>
+                  <td style="color: #0f172a;">Emergency equipment unobstructed.</td>
+                  <td style="text-align: center;"><input type="checkbox" id="cs-5s-12" checked style="width: 16px; height: 16px;"></td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <button onclick="submit5SChecksheet()" style="padding: 14px; width: 100%; background: #2563eb; color: #ffffff; border: none; border-radius: 10px; font-weight: 900; font-size: 14px; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);">
-            SUBMIT LAB 5S CHECKSHEET ➔
+          <button onclick="submit5SChecksheet()" style="padding: 12px; width: 100%; background: #2563eb; color: #ffffff; border: none; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer;">
+            Submit 5S Checksheet ➔
           </button>
         </div>
       </div>
@@ -528,8 +509,7 @@
       <!-- 8. LAB VIEW DIGITAL TWIN -->
       <div id="tab-twin" class="hidden">
         <div class="card">
-          <h2 id="twin-title" style="font-size: 18px; font-weight: 900; color: #0f172a; margin-bottom: 4px;">Lab View</h2>
-          <p style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 15px;">Interactive Spatial Layout. Thermal Chambers & Cyclers update dynamically as associates log progress.</p>
+          <div class="card-header">Lab View</div>
           <div id="top-row-deck" class="diagram-row-top"></div>
           <div class="pathway-horizontal" id="twin-pathway"></div>
           <div id="bottom-row-deck" class="diagram-row-bottom"></div>
@@ -543,10 +523,8 @@
   <div id="modal-task-observations" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('modal-task-observations')" class="modal-close-icon">&times;</button>
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px;">
-        <h3 id="m-obs-task-title" style="font-size: 16px; font-weight: 900; color: #0f172a;">Task Observations Inspector</h3>
-      </div>
-      <div id="m-obs-history-deck" style="display: flex; flex-direction: column; gap: 10px;"></div>
+      <div class="card-header" id="m-obs-task-title">Task Observations</div>
+      <div id="m-obs-history-deck" style="display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
   </div>
 
@@ -554,21 +532,19 @@
   <div id="modal-create-task" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('modal-create-task')" class="modal-close-icon">&times;</button>
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 15px;">
-        <h3 style="font-size: 16px; font-weight: 900; color: #0f172a;">CREATE NEW MASTER DVP TASK</h3>
-      </div>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 15px;">
-        <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 8px;">1. SCOPE & PRIORITY IDENTIFIERS</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; font-size: 11px; font-weight: 800;">
-          <div><label>BIN / PACK BARCODE *</label><input type="text" id="m-bin" placeholder="e.g. BGFT5B17000619" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></div>
-          <div><label>DVP NAME *</label><input type="text" id="m-dvp-name" placeholder="e.g. STB Pack Profile" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></div>
+      <div class="card-header">Create Master DVP Task</div>
+      
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+          <div><label>BIN / PACK BARCODE *</label><input type="text" id="m-bin" placeholder="BGFT5B17000619" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+          <div><label>DVP NAME *</label><input type="text" id="m-dvp-name" placeholder="STB Pack Profile" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
           <div>
-            <label>TARGET COMPONENT *</label>
-            <select id="m-component-select" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></select>
+            <label>COMPONENT *</label>
+            <select id="m-component-select" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></select>
           </div>
           <div>
-            <label>CATEGORY CLASSIFICATION *</label>
-            <select id="m-category" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;">
+            <label>CATEGORY *</label>
+            <select id="m-category" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;">
               <option value="450">450</option>
               <option value="DIESEL">DIESEL</option>
               <option value="EL">EL</option>
@@ -576,54 +552,55 @@
           </div>
         </div>
       </div>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 15px;">
-        <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 8px;">2. LOAD TEST FLOW BLUEPRINT OR DYNAMIC STEP BUILDER</div>
-        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px; font-weight: 800;">
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; font-weight: 800;">
           <div>
-            <label style="color: #7c3aed;">LOAD SAVED TEST FLOW BLUEPRINT</label>
-            <select id="m-saved-bp-dropdown" onchange="loadSelectedBlueprintSteps()" style="width: 100%; padding: 8px; border: 2px solid #7c3aed; border-radius: 6px; margin-top: 4px; font-weight: 800;">
+            <label style="color: #7c3aed;">LOAD SAVED BLUEPRINT</label>
+            <select id="m-saved-bp-dropdown" onchange="loadSelectedBlueprintSteps()" style="width: 100%; padding: 6px; border: 1px solid #7c3aed; border-radius: 6px; margin-top: 2px;">
               <option value="">-- Select Saved Flow --</option>
             </select>
           </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div><label>TEST OBJECTIVE *</label><textarea id="m-objective" rows="2" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></textarea></div>
-            <div><label>TEST BACKGROUND / JUSTIFICATION</label><textarea id="m-background" rows="2" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></textarea></div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div><label>TEST OBJECTIVE *</label><textarea id="m-objective" rows="2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea></div>
+            <div><label>BACKGROUND / JUSTIFICATION</label><textarea id="m-background" rows="2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea></div>
           </div>
-          <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; margin-top: 8px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-              <span style="font-size: 11px; font-weight: 900; color: #7c3aed;">📋 SUBTASK STEPS:</span>
-              <button onclick="addDynamicStepRow()" style="background:#2563eb; color:#ffffff; border:none; font-weight:800; font-size:10px; padding:4px 10px; border-radius:4px; cursor:pointer;">+ ADD SUBTASK STEP</button>
+          <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; margin-top: 4px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+              <span style="font-size: 11px; font-weight: 900; color: #7c3aed;">SUBTASK STEPS:</span>
+              <button onclick="addDynamicStepRow()" style="background:#2563eb; color:#ffffff; border:none; font-weight:800; font-size:10px; padding:4px 8px; border-radius:4px; cursor:pointer;">+ Add Subtask Step</button>
             </div>
-            <div id="m-generated-steps-deck" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <div id="m-generated-steps-deck" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
         </div>
       </div>
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-        <div style="font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 8px;">3. OWNERSHIP, PRIORITY & SPRINT</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; font-size: 11px; font-weight: 800;">
-          <div><label>TASK PRIORITY *</label><select id="m-prio" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"><option value="P1">P1 - Critical Priority</option><option value="P2">P2 - High Priority</option></select></div>
-          <div><label>LEAD ENGINEER</label><input type="text" id="m-engineer" placeholder="e.g. Raj Kumar" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></div>
-          <div><label>SPRINT NUMBER *</label><input type="text" id="m-sprint" placeholder="e.g. Sprint 27.2" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+          <div><label>PRIORITY *</label><select id="m-prio" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"><option value="P1">P1 - Critical Priority</option><option value="P2">P2 - High Priority</option></select></div>
+          <div><label>LEAD ENGINEER</label><input type="text" id="m-engineer" placeholder="Raj Kumar" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+          <div><label>SPRINT NO. *</label><input type="text" id="m-sprint" placeholder="Sprint 27.2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
         </div>
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-        <button onclick="closeModal('modal-create-task')" style="padding: 10px 20px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer;">Cancel</button>
-        <button onclick="submitMasterTask()" style="background: #2563eb; color: #ffffff; padding: 10px 24px; border-radius: 8px; border: none; font-weight: 900; cursor: pointer;">SAVE & GENERATE TASK ➔</button>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+        <button onclick="closeModal('modal-create-task')" style="padding: 8px 16px; border-radius: 6px; border: none; font-weight: 800; cursor: pointer;">Cancel</button>
+        <button onclick="submitMasterTask()" class="btn-primary">Save & Generate Task ➔</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PROGRESS LOG & ROLLOVER -->
+  <!-- MODAL: PROGRESS LOG -->
   <div id="modal-log-progress" class="modal-overlay">
-    <div class="modal-card" style="max-width: 560px;">
+    <div class="modal-card" style="max-width: 520px;">
       <button onclick="closeModal('modal-log-progress')" class="modal-close-icon">&times;</button>
-      <div style="font-size: 11px; font-weight: 900; color: #7c3aed; margin-bottom: 4px;">📋 UPDATE STEP PROGRESS & TELEMETRY LINK</div>
-      <h3 id="m-log-step-title" style="font-size: 15px; font-weight: 900; color: #2563eb; margin-bottom: 15px;">SUB-806937 | Step Progress</h3>
+      <div class="card-header" id="m-log-step-title" style="margin-bottom: 12px;">Log Progress</div>
       <input type="hidden" id="log-task-id"><input type="hidden" id="log-sub-id">
-      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 11px; font-weight: 800;">
+      
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px; font-weight: 800;">
         <div>
-          <label style="color: #713f12;">ASSIGN ENVIRONMENTAL CHAMBER / RIG *</label>
-          <select id="log-chamber-select" style="width: 100%; padding: 8px; border: 2px solid #ca8a04; border-radius: 6px; margin-top: 4px; font-weight: 800;">
+          <label style="color: #713f12;">ENVIRONMENTAL CHAMBER / RIG *</label>
+          <select id="log-chamber-select" style="width: 100%; padding: 6px; border: 1px solid #ca8a04; border-radius: 6px; margin-top: 2px; font-weight: 800;">
             <option value="None">None (No Chamber Used)</option>
             <option value="Chamber-1">Chamber 1</option>
             <option value="Chamber-2">Chamber 2</option>
@@ -639,8 +616,8 @@
           </select>
         </div>
         <div>
-          <label style="color: #7c2d12;">ASSIGN CHARGE / DISCHARGE CYCLER *</label>
-          <select id="log-cycler-select" onchange="toggleNewareChannelSelect()" style="width: 100%; padding: 8px; border: 2px solid #c2410c; border-radius: 6px; margin-top: 4px; font-weight: 800;">
+          <label style="color: #7c2d12;">CHARGE / DISCHARGE CYCLER *</label>
+          <select id="log-cycler-select" onchange="toggleNewareChannelSelect()" style="width: 100%; padding: 6px; border: 1px solid #c2410c; border-radius: 6px; margin-top: 2px; font-weight: 800;">
             <option value="None">None (No Cycler Used)</option>
             <option value="EA-Cycler-1">EA Cycler 1</option>
             <option value="EA-Cycler-2">EA Cycler 2</option>
@@ -656,9 +633,9 @@
             <option value="Neware-2">Neware Cycler 2 (4-Channel)</option>
           </select>
         </div>
-        <div id="neware-channel-box" style="display: none; background: #fffbf7; border: 1px dashed #c2410c; padding: 10px; border-radius: 6px;">
-          <label style="color: #c2410c;">NEWARE CYCLER CHANNEL SELECTOR (1 TO 4) *</label>
-          <select id="log-neware-channel" style="width: 100%; padding: 8px; border: 1px solid #c2410c; border-radius: 6px; margin-top: 4px; font-weight: 800;">
+        <div id="neware-channel-box" style="display: none; background: #fffbf7; border: 1px dashed #c2410c; padding: 8px; border-radius: 6px;">
+          <label style="color: #c2410c;">NEWARE CHANNEL *</label>
+          <select id="log-neware-channel" style="width: 100%; padding: 6px; border: 1px solid #c2410c; border-radius: 6px; margin-top: 2px; font-weight: 800;">
             <option value="1">Channel 1</option>
             <option value="2">Channel 2</option>
             <option value="3">Channel 3</option>
@@ -666,30 +643,29 @@
           </select>
         </div>
         <div>
-          <label>GRAFANA TELEMETRY DASHBOARD LINK *</label>
-          <input type="text" id="log-grafana-link" placeholder="https://grafana.optilab.internal/d/chamber-3?orgId=1" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;">
+          <label>GRAFANA TELEMETRY LINK *</label>
+          <input type="text" id="log-grafana-link" placeholder="https://grafana.optilab.internal/d/chamber-3?orgId=1" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;">
         </div>
         <div>
-          <label>TEST EXECUTION STATUS *</label>
-          <select id="log-status" style="width: 100%; padding: 8px; border: 2px solid #2563eb; border-radius: 8px; font-weight: 800; margin-top: 4px;">
-            <option value="Running">Running 🟢 (Resumes / Continues Test)</option>
+          <label>EXECUTION STATUS *</label>
+          <select id="log-status" style="width: 100%; padding: 6px; border: 1px solid #2563eb; border-radius: 6px; font-weight: 800; margin-top: 2px;">
+            <option value="Running">Running 🟢</option>
             <option value="Completed">Completed ✅</option>
-            <option value="Parts Missing">Parts / Components Not Available 🧩 (Blocked)</option>
-            <option value="Blocked">Paused / Blocked (3M Constraint) 🔴</option>
+            <option value="Parts Missing">Parts Missing 🧩 (Blocked)</option>
+            <option value="Blocked">Paused / Blocked 🔴</option>
           </select>
         </div>
         <div>
-          <label>ADD LOGGED PROGRESS (DAYS / HOURS / CYCLES) *</label>
-          <input type="number" id="log-add-p" value="1" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;">
+          <label>ADD PROGRESS *</label>
+          <input type="number" id="log-add-p" value="1" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;">
         </div>
         <div>
-          <label>SHIFT HANDOVER & OBSERVATION NOTES / PARTS SHORTAGE COMMENT *</label>
-          <textarea id="log-notes" rows="2" placeholder="Log chamber observations, temperature readings, or handover notes..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;"></textarea>
+          <label>SHIFT HANDOVER & OBSERVATION NOTES *</label>
+          <textarea id="log-notes" rows="2" placeholder="Chamber observations, temperature readings, or handover comments..." style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea>
         </div>
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-        <button style="background: #fef3c7; color: #b45309; border: 1px solid #fde047; font-weight: 900; font-size: 11px; padding: 8px 14px; border-radius: 6px; cursor: pointer;">🧩 FLAG PARTS MISSING</button>
-        <button onclick="submitSubtaskLog()" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 12px; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;">SAVE PROGRESS & SYNC LAB VIEW ➔</button>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+        <button onclick="submitSubtaskLog()" class="btn-primary">Save Progress & Sync ➔</button>
       </div>
     </div>
   </div>
@@ -698,35 +674,35 @@
   <div id="inspector-modal" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('inspector-modal')" class="modal-close-icon">&times;</button>
-      <h3 id="modal-node-title" style="font-size: 15px; font-weight: 900; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 12px;">Equipment Inspector</h3>
+      <div class="card-header" id="modal-node-title" style="border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">Equipment Inspector</div>
       
-      <!-- PM & Calibration Alert & Form -->
-      <div style="background: #fffbf7; border: 1px solid #fed7aa; padding: 12px; border-radius: 8px; margin-bottom: 14px;">
-        <h4 style="font-size: 12px; font-weight: 900; color: #c2410c; margin-bottom: 6px;">📅 PM & CALIBRATION DUE DATES</h4>
-        <div id="modal-due-status" style="font-size: 11px; font-weight: 800; margin-bottom: 8px;"></div>
+      <!-- PM & Calibration Form -->
+      <div style="background: #fffbf7; border: 1px solid #fed7aa; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
+        <div style="font-size: 11px; font-weight: 900; color: #c2410c; margin-bottom: 4px;">PM & CALIBRATION DUE DATES</div>
+        <div id="modal-due-status" style="font-size: 11px; font-weight: 800; margin-bottom: 6px;"></div>
         
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end;">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end;">
           <div>
-            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">NEXT PM DATE</label>
-            <input type="date" id="modal-pm-date" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">NEXT PM</label>
+            <input type="date" id="modal-pm-date" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
           </div>
           <div>
-            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">CALIBRATION DUE DATE</label>
-            <input type="date" id="modal-calib-date" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
+            <label style="display: block; font-size: 10px; font-weight: 800; color: #475569;">CALIBRATION DUE</label>
+            <input type="date" id="modal-calib-date" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 11px;">
           </div>
-          <button onclick="saveEquipmentDatesInModal()" style="padding: 6px 12px; background: #d97706; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 10px; cursor: pointer;">
-            UPDATE DATES
+          <button onclick="saveEquipmentDatesInModal()" style="padding: 6px 10px; background: #d97706; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 10px; cursor: pointer;">
+            Update Dates
           </button>
         </div>
       </div>
 
       <!-- Chamber Daily Checklist Embedded Inside Chamber Modal -->
-      <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <h4 style="font-size: 12px; font-weight: 900; color: #2563eb;">🧪 DAILY CHAMBER MAINTENANCE CHECKSHEET</h4>
-          <input id="m-ch-inspector-name" placeholder="Inspector Name" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10px; font-weight: 800; width: 140px;">
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <div style="font-size: 11px; font-weight: 900; color: #2563eb;">DAILY CHAMBER MAINTENANCE CHECKSHEET</div>
+          <input id="m-ch-inspector-name" placeholder="Inspector Name" style="padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 10px; font-weight: 800; width: 130px;">
         </div>
-        <div style="font-size: 11px; font-weight: 800; display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+        <div style="font-size: 10px; font-weight: 800; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
           <label><input type="checkbox" id="m-ch-1" checked> 1. Clean test chamber</label>
           <label><input type="checkbox" id="m-ch-2" checked> 2. Check door sealing</label>
           <label><input type="checkbox" id="m-ch-3" checked> 3. Check abnormal noise</label>
@@ -736,8 +712,8 @@
           <label><input type="checkbox" id="m-ch-7" checked> 7. Setup dust-free</label>
           <label><input type="checkbox" id="m-ch-8" checked> 8. Temp/humidity profile</label>
         </div>
-        <button onclick="submitChamberCheckInModal()" style="margin-top: 10px; padding: 10px; width: 100%; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer;">
-          SUBMIT CHAMBER DAILY CHECKSHEET ➔
+        <button onclick="submitChamberCheckInModal()" style="margin-top: 8px; padding: 8px; width: 100%; background: #2563eb; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 10px; cursor: pointer;">
+          Submit Daily Checksheet ➔
         </button>
       </div>
 
@@ -750,16 +726,16 @@
   <div id="modal-add-personnel" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('modal-add-personnel')" class="modal-close-icon">&times;</button>
-      <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 12px;">Add Team Member to Roster</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px; font-weight: 800;">
-        <label>Employee ID *</label><input type="text" id="p-id" placeholder="e.g. EMP-205" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;">
-        <label>Full Name *</label><input type="text" id="p-name" placeholder="e.g. Karthick G Prabhu" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;">
-        <label>Role *</label><select id="p-role" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;"><option value="Associate">Associate / Technician</option><option value="Shift Incharge">Shift Incharge</option></select>
-        <label>Default Shift *</label><select id="p-shift" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;"><option value="Shift A">Shift A</option><option value="Shift B">Shift B</option><option value="Shift C">Shift C</option></select>
+      <div class="card-header">Add Team Member</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; font-weight: 800;">
+        <label>Employee ID *</label><input type="text" id="p-id" placeholder="EMP-205" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        <label>Full Name *</label><input type="text" id="p-name" placeholder="Karthick G Prabhu" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        <label>Role *</label><select id="p-role" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"><option value="Associate">Associate / Technician</option><option value="Shift Incharge">Shift Incharge</option></select>
+        <label>Default Shift *</label><select id="p-shift" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"><option value="Shift A">Shift A</option><option value="Shift B">Shift B</option><option value="Shift C">Shift C</option></select>
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-        <button onclick="closeModal('modal-add-personnel')" style="padding: 8px 16px; border: none; border-radius: 6px;">Cancel</button>
-        <button onclick="submitPersonnel()" style="background: #2563eb; color: #fff; font-weight: 900; padding: 8px 16px; border: none; border-radius: 6px;">Save Member</button>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button onclick="closeModal('modal-add-personnel')" style="padding: 6px 14px; border: none; border-radius: 6px;">Cancel</button>
+        <button onclick="submitPersonnel()" class="btn-primary">Save Member</button>
       </div>
     </div>
   </div>
@@ -768,15 +744,15 @@
   <div id="modal-extra-task" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('modal-extra-task')" class="modal-close-icon">&times;</button>
-      <h3 style="font-size: 15px; font-weight: 900; margin-bottom: 12px;">Log Extra / Unplanned Task</h3>
-      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px; font-weight: 800;">
-        <label>Task Title *</label><input type="text" id="ext-title" placeholder="e.g. Chamber Calibration" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;">
-        <label>Logged By Associate *</label><select id="ext-logged-by" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;"></select>
-        <label>Action Notes *</label><textarea id="ext-notes" rows="2" style="padding: 8px; border: 2px solid #cbd5e1; border-radius: 6px;"></textarea>
+      <div class="card-header">Log Extra Task</div>
+      <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11px; font-weight: 800;">
+        <label>Task Title *</label><input type="text" id="ext-title" placeholder="Chamber Calibration" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;">
+        <label>Logged By *</label><select id="ext-logged-by" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"></select>
+        <label>Action Notes *</label><textarea id="ext-notes" rows="2" style="padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px;"></textarea>
       </div>
-      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-        <button onclick="closeModal('modal-extra-task')" style="padding: 8px 16px; border: none; border-radius: 6px;">Cancel</button>
-        <button onclick="submitExtraTask()" style="background: #2563eb; color: #fff; font-weight: 900; padding: 8px 16px; border: none; border-radius: 6px;">Log Extra Task</button>
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+        <button onclick="closeModal('modal-extra-task')" style="padding: 6px 14px; border: none; border-radius: 6px;">Cancel</button>
+        <button onclick="submitExtraTask()" class="btn-primary">Log Task</button>
       </div>
     </div>
   </div>
@@ -796,7 +772,6 @@
         const res = await fetch(`/api/lab/${encodeURIComponent(activeLab)}`);
         labStore = await res.json();
 
-        // 1. Populate Dropdowns
         const stampSelect = document.getElementById('stamp-person');
         const extSelect = document.getElementById('ext-logged-by');
         const punchEmp = document.getElementById('punch-employee-name');
@@ -815,7 +790,7 @@
 
         const compFilter = document.getElementById('filter-component');
         const compTaskSelect = document.getElementById('m-component-select');
-        if (compFilter) compFilter.innerHTML = `<option value="All">Component: All Components</option>`;
+        if (compFilter) compFilter.innerHTML = `<option value="All">All Components</option>`;
         if (compTaskSelect) compTaskSelect.innerHTML = `<option value="General Hardware">General Hardware</option>`;
 
         const uniqueComponents = Array.from(new Set(labStore.components || []));
@@ -832,7 +807,6 @@
           });
         }
 
-        // 2. Update Top Stat Cards
         if (labStore.metrics) {
           document.getElementById('stat-complete').innerText = labStore.metrics.complete || 0;
           document.getElementById('stat-running').innerText = labStore.metrics.running || 0;
@@ -844,15 +818,14 @@
         const catDonutDeck = document.getElementById('cat-donut-deck');
 
         if (activeLab === "Battery Lab") {
-          if (catCardTitle) catCardTitle.innerText = "📦 BATTERY PACK CATEGORY CALCULATED DISTRIBUTION";
+          if (catCardTitle) catCardTitle.innerText = "BATTERY PACK CATEGORY DISTRIBUTION";
           if (catDonutDeck) catDonutDeck.style.display = "grid";
           renderCalculatedDonuts();
         } else {
-          if (catCardTitle) catCardTitle.innerText = `⚙️ ${activeLab.toUpperCase()} HARDWARE COMPONENT TEST SUMMARY`;
+          if (catCardTitle) catCardTitle.innerText = `${activeLab.toUpperCase()} HARDWARE TEST SUMMARY`;
           if (catDonutDeck) catDonutDeck.style.display = "none";
         }
 
-        // 3. FORCE RE-RENDER ALL ACTIVE UI DECKS INSTANTLY WITHOUT PAGE RELOAD
         renderDashboardTable();
         renderConfigManager();
         renderWorkbench();
@@ -919,7 +892,7 @@
 
       document.getElementById('dash-results-count').innerText = `Displaying ${filtered.length} Results`;
       if (filtered.length === 0) {
-        body.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#94a3b8; font-weight:800; padding:20px;">No matching DVP tasks created in ${activeLab}. Add a team member and create a task.</td></tr>`;
+        body.innerHTML = `<tr><td colspan="11" style="text-align:center; color:#94a3b8; font-weight:800; padding:16px;">No matching tasks in ${activeLab}.</td></tr>`;
         return;
       }
 
@@ -987,7 +960,7 @@
                         ${labStore.personnel.map(a=>`<option value="${a.name}" ${st.associate===a.name?'selected':''}>${a.name}</option>`).join('')}
                       </select>
                     </div>
-                    <button onclick="saveInlineStepAssignment('${t.task_id}','${st.sub_id}')" class="btn-assign-step">ASSIGN STEP ➔</button>
+                    <button onclick="saveInlineStepAssignment('${t.task_id}','${st.sub_id}')" class="btn-assign-step">ASSIGN ➔</button>
                     <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${st.name}')" class="btn-log-step" title="Log Progress & Telemetry">📝 Log</button>
                   </div>
                 `}).join('')}
@@ -1048,7 +1021,7 @@
               ${renderImageHTML(item)}
               <div>${item.name}</div>
               <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-                ${activeCount > 0 ? `🟢 ${activeCount} Pack${activeCount > 1 ? 's' : ''} Active` : 'Idle'}
+                ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
               </div>
             </div>
           `;
@@ -1076,7 +1049,7 @@
               ${renderImageHTML(item)}
               <div>${item.name}</div>
               <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-                ${activeCount > 0 ? `🟢 ${activeCount} Pack${activeCount > 1 ? 's' : ''} Active` : 'Idle'}
+                ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
               </div>
             </div>
           `;
@@ -1086,7 +1059,7 @@
 
     function openChamberInspector(nodeId, nodeName) {
       selectedChamberId = nodeId;
-      document.getElementById('modal-node-title').innerText = `${nodeName} — Telemetry, Checksheet & Mounted Packs Inspector`;
+      document.getElementById('modal-node-title').innerText = `${nodeName} — Telemetry & Inspector`;
       
       const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[nodeId] || {} : {};
       document.getElementById('modal-pm-date').value = maint.pm_date || '';
@@ -1098,7 +1071,7 @@
       let statusHTML = '';
       if (pmDays !== null && pmDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ PM Due in ${pmDays} Days! </span>`;
       if (calibDays !== null && calibDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ Calibration Due in ${calibDays} Days!</span>`;
-      if (!statusHTML) statusHTML = `<span style="color:#16a34a;">✅ Equipment PM & Calibration within valid interval.</span>`;
+      if (!statusHTML) statusHTML = `<span style="color:#16a34a;">✅ PM & Calibration Valid.</span>`;
       
       document.getElementById('modal-due-status').innerHTML = statusHTML;
 
@@ -1137,36 +1110,34 @@
       }
 
       if (activePacks.length === 0) {
-        container.innerHTML = `<div style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 11px; font-weight: 800; color: #64748b; text-align: center;">No active battery packs currently mounted in ${nodeName}.</div>`;
+        container.innerHTML = `<div style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 11px; font-weight: 800; color: #64748b; text-align: center;">No active packs mounted in ${nodeName}.</div>`;
       } else {
-        container.innerHTML = `<div style="font-size: 11px; font-weight: 900; color: #2563eb; margin-bottom: 8px;">TOTAL ACTIVE PACKS MOUNTED IN ${nodeName.toUpperCase()}: ${activePacks.length}</div>`;
+        container.innerHTML = `<div style="font-size: 11px; font-weight: 900; color: #2563eb; margin-bottom: 6px;">MOUNTED PACKS (${activePacks.length})</div>`;
         
         activePacks.forEach((p, idx) => {
           container.innerHTML += `
-            <div style="padding: 14px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 5px solid #2563eb; border-radius: 10px; margin-bottom: 10px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-bottom: 8px;">
+            <div style="padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #2563eb; border-radius: 8px; margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 6px;">
                 <div>
                   <span style="font-weight: 900; font-size: 12px; color: #0f172a;">Pack #${idx + 1}: ${p.bin}</span>
-                  <span style="margin-left: 6px; font-size: 10px; font-weight: 800; color: #7c3aed; background: #f3e8ff; padding: 2px 6px; border-radius: 4px;">Task: ${p.taskId}</span>
+                  <span style="margin-left: 6px; font-size: 10px; font-weight: 800; color: #7c3aed; background: #f3e8ff; padding: 2px 4px; border-radius: 4px;">Task: ${p.taskId}</span>
                 </div>
                 <span class="badge-status ${p.status==='Completed'?'green':'yellow'}">${p.status}</span>
               </div>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 8px;">
-                <div><b>DVP Test Name:</b> ${p.dvpName}</div>
-                <div><b>Hardware Component:</b> ${p.component}</div>
-                <div><b>Active Test Step:</b> ${p.stepName} (${p.stepId})</div>
-                <div><b>Test Objective:</b> 🎯 ${p.objective}</div>
-                <div><b>Chamber Rig:</b> ${p.chamber}</div>
-                <div><b>Charge Cycler:</b> ${p.cycler} ${p.channel ? '(Ch: '+p.channel+')' : ''}</div>
-                <div><b>Logged Progress:</b> <span style="color:#16a34a; font-weight:900;">${p.logged} / ${p.target} ${p.unit}</span></div>
-                <div><b>Lead Engineer:</b> ${p.engineer}</div>
-                <div><b>Shift Incharge:</b> ${p.incharge}</div>
-                <div><b>Assigned Associate:</b> ${p.associate} (${p.shift})</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px; font-weight: 700; color: #334155; margin-bottom: 6px;">
+                <div><b>DVP Name:</b> ${p.dvpName}</div>
+                <div><b>Component:</b> ${p.component}</div>
+                <div><b>Step:</b> ${p.stepName} (${p.stepId})</div>
+                <div><b>Objective:</b> 🎯 ${p.objective}</div>
+                <div><b>Chamber:</b> ${p.chamber}</div>
+                <div><b>Cycler:</b> ${p.cycler} ${p.channel ? '(Ch: '+p.channel+')' : ''}</div>
+                <div><b>Progress:</b> <span style="color:#16a34a; font-weight:900;">${p.logged} / ${p.target} ${p.unit}</span></div>
+                <div><b>Engineer:</b> ${p.engineer}</div>
               </div>
 
-              <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed #cbd5e1;">
-                <a href="${p.grafana}" target="_blank" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 10px; padding: 6px 12px; border-radius: 6px; text-decoration: none; display: inline-block;">📊 OPEN PACK TELEMETRY IN GRAFANA ➔</a>
+              <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed #cbd5e1;">
+                <a href="${p.grafana}" target="_blank" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 10px; padding: 4px 10px; border-radius: 4px; text-decoration: none; display: inline-block;">📊 Open Telemetry in Grafana ➔</a>
               </div>
             </div>
           `;
@@ -1191,9 +1162,9 @@
         })
       });
 
-      alert(`✅ Updated PM & Calibration dates for ${selectedChamberId}!`);
+      alert(`✅ Dates updated for ${selectedChamberId}!`);
       closeModal('inspector-modal');
-      await fetchLabData(); // 🚀 Instantly updates warning badges
+      await fetchLabData();
     }
 
     async function submitChamberCheckInModal() {
@@ -1221,14 +1192,14 @@
         body: JSON.stringify(payload)
       });
 
-      alert(`✅ Chamber Daily Check Logged for ${selectedChamberId}!`);
+      alert(`✅ Daily Check Logged for ${selectedChamberId}!`);
       closeModal('inspector-modal');
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     async function submit5SChecksheet() {
       const operator = document.getElementById('fives-operator').value;
-      if (!operator) return alert("Please enter Associate Name for 5S!");
+      if (!operator) return alert("Please enter Associate Name.");
 
       const payload = {
         lab_name: activeLab,
@@ -1258,7 +1229,7 @@
       });
       const data = await res.json();
       alert('✅ ' + data.message);
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     async function deleteSingleTask(taskId) {
@@ -1273,7 +1244,7 @@
     }
 
     async function clearAllSystemData() {
-      if (confirm("⚠️ WARNING: Are you sure you want to clear ALL tasks, roster assignments, and history across all labs?")) {
+      if (confirm("⚠️ WARNING: Clear all data across all labs?")) {
         await fetch('/api/lab/reset', { method: 'POST' });
         await fetchLabData();
       }
@@ -1306,9 +1277,9 @@
     }
 
     function openObservationsInspector(taskId) {
-      const task = labStore.tasks.find(t => t.task_id === taskId);
+      const task = labStore.tasks ? labStore.tasks.find(t => t.task_id === taskId) : null;
       if (!task) return;
-      document.getElementById('m-obs-task-title').innerText = `${task.task_id} (${task.bin}) — Observations & Handover History`;
+      document.getElementById('m-obs-task-title').innerText = `${task.task_id} (${task.bin}) — Observations`;
       const deck = document.getElementById('m-obs-history-deck');
       deck.innerHTML = '';
       let foundNotes = false;
@@ -1317,20 +1288,20 @@
           st.observations.forEach(o => {
             foundNotes = true;
             deck.innerHTML += `
-              <div style="padding: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #2563eb; border-radius: 8px;">
+              <div style="padding: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #2563eb; border-radius: 6px;">
                 <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 900; color: #475569; margin-bottom: 4px;">
                   <span>Step: ${st.name} (${st.sub_id})</span>
                   <span>${o.date} | ${o.shift}</span>
                 </div>
                 <div style="font-size: 12px; font-weight: 800; color: #0f172a;">"${o.notes}"</div>
-                <div style="font-size: 10px; font-weight: 700; color: #64748b; margin-top: 4px;">Logged By Associate: <b>${o.associate}</b> | Equipment: <b>${o.chamber} / ${o.cycler || 'None'} ${o.channel ? '(Ch:'+o.channel+')' : ''}</b></div>
+                <div style="font-size: 10px; color: #64748b; margin-top: 4px;">Associate: <b>${o.associate}</b> | Equipment: <b>${o.chamber} / ${o.cycler || 'None'}</b></div>
               </div>
             `;
           });
         }
       });
       if (!foundNotes) {
-        deck.innerHTML = `<div style="text-align: center; color: #94a3b8; font-weight: 800; padding: 20px;">No shift observations or handover notes logged for this task yet.</div>`;
+        deck.innerHTML = `<div style="text-align: center; color: #94a3b8; font-weight: 800; padding: 16px;">No observations logged.</div>`;
       }
       openModal('modal-task-observations');
     }
@@ -1340,33 +1311,33 @@
       const associates = labStore.personnel || [];
       const today = new Date().toISOString().split('T')[0];
       return `
-        <div class="step-row-item" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
-          <span style="font-weight:900; color:#2563eb; width:20px;">${num}.</span>
-          <input type="text" value="${name}" class="step-input-name" placeholder="Subtask Step Name" style="flex-grow:1; min-width:140px; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
-          <select class="step-input-unit" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
+        <div class="step-row-item" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
+          <span style="font-weight:900; color:#2563eb; width:18px;">${num}.</span>
+          <input type="text" value="${name}" class="step-input-name" placeholder="Subtask Name" style="flex-grow:1; min-width:130px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
+          <select class="step-input-unit" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="Days" ${unit==='Days'?'selected':''}>Days ⏳</option>
             <option value="Hours" ${unit==='Hours'?'selected':''}>Hours ⏳</option>
             <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles ⏳</option>
             <option value="Units" ${unit==='Units'?'selected':''}>Units ⏳</option>
           </select>
-          <input type="number" value="${target}" class="step-input-target" placeholder="Target" style="width:60px; padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
+          <input type="number" value="${target}" class="step-input-target" placeholder="Target" style="width:55px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           
-          <select class="step-input-shift" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
+          <select class="step-input-shift" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="None" selected>None</option>
             <option value="Shift A">Shift A</option>
             <option value="Shift B">Shift B</option>
             <option value="Shift C">Shift C</option>
           </select>
-          <select class="step-input-incharge" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
+          <select class="step-input-incharge" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="Unassigned">Unassigned</option>
-            ${incharges.length > 0 ? incharges.map(i=>`<option value="${i.name}">${i.name} (Incharge)</option>`).join('') : ''}
+            ${incharges.length > 0 ? incharges.map(i=>`<option value="${i.name}">${i.name}</option>`).join('') : ''}
           </select>
-          <select class="step-input-assoc" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
+          <select class="step-input-assoc" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="Unassigned">Unassigned</option>
             ${associates.length > 0 ? associates.map(a=>`<option value="${a.name}">${a.name}</option>`).join('') : ''}
           </select>
-          <input type="date" value="${today}" class="step-input-date" style="padding:6px; border:1px solid #cbd5e1; border-radius:6px; font-size:11px; font-weight:800;">
-          <button onclick="this.parentElement.remove()" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; font-size:12px; padding:4px 8px; border-radius:4px; cursor:pointer;">✕</button>
+          <input type="date" value="${today}" class="step-input-date" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
+          <button onclick="this.parentElement.remove()" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✕</button>
         </div>
       `;
     }
@@ -1374,7 +1345,86 @@
     function addDynamicStepRow() {
       const deck = document.getElementById('m-generated-steps-deck');
       const count = deck.children.length + 1;
-      deck.insertAdjacentHTML('beforeend', createStepRowHTML(count, `Step ${count}. Custom Test Phase`, "Days", 12));
+      deck.insertAdjacentHTML('beforeend', createStepRowHTML(count, `Step ${count}. Test Phase`, "Days", 10));
+    }
+
+    function addBlueprintBuilderStep() {
+      bpBuilderSteps.push({ name: "New Test Step", unit: "Days", target: 10 });
+      renderBlueprintBuilderSteps();
+    }
+
+    function renderBlueprintBuilderSteps() {
+      const deck = document.getElementById('flow-bp-step-deck');
+      if (!deck) return;
+      deck.innerHTML = '';
+      bpBuilderSteps.forEach((s, idx) => {
+        deck.innerHTML += `
+          <div style="display:flex; gap:8px; align-items:center; background:#ffffff; padding:8px; border-radius:6px; border:1px solid #cbd5e1; margin-bottom:6px;">
+            <span style="font-weight:900; font-size:11px; color:#2563eb;">Step ${idx+1}.</span>
+            <input type="text" value="${s.name}" oninput="bpBuilderSteps[${idx}].name=this.value" placeholder="Subtask Name" style="flex-grow:1; padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
+            <select onchange="bpBuilderSteps[${idx}].unit=this.value" style="padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
+              <option value="Days" ${s.unit==='Days'?'selected':''}>Days ⏳</option>
+              <option value="Hours" ${s.unit==='Hours'?'selected':''}>Hours ⏳</option>
+              <option value="Cycles" ${s.unit==='Cycles'?'selected':''}>Cycles ⏳</option>
+              <option value="Units" ${s.unit==='Units'?'selected':''}>Units ⏳</option>
+            </select>
+            <input type="number" value="${s.target}" oninput="bpBuilderSteps[${idx}].target=parseFloat(this.value)||1" style="width:65px; padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
+            <button onclick="bpBuilderSteps.splice(${idx},1); renderBlueprintBuilderSteps();" style="background:#fee2e2; color:#b91c1c; border:none; border-radius:4px; font-weight:900; padding:4px 8px; cursor:pointer;">✕</button>
+          </div>
+        `;
+      });
+    }
+
+    async function saveTestFlowBlueprint() {
+      const nameInput = document.getElementById('flow-bp-name');
+      const name = nameInput ? nameInput.value.trim() : '';
+
+      if (!name) {
+        alert("⚠️ Please enter a Blueprint Flow Name.");
+        return;
+      }
+
+      if (!bpBuilderSteps || bpBuilderSteps.length === 0) {
+        alert("⚠️ Please click '+ Add Step' to add at least one step.");
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/blueprints/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            dept: activeLab,
+            name: name,
+            steps: bpBuilderSteps
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+          alert(`✅ Flow Blueprint '${name}' saved!`);
+          document.getElementById('flow-bp-name').value = '';
+          bpBuilderSteps = [];
+          renderBlueprintBuilderSteps();
+          await fetchLabData();
+        } else {
+          alert("❌ Failed to save blueprint.");
+        }
+      } catch (err) {
+        console.error("Blueprint save error:", err);
+      }
+    }
+
+    function loadSelectedBlueprintSteps() {
+      const bpKey = document.getElementById('m-saved-bp-dropdown').value;
+      if (!bpKey || !labStore.blueprints[bpKey]) return;
+      const steps = labStore.blueprints[bpKey];
+      const deck = document.getElementById('m-generated-steps-deck');
+      deck.innerHTML = '';
+      steps.forEach((s, idx) => {
+        deck.insertAdjacentHTML('beforeend', createStepRowHTML(idx + 1, s.name, s.unit, s.target));
+      });
     }
 
     async function submitMasterTask() {
@@ -1416,7 +1466,7 @@
         body: JSON.stringify(payload)
       });
       closeModal('modal-create-task');
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     function openLogModal(taskId, subId, stepName) {
@@ -1448,7 +1498,7 @@
         })
       });
       closeModal('modal-log-progress');
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     function renderConfigManager() {
@@ -1519,7 +1569,7 @@
           status: status
         })
       });
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     async function submitPersonnel() {
@@ -1535,7 +1585,7 @@
         })
       });
       closeModal('modal-add-personnel');
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     async function submitExtraTask() {
@@ -1551,7 +1601,7 @@
         })
       });
       closeModal('modal-extra-task');
-      await fetchLabData(); // 🚀 Instant auto-update
+      await fetchLabData();
     }
 
     async function loadRoster() {
@@ -1679,12 +1729,12 @@
       }
       labStore.audit_history.forEach(item => {
         deck.innerHTML += `
-          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-size: 11px;">
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; font-size: 11px;">
             <div style="display: flex; justify-content: space-between; font-weight: 900; color: #2563eb;">
               <span>${item.title}</span>
               <span style="color: #64748b; font-family: monospace;">${item.timestamp}</span>
             </div>
-            <div style="font-weight: 700; color: #0f172a; margin-top: 4px;">${item.detail}</div>
+            <div style="font-weight: 700; color: #0f172a; margin-top: 2px;">${item.detail}</div>
             <div style="font-size: 10px; color: #64748b; margin-top: 2px;">Actor: <b>${item.user}</b></div>
           </div>
         `;
@@ -1744,10 +1794,10 @@
           const c = shiftComp[sName] ? shiftComp[sName].completed : 0;
           const a = shiftComp[sName] ? shiftComp[sName].assigned : 0;
           shiftDeck.innerHTML += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:800;">
               <span>${sName}</span>
-              <span style="background:#f3e8ff; color:#7c3aed; padding:2px 8px; border-radius:4px;">${c} Tasks Completed</span>
-              <span style="color:#64748b;">(${c} / ${a} Assigned)</span>
+              <span style="background:#f3e8ff; color:#7c3aed; padding:2px 6px; border-radius:4px;">${c} Completed</span>
+              <span style="color:#64748b;">(${c} / ${a})</span>
             </div>
           `;
         });
@@ -1763,10 +1813,10 @@
           incharges.forEach(inc => {
             const stats = inchargeStats[inc.name] || {completed: 0, managed: 0};
             incDeck.innerHTML += `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:800;">
                 <span>${inc.name}</span>
-                <span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
-                <span style="color:#64748b;">(${stats.completed} / ${stats.managed} Managed)</span>
+                <span style="background:#eff6ff; color:#2563eb; padding:2px 6px; border-radius:4px;">${stats.completed} Completed</span>
+                <span style="color:#64748b;">(${stats.completed} / ${stats.managed})</span>
               </div>
             `;
           });
@@ -1783,10 +1833,10 @@
           associates.forEach(a => {
             const stats = associateStats[a.name] || {completed: 0, assigned: 0};
             assocDeck.innerHTML += `
-              <div style="display:flex; justify-content:space-between; align-items:center; background:#f0fdf4; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#f0fdf4; border:1px solid #cbd5e1; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:800;">
                 <span>${a.name}</span>
-                <span style="background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
-                <span style="color:#64748b;">(${stats.completed} / ${stats.assigned} Assigned)</span>
+                <span style="background:#f0fdf4; color:#16a34a; padding:2px 6px; border-radius:4px;">${stats.completed} Completed</span>
+                <span style="color:#64748b;">(${stats.completed} / ${stats.assigned})</span>
               </div>
             `;
           });
