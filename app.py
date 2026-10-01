@@ -87,14 +87,12 @@ def init_db():
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
-            
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS opti_lab_store (
                     id VARCHAR(50) PRIMARY KEY,
                     data JSONB NOT NULL
                 );
             """)
-            
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS lab_fives_submissions (
                     id SERIAL PRIMARY KEY,
@@ -108,7 +106,6 @@ def init_db():
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS chamber_daily_submissions (
                     id SERIAL PRIMARY KEY,
@@ -121,7 +118,6 @@ def init_db():
                     submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
             """)
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS equipment_master (
                     id SERIAL PRIMARY KEY,
@@ -130,7 +126,6 @@ def init_db():
                     calibration_due_date DATE
                 );
             """)
-
             conn.commit()
             cursor.close()
             conn.close()
@@ -270,7 +265,7 @@ def calculate_dashboard_metrics(tasks):
         "associate_stats": associate_stats
     }
 
-# --- API ENDPOINTS ---
+# --- ROUTES ---
 
 @app.route("/")
 def index():
@@ -705,9 +700,9 @@ def export_excel():
             df_equip = pd.read_sql_query("SELECT * FROM equipment_master ORDER BY equipment_name ASC;", conn)
             conn.close()
         else:
-            df_5s = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
-            df_chamber = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
-            df_equip = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
+            df_5s = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
+            df_chamber = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
+            df_equip = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
             
         df_chamber.to_excel(writer, sheet_name='30-Day Chamber Daily Logs', index=False)
         df_5s.to_excel(writer, sheet_name='30-Day Lab 5S Logs', index=False)
