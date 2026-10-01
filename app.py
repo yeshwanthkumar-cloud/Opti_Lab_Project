@@ -9,6 +9,7 @@ import pandas as pd
 
 app = Flask(__name__)
 
+# Environment & Database Configuration
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
