@@ -995,66 +995,74 @@
         return `<div class="node-icon-placeholder">${item.type==='cycler'?'🔋':'🌡️'}</div>`;
       };
 
-      if (!labStore.twin.top_row || labStore.twin.top_row.length === 0) {
-        topDeck.innerHTML = `<div style="padding:20px; color:#94a3b8; font-weight:800; text-align:center; width:100%;">No hardware rigs registered in ${activeLab}.</div>`;
-      } else {
-        labStore.twin.top_row.forEach(item => {
-          let activeCount = 0;
-          if (labStore.tasks) {
-            labStore.tasks.forEach(t => {
-              t.subtasks.forEach(st => {
-                if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
-              });
+      const topRowData = (labStore.twin.top_row && labStore.twin.top_row.length > 0) 
+        ? labStore.twin.top_row 
+        : [
+            {"id": "Chamber-1", "name": "Chamber 1", "type": "chamber", "img": "/static/images/chamber.png"},
+            {"id": "Chamber-2", "name": "Chamber 2", "type": "chamber", "img": "/static/images/chamber.png"},
+            {"id": "Chamber-3", "name": "Chamber 3", "type": "chamber", "img": "/static/images/chamber.png"},
+            {"id": "Chamber-4", "name": "Chamber 4", "type": "chamber", "img": "/static/images/chamber.png"}
+          ];
+
+      const bottomRowData = (labStore.twin.bottom_row && labStore.twin.bottom_row.length > 0)
+        ? labStore.twin.bottom_row
+        : [
+            {"id": "EA-Cycler-1", "name": "EA Cycler 1", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+            {"id": "EA-Cycler-2", "name": "EA Cycler 2", "type": "cycler", "img": "/static/images/ea_cycler.png"}
+          ];
+
+      topRowData.forEach(item => {
+        let activeCount = 0;
+        if (labStore.tasks) {
+          labStore.tasks.forEach(t => {
+            t.subtasks.forEach(st => {
+              if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
             });
-          }
+          });
+        }
 
-          const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[item.id] || {} : {};
-          const pmDays = checkDueDays(maint.pm_date);
-          const calibDays = checkDueDays(maint.calibration_due_date);
-          
-          let isDueSoon = (pmDays !== null && pmDays <= 15) || (calibDays !== null && calibDays <= 15);
-          let isShaker = item.type === 'shaker-large';
+        const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[item.id] || {} : {};
+        const pmDays = checkDueDays(maint.pm_date);
+        const calibDays = checkDueDays(maint.calibration_due_date);
+        
+        let isDueSoon = (pmDays !== null && pmDays <= 15) || (calibDays !== null && calibDays <= 15);
+        let isShaker = item.type === 'shaker-large';
 
-          topDeck.innerHTML += `
-            <div class="node-box ${isShaker ? 'shaker-large' : 'type-chamber'}" onclick='openChamberInspector("${item.id}", "${item.name}")'>
-              ${isDueSoon ? `<span class="due-badge">⚠️ PM/CAL DUE</span>` : ''}
-              ${renderImageHTML(item)}
-              <div>${item.name}</div>
-              <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-                ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
-              </div>
+        topDeck.innerHTML += `
+          <div class="node-box ${isShaker ? 'shaker-large' : 'type-chamber'}" onclick='openChamberInspector("${item.id}", "${item.name}")'>
+            ${isDueSoon ? `<span class="due-badge">⚠️ PM/CAL DUE</span>` : ''}
+            ${renderImageHTML(item)}
+            <div>${item.name}</div>
+            <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
+              ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
             </div>
-          `;
-        });
-      }
+          </div>
+        `;
+      });
 
-      if (!labStore.twin.bottom_row || labStore.twin.bottom_row.length === 0) {
-        bottomDeck.style.display = "none";
-        pathway.style.display = "none";
-      } else {
-        bottomDeck.style.display = "flex";
-        pathway.style.display = "block";
-        labStore.twin.bottom_row.forEach(item => {
-          let activeCount = 0;
-          if (labStore.tasks) {
-            labStore.tasks.forEach(t => {
-              t.subtasks.forEach(st => {
-                if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
-              });
+      bottomDeck.style.display = "flex";
+      pathway.style.display = "block";
+
+      bottomRowData.forEach(item => {
+        let activeCount = 0;
+        if (labStore.tasks) {
+          labStore.tasks.forEach(t => {
+            t.subtasks.forEach(st => {
+              if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
             });
-          }
+          });
+        }
 
-          bottomDeck.innerHTML += `
-            <div class="node-box type-cycler" onclick='openChamberInspector("${item.id}", "${item.name}")'>
-              ${renderImageHTML(item)}
-              <div>${item.name}</div>
-              <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
-                ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
-              </div>
+        bottomDeck.innerHTML += `
+          <div class="node-box type-cycler" onclick='openChamberInspector("${item.id}", "${item.name}")'>
+            ${renderImageHTML(item)}
+            <div>${item.name}</div>
+            <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
+              ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
             </div>
-          `;
-        });
-      }
+          </div>
+        `;
+      });
     }
 
     function openChamberInspector(nodeId, nodeName) {
@@ -1369,7 +1377,7 @@
               <option value="Units" ${s.unit==='Units'?'selected':''}>Units ⏳</option>
             </select>
             <input type="number" value="${s.target}" oninput="bpBuilderSteps[${idx}].target=parseFloat(this.value)||1" style="width:65px; padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
-            <button onclick="bpBuilderSteps.splice(${idx},1); renderBlueprintBuilderSteps();" style="background:#fee2e2; color:#b91c1c; border:none; border-radius:4px; font-weight:900; padding:4px 8px; cursor:pointer;">✕</button>
+            <button onclick="bpBuilderSteps.splice(${idx},1); renderBlueprintBuilderSteps();" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; padding:4px 8px; cursor:pointer;">✕</button>
           </div>
         `;
       });

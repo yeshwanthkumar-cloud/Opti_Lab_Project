@@ -14,38 +14,42 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
 
+DEFAULT_CHAMBERS = [
+    {"id": "Chamber-1", "name": "Chamber 1", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-2", "name": "Chamber 2", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-3", "name": "Chamber 3", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-4", "name": "Chamber 4", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-5", "name": "Chamber 5", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-6", "name": "Chamber 6", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-7", "name": "Chamber 7", "type": "chamber", "img": "/static/images/chamber.png"},
+    {"id": "Chamber-8", "name": "Chamber 8", "type": "chamber", "img": "/static/images/chamber.png"}
+]
+
+DEFAULT_CYCLERS = [
+    {"id": "EA-Cycler-1", "name": "EA Cycler 1", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-2", "name": "EA Cycler 2", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-3", "name": "EA Cycler 3", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-4", "name": "EA Cycler 4", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-5", "name": "EA Cycler 5", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-6", "name": "EA Cycler 6", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "EA-Cycler-7", "name": "EA Cycler 7", "type": "cycler", "img": "/static/images/ea_cycler.png"},
+    {"id": "ITECH-1", "name": "ITECH Cycler 1", "type": "cycler", "img": "/static/images/itech_cycler.png"},
+    {"id": "ITECH-2", "name": "ITECH Cycler 2", "type": "cycler", "img": "/static/images/itech_cycler.png"},
+    {"id": "ITECH-3", "name": "ITECH Cycler 3", "type": "cycler", "img": "/static/images/itech_cycler.png"},
+    {"id": "Neware-1", "name": "Neware Cycler 1", "type": "cycler", "img": "/static/images/neware_cycler.png"},
+    {"id": "Neware-2", "name": "Neware Cycler 2", "type": "cycler", "img": "/static/images/neware_cycler.png"}
+]
+
 DIGITAL_TWINS = {
     "Battery Lab": {
         "title": "Battery Lab Spatial Twin",
-        "top_row": [
-            {"id": "Chamber-1", "name": "Chamber 1", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-2", "name": "Chamber 2", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-3", "name": "Chamber 3", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-4", "name": "Chamber 4", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-5", "name": "Chamber 5", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-6", "name": "Chamber 6", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-7", "name": "Chamber 7", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Chamber-8", "name": "Chamber 8", "type": "chamber", "img": "/static/images/chamber.png"}
-        ],
-        "bottom_row": [
-            {"id": "EA-Cycler-1", "name": "EA Cycler 1", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-2", "name": "EA Cycler 2", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-3", "name": "EA Cycler 3", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-4", "name": "EA Cycler 4", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-5", "name": "EA Cycler 5", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-6", "name": "EA Cycler 6", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "EA-Cycler-7", "name": "EA Cycler 7", "type": "cycler", "img": "/static/images/ea_cycler.png"},
-            {"id": "ITECH-1", "name": "ITECH Cycler 1", "type": "cycler", "img": "/static/images/itech_cycler.png"},
-            {"id": "ITECH-2", "name": "ITECH Cycler 2", "type": "cycler", "img": "/static/images/itech_cycler.png"},
-            {"id": "ITECH-3", "name": "ITECH Cycler 3", "type": "cycler", "img": "/static/images/itech_cycler.png"},
-            {"id": "Neware-1", "name": "Neware Cycler 1", "type": "cycler", "img": "/static/images/neware_cycler.png"},
-            {"id": "Neware-2", "name": "Neware Cycler 2", "type": "cycler", "img": "/static/images/neware_cycler.png"}
-        ]
+        "top_row": DEFAULT_CHAMBERS,
+        "bottom_row": DEFAULT_CYCLERS
     },
     "Cell Lab": {
         "title": "Cell Lab Spatial Twin",
-        "top_row": [],
-        "bottom_row": []
+        "top_row": DEFAULT_CHAMBERS[:4],
+        "bottom_row": DEFAULT_CYCLERS[:6]
     },
     "Vibration Team": {
         "title": "Vibration Team — High-Capacity Shakers",
@@ -58,8 +62,8 @@ DIGITAL_TWINS = {
     },
     "E&E Lab": {
         "title": "E&E Lab Spatial Twin",
-        "top_row": [],
-        "bottom_row": []
+        "top_row": DEFAULT_CHAMBERS[:6],
+        "bottom_row": DEFAULT_CYCLERS[:4]
     }
 }
 
@@ -166,7 +170,8 @@ def load_data_from_file():
                 saved_data = row['data']
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
-                        LAB_DATA[dept] = saved_data[dept]
+                        for k, v in saved_data[dept].items():
+                            LAB_DATA[dept][k] = v
             cursor.close()
             conn.close()
         except Exception as e:
@@ -178,7 +183,8 @@ def load_data_from_file():
                     saved_data = json.load(f)
                     for dept in DEPARTMENTS:
                         if dept in saved_data:
-                            LAB_DATA[dept] = saved_data[dept]
+                            for k, v in saved_data[dept].items():
+                                LAB_DATA[dept][k] = v
             except Exception as e:
                 print("Error loading local file:", e)
 
@@ -278,6 +284,8 @@ def get_lab_data(dept_name):
     metrics = calculate_dashboard_metrics(tasks)
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
    
+    twin_config = DIGITAL_TWINS.get(dept, DIGITAL_TWINS["Battery Lab"])
+
     return jsonify({
         "dept": dept,
         "components": dept_components,
@@ -289,7 +297,7 @@ def get_lab_data(dept_name):
         "audit_history": LAB_DATA[dept]["audit_history"],
         "equipment_maintenance": LAB_DATA[dept].get("equipment_maintenance", {}),
         "metrics": metrics,
-        "twin": DIGITAL_TWINS.get(dept, DIGITAL_TWINS["Battery Lab"])
+        "twin": twin_config
     })
 
 @app.route("/api/tasks/delete", methods=["POST"])
