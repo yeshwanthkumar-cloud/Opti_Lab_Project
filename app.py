@@ -4,7 +4,7 @@ import json
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from flask import Flask, render_template, jsonify, request, send_file
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 
 app = Flask(__name__)
@@ -16,7 +16,7 @@ DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
 
 DIGITAL_TWINS = {
     "Battery Lab": {
-        "title": "Battery Lab View — Environmental Chambers & Charge/Discharge Cyclers",
+        "title": "Battery Lab Spatial Twin",
         "top_row": [
             {"id": "Chamber-1", "name": "Chamber 1", "type": "chamber", "img": "/static/images/chamber.png"},
             {"id": "Chamber-2", "name": "Chamber 2", "type": "chamber", "img": "/static/images/chamber.png"},
@@ -43,30 +43,22 @@ DIGITAL_TWINS = {
         ]
     },
     "Cell Lab": {
-        "title": "Cell Lab View — Channel Rig Array",
-        "top_row": [
-            {"id": "Cell-Bench-1", "name": "Pouch Cell Rig A", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Cell-Bench-2", "name": "Prismatic Rig 1", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "Cell-Bench-3", "name": "Prismatic Rig 2", "type": "chamber", "img": "/static/images/chamber.png"}
-        ],
+        "title": "Cell Lab Spatial Twin",
+        "top_row": [],
         "bottom_row": []
     },
     "Vibration Team": {
-        "title": "Vibration Team Lab View — High-Capacity Shakers",
+        "title": "Vibration Team — High-Capacity Shakers",
         "top_row": [
-            {"id": "Shaker-1.5T", "name": "1.5-Ton Tri-Axial Shaker", "type": "chamber", "img": "/static/images/shaker.png"},
-            {"id": "Shaker-3T", "name": "3.0-Ton Tri-Axial Shaker", "type": "chamber", "img": "/static/images/shaker.png"},
-            {"id": "Shaker-SDYN", "name": "SDYN Shaker Rig", "type": "chamber", "img": "/static/images/shaker.png"}
+            {"id": "Shaker-1.5T", "name": "1.5-Ton Tri-Axial Shaker", "type": "shaker-large", "img": "/static/images/shaker.png"},
+            {"id": "Shaker-3T", "name": "3.0-Ton Tri-Axial Shaker", "type": "shaker-large", "img": "/static/images/shaker.png"},
+            {"id": "Shaker-SDYN", "name": "SDYN Shaker Rig", "type": "shaker-large", "img": "/static/images/shaker.png"}
         ],
         "bottom_row": []
     },
     "E&E Lab": {
-        "title": "E&E Lab View — Controller Simulators",
-        "top_row": [
-            {"id": "EE-MCU-Bench", "name": "MCU Bench Station", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "EE-VCU-Bench", "name": "VCU Simulator Rig", "type": "chamber", "img": "/static/images/chamber.png"},
-            {"id": "EE-BMS-Tester", "name": "BMS HIL Station", "type": "chamber", "img": "/static/images/chamber.png"}
-        ],
+        "title": "E&E Lab Spatial Twin",
+        "top_row": [],
         "bottom_row": []
     }
 }
@@ -80,13 +72,11 @@ LAB_DATA = {
         "attendance": [],
         "extra_tasks": [],
         "audit_history": [],
-        "roster_stamps": {}
+        "roster_stamps": {},
+        "equipment_maintenance": {}
     } for dept in DEPARTMENTS
 }
 
-# ==============================================================================
-# DATABASE OR LOCAL PERSISTENCE ENGINE
-# ==============================================================================
 def get_db_connection():
     if DATABASE_URL:
         return psycopg2.connect(DATABASE_URL)
@@ -98,7 +88,6 @@ def init_db():
             conn = get_db_connection()
             cursor = conn.cursor()
             
-            # 1. Main JSON Store for Lab Operating State
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS opti_lab_store (
                     id VARCHAR(50) PRIMARY KEY,
@@ -106,7 +95,6 @@ def init_db():
                 );
             """)
             
-            # 2. Lab-Level 5S Submissions
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS lab_fives_submissions (
                     id SERIAL PRIMARY KEY,
@@ -121,7 +109,6 @@ def init_db():
                 );
             """)
 
-            # 3. Individual Chamber Daily Check Submissions
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS chamber_daily_submissions (
                     id SERIAL PRIMARY KEY,
@@ -135,7 +122,6 @@ def init_db():
                 );
             """)
 
-            # 4. Equipment Master Register (PM & Calibration Due Dates)
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS equipment_master (
                     id SERIAL PRIMARY KEY,
@@ -284,9 +270,7 @@ def calculate_dashboard_metrics(tasks):
         "associate_stats": associate_stats
     }
 
-# ==============================================================================
-# ROUTE ENDPOINTS
-# ==============================================================================
+# --- API ENDPOINTS ---
 
 @app.route("/")
 def index():
@@ -308,6 +292,7 @@ def get_lab_data(dept_name):
         "attendance": LAB_DATA[dept]["attendance"],
         "extra_tasks": LAB_DATA[dept]["extra_tasks"],
         "audit_history": LAB_DATA[dept]["audit_history"],
+        "equipment_maintenance": LAB_DATA[dept].get("equipment_maintenance", {}),
         "metrics": metrics,
         "twin": DIGITAL_TWINS.get(dept, DIGITAL_TWINS["Battery Lab"])
     })
@@ -341,7 +326,8 @@ def reset_all_lab_data():
             "attendance": [],
             "extra_tasks": [],
             "audit_history": [],
-            "roster_stamps": {}
+            "roster_stamps": {},
+            "equipment_maintenance": {}
         } for dept in DEPARTMENTS
     }
     save_data_to_file()
@@ -588,9 +574,7 @@ def add_extra_task():
         return jsonify({"success": True, "extra": extra})
     return jsonify({"success": False}), 400
 
-# ==============================================================================
-# CHECKSHEETS & EXCEL EXPORT ENGINE
-# ==============================================================================
+# --- CHECKSHEET & MAINTENANCE API ---
 
 @app.route('/api/5s-submit', methods=['POST'])
 def submit_5s():
@@ -614,12 +598,20 @@ def submit_5s():
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({"status": "success", "message": f"5S Check Sheet for {data.get('lab_name')} ({data.get('shift')}) recorded!"})
-    return jsonify({"status": "warning", "message": "Database not configured. Using local session mode."})
+    
+    dept = data.get('lab_name', 'Battery Lab')
+    if dept in LAB_DATA:
+        log_audit_event(dept, "5S Checksheet Submitted", f"5S log recorded for {data.get('shift')} by {data.get('submitted_by')}.")
+        save_data_to_file()
+
+    return jsonify({"status": "success", "message": f"5S Check Sheet for {data.get('lab_name')} ({data.get('shift')}) recorded!"})
 
 @app.route('/api/chamber-check-submit', methods=['POST'])
 def submit_chamber_check():
     data = request.json or {}
+    chamber_name = data.get('chamber_name', 'Chamber-1')
+    dept = data.get('dept', 'Battery Lab')
+
     conn = get_db_connection()
     if conn:
         cur = conn.cursor()
@@ -628,7 +620,7 @@ def submit_chamber_check():
             (chamber_name, shift, submitted_by, checks_data, notes, status)
             VALUES (%s, %s, %s, %s, %s, %s);
         ''', (
-            data.get('chamber_name', 'Chamber-1'),
+            chamber_name,
             data.get('shift', 'Shift A'),
             data.get('submitted_by', 'Operator'),
             Json(data.get('checks_data', {})),
@@ -638,12 +630,32 @@ def submit_chamber_check():
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({"status": "success", "message": f"Daily Check Sheet for {data.get('chamber_name')} ({data.get('shift')}) recorded!"})
-    return jsonify({"status": "warning", "message": "Database not configured. Using local session mode."})
+
+    if dept in LAB_DATA:
+        if "equipment_maintenance" not in LAB_DATA[dept]:
+            LAB_DATA[dept]["equipment_maintenance"] = {}
+        if chamber_name not in LAB_DATA[dept]["equipment_maintenance"]:
+            LAB_DATA[dept]["equipment_maintenance"][chamber_name] = {}
+        
+        LAB_DATA[dept]["equipment_maintenance"][chamber_name]["last_check"] = {
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
+            "submitted_by": data.get('submitted_by'),
+            "shift": data.get('shift'),
+            "checks": data.get('checks_data', {})
+        }
+        log_audit_event(dept, "Chamber Check Logged", f"Daily maintenance check completed for {chamber_name}.", data.get('submitted_by'))
+        save_data_to_file()
+
+    return jsonify({"status": "success", "message": f"Daily Check Sheet for {chamber_name} recorded!"})
 
 @app.route('/api/equipment', methods=['POST'])
 def update_equipment():
     data = request.json or {}
+    chamber_name = data.get('equipment_name')
+    dept = data.get('dept', 'Battery Lab')
+    pm_date = data.get('pm_date')
+    calib_date = data.get('calibration_due_date')
+
     conn = get_db_connection()
     if conn:
         cur = conn.cursor()
@@ -655,39 +667,58 @@ def update_equipment():
                 pm_date = EXCLUDED.pm_date,
                 calibration_due_date = EXCLUDED.calibration_due_date;
         ''', (
-            data.get('equipment_name'),
-            data.get('pm_date') or None,
-            data.get('calibration_due_date') or None
+            chamber_name,
+            pm_date or None,
+            calib_date or None
         ))
         conn.commit()
         cur.close()
         conn.close()
-        return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {data.get('equipment_name')}!"})
-    return jsonify({"status": "warning", "message": "Database not configured."})
+
+    if dept in LAB_DATA:
+        if "equipment_maintenance" not in LAB_DATA[dept]:
+            LAB_DATA[dept]["equipment_maintenance"] = {}
+        if chamber_name not in LAB_DATA[dept]["equipment_maintenance"]:
+            LAB_DATA[dept]["equipment_maintenance"][chamber_name] = {}
+        
+        if pm_date:
+            LAB_DATA[dept]["equipment_maintenance"][chamber_name]["pm_date"] = pm_date
+        if calib_date:
+            LAB_DATA[dept]["equipment_maintenance"][chamber_name]["calibration_due_date"] = calib_date
+        
+        log_audit_event(dept, "Equipment PM/Calib Updated", f"Updated PM ({pm_date}) & Calibration ({calib_date}) dates for {chamber_name}.")
+        save_data_to_file()
+
+    return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {chamber_name}!"})
 
 @app.route('/api/export-excel', methods=['GET'])
 def export_excel():
     conn = get_db_connection()
     output = io.BytesIO()
     
+    thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
+
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         if conn:
-            df_5s = pd.read_sql_query('SELECT * FROM lab_fives_submissions ORDER BY submitted_at DESC;', conn)
-            df_chamber = pd.read_sql_query('SELECT * FROM chamber_daily_submissions ORDER BY submitted_at DESC;', conn)
+            df_5s = pd.read_sql_query(f"SELECT * FROM lab_fives_submissions WHERE submitted_at >= '{thirty_days_ago}' ORDER BY submitted_at DESC;", conn)
+            df_chamber = pd.read_sql_query(f"SELECT * FROM chamber_daily_submissions WHERE submitted_at >= '{thirty_days_ago}' ORDER BY submitted_at DESC;", conn)
+            df_equip = pd.read_sql_query("SELECT * FROM equipment_master ORDER BY equipment_name ASC;", conn)
             conn.close()
         else:
-            df_5s = pd.DataFrame([{"info": "No database attached"}])
-            df_chamber = pd.DataFrame([{"info": "No database attached"}])
+            df_5s = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
+            df_chamber = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
+            df_equip = pd.DataFrame([{"info": "30-Day Logs stored locally in session memory"}])
             
-        df_5s.to_excel(writer, sheet_name='Lab 5S Logs', index=False)
-        df_chamber.to_excel(writer, sheet_name='Chamber Daily Logs', index=False)
+        df_chamber.to_excel(writer, sheet_name='30-Day Chamber Daily Logs', index=False)
+        df_5s.to_excel(writer, sheet_name='30-Day Lab 5S Logs', index=False)
+        df_equip.to_excel(writer, sheet_name='Equipment PM & Calib Dates', index=False)
    
     output.seek(0)
     return send_file(
         output,
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         as_attachment=True,
-        download_name='OptiLab_Master_Shift_Checksheets.xlsx'
+        download_name='OptiLab_30Day_Checksheet_Logs.xlsx'
     )
 
 if __name__ == "__main__":
