@@ -544,3 +544,74 @@ def add_extra_task():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+    # =========================================================
+# NEW FEATURES: CHECKSHEETS & EXCEL EXPORT
+# =========================================================
+import io
+import pandas as pd
+
+def init_checksheet_tables():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('''
+            CREATE TABLE IF NOT EXISTS master_shift_submissions (
+                id SERIAL PRIMARY KEY,
+                shift VARCHAR(20),
+                equipment_name VARCHAR(100),
+                submitted_by VARCHAR(100),
+                fives_data JSONB,
+                tools_data JSONB,
+                chamber_checklist JSONB,
+                status VARCHAR(20) DEFAULT 'Pass',
+                submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        ''')
+        conn.commit()
+        cur.close()
+        conn.close()
+    except Exception as e:
+        print("Checksheet Table Init Error:", e)
+
+init_checksheet_tables()
+
+@app.route('/api/master-shift-submit', methods=['POST'])
+def submit_master_shift():
+    data = request.json
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        INSERT INTO master_shift_submissions 
+        (shift, equipment_name, submitted_by, fives_data, tools_data, chamber_checklist, status)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    ''', (
+        data['shift'],
+        data['equipment_name'],
+        data['submitted_by'],
+        psycopg2.extras.Json(data['fives']),
+        psycopg2.extras.Json(data['tools']),
+        psycopg2.extras.Json(data['chamber_checks']),
+        data.get('status', 'Pass')
+    ))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return jsonify({"status": "success", "message": f"{data['shift']} submission recorded!"})
+
+@app.route('/api/export-excel', methods=['GET'])
+def export_excel():
+    conn = get_db_connection()
+    df = pd.read_sql_query('SELECT * FROM master_shift_submissions ORDER BY submitted_at DESC;', conn)
+    conn.close()
+
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, sheet_name='Shift Checksheet Logs', index=False)
+    
+    output.seek(0)
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name='OptiLab_Master_Shift_Checksheets.xlsx'
+    )
