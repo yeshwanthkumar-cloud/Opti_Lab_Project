@@ -333,7 +333,7 @@
 
         <div class="card" style="padding: 0; overflow: hidden;">
           <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-size: 13px; font-weight: 900; color: #0f172a;">🗓️ MONTHLY ASSOCIATE ATTENDANCE & PUNCH LEDGER MATRIX</h3>
+            <h3 style="font-size: 13px; font-weight: 900; color: #0f172a;">🗓️️ MONTHLY ASSOCIATE ATTENDANCE & PUNCH LEDGER MATRIX</h3>
             <span style="font-size: 10px; font-weight: 800; color: #64748b;">Present / Absent Ledger</span>
           </div>
           <table class="task-table">
@@ -792,62 +792,77 @@
     document.getElementById('stamp-date').value = new Date().toISOString().split('T')[0];
 
     async function fetchLabData() {
-      const res = await fetch(`/api/lab/${encodeURIComponent(activeLab)}`);
-      labStore = await res.json();
+      try {
+        const res = await fetch(`/api/lab/${encodeURIComponent(activeLab)}`);
+        labStore = await res.json();
 
-      const stampSelect = document.getElementById('stamp-person');
-      const extSelect = document.getElementById('ext-logged-by');
-      const punchEmp = document.getElementById('punch-employee-name');
+        // 1. Populate Dropdowns
+        const stampSelect = document.getElementById('stamp-person');
+        const extSelect = document.getElementById('ext-logged-by');
+        const punchEmp = document.getElementById('punch-employee-name');
 
-      stampSelect.innerHTML = ''; extSelect.innerHTML = ''; punchEmp.innerHTML = '';
+        if (stampSelect) stampSelect.innerHTML = ''; 
+        if (extSelect) extSelect.innerHTML = ''; 
+        if (punchEmp) punchEmp.innerHTML = '';
 
-      labStore.personnel.forEach(p => {
-        stampSelect.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
-        extSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-        punchEmp.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
-      });
+        if (labStore.personnel) {
+          labStore.personnel.forEach(p => {
+            if (stampSelect) stampSelect.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
+            if (extSelect) extSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
+            if (punchEmp) punchEmp.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
+          });
+        }
 
-      const compFilter = document.getElementById('filter-component');
-      const compTaskSelect = document.getElementById('m-component-select');
-      compFilter.innerHTML = `<option value="All">Component: All Components</option>`;
-      compTaskSelect.innerHTML = `<option value="General Hardware">General Hardware</option>`;
+        const compFilter = document.getElementById('filter-component');
+        const compTaskSelect = document.getElementById('m-component-select');
+        if (compFilter) compFilter.innerHTML = `<option value="All">Component: All Components</option>`;
+        if (compTaskSelect) compTaskSelect.innerHTML = `<option value="General Hardware">General Hardware</option>`;
 
-      const uniqueComponents = Array.from(new Set(labStore.components || []));
+        const uniqueComponents = Array.from(new Set(labStore.components || []));
+        uniqueComponents.forEach(c => {
+          if (compFilter) compFilter.innerHTML += `<option value="${c}">${c}</option>`;
+          if (compTaskSelect) compTaskSelect.innerHTML += `<option value="${c}">${c}</option>`;
+        });
 
-      uniqueComponents.forEach(c => {
-        compFilter.innerHTML += `<option value="${c}">${c}</option>`;
-        compTaskSelect.innerHTML += `<option value="${c}">${c}</option>`;
-      });
+        const bpDropdown = document.getElementById('m-saved-bp-dropdown');
+        if (bpDropdown) {
+          bpDropdown.innerHTML = `<option value="">-- Select Saved Flow --</option>`;
+          Object.keys(labStore.blueprints || {}).forEach(bp => {
+            bpDropdown.innerHTML += `<option value="${bp}">${bp}</option>`;
+          });
+        }
 
-      const bpDropdown = document.getElementById('m-saved-bp-dropdown');
-      bpDropdown.innerHTML = `<option value="">-- Select Saved Flow --</option>`;
-      Object.keys(labStore.blueprints || {}).forEach(bp => {
-        bpDropdown.innerHTML += `<option value="${bp}">${bp}</option>`;
-      });
+        // 2. Update Top Stat Cards
+        if (labStore.metrics) {
+          document.getElementById('stat-complete').innerText = labStore.metrics.complete || 0;
+          document.getElementById('stat-running').innerText = labStore.metrics.running || 0;
+          document.getElementById('stat-awaiting-res').innerText = labStore.metrics.awaiting_res || 0;
+          document.getElementById('stat-awaiting-eng').innerText = labStore.metrics.awaiting_eng || 0;
+        }
 
-      document.getElementById('stat-complete').innerText = labStore.metrics.complete;
-      document.getElementById('stat-running').innerText = labStore.metrics.running;
-      document.getElementById('stat-awaiting-res').innerText = labStore.metrics.awaiting_res;
-      document.getElementById('stat-awaiting-eng').innerText = labStore.metrics.awaiting_eng;
+        const catCardTitle = document.getElementById('cat-card-title');
+        const catDonutDeck = document.getElementById('cat-donut-deck');
 
-      const catCardTitle = document.getElementById('cat-card-title');
-      const catDonutDeck = document.getElementById('cat-donut-deck');
+        if (activeLab === "Battery Lab") {
+          if (catCardTitle) catCardTitle.innerText = "📦 BATTERY PACK CATEGORY CALCULATED DISTRIBUTION";
+          if (catDonutDeck) catDonutDeck.style.display = "grid";
+          renderCalculatedDonuts();
+        } else {
+          if (catCardTitle) catCardTitle.innerText = `⚙️ ${activeLab.toUpperCase()} HARDWARE COMPONENT TEST SUMMARY`;
+          if (catDonutDeck) catDonutDeck.style.display = "none";
+        }
 
-      if (activeLab === "Battery Lab") {
-        catCardTitle.innerText = "📦 BATTERY PACK CATEGORY CALCULATED DISTRIBUTION";
-        catDonutDeck.style.display = "grid";
-        renderCalculatedDonuts();
-      } else {
-        catCardTitle.innerText = `⚙️ ${activeLab.toUpperCase()} HARDWARE COMPONENT TEST SUMMARY`;
-        catDonutDeck.style.display = "none";
+        // 3. FORCE RE-RENDER ALL ACTIVE UI DECKS INSTANTLY WITHOUT PAGE RELOAD
+        renderDashboardTable();
+        renderConfigManager();
+        renderWorkbench();
+        renderDigitalTwin();
+        renderAuditHistory();
+        renderAnalyticsWorkspace();
+
+      } catch (err) {
+        console.error("Error fetching lab data:", err);
       }
-
-      renderDashboardTable();
-      renderConfigManager();
-      renderWorkbench();
-      renderDigitalTwin();
-      renderAuditHistory();
-      renderAnalyticsWorkspace();
     }
 
     function toggleNewareChannelSelect() {
@@ -888,17 +903,19 @@
 
     function renderDashboardTable() {
       const body = document.getElementById('dash-task-table-body');
+      if (!body) return;
       body.innerHTML = '';
+      
       const searchVal = document.getElementById('dash-search').value.toLowerCase();
       const compVal = document.getElementById('filter-component').value;
       const statusVal = document.getElementById('filter-status').value;
 
-      let filtered = labStore.tasks.filter(t => {
+      let filtered = labStore.tasks ? labStore.tasks.filter(t => {
         let matchesSearch = t.task_id.toLowerCase().includes(searchVal) || t.bin.toLowerCase().includes(searchVal) || t.objective.toLowerCase().includes(searchVal);
         let matchesComp = (compVal === 'All') || (t.component === compVal);
         let matchesStatus = (statusVal === 'All') || (t.status === statusVal);
         return matchesSearch && matchesComp && matchesStatus;
-      });
+      }) : [];
 
       document.getElementById('dash-results-count').innerText = `Displaying ${filtered.length} Results`;
       if (filtered.length === 0) {
@@ -1010,11 +1027,13 @@
       } else {
         labStore.twin.top_row.forEach(item => {
           let activeCount = 0;
-          labStore.tasks.forEach(t => {
-            t.subtasks.forEach(st => {
-              if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
+          if (labStore.tasks) {
+            labStore.tasks.forEach(t => {
+              t.subtasks.forEach(st => {
+                if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
+              });
             });
-          });
+          }
 
           const maint = labStore.equipment_maintenance ? labStore.equipment_maintenance[item.id] || {} : {};
           const pmDays = checkDueDays(maint.pm_date);
@@ -1044,11 +1063,13 @@
         pathway.style.display = "block";
         labStore.twin.bottom_row.forEach(item => {
           let activeCount = 0;
-          labStore.tasks.forEach(t => {
-            t.subtasks.forEach(st => {
-              if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
+          if (labStore.tasks) {
+            labStore.tasks.forEach(t => {
+              t.subtasks.forEach(st => {
+                if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
+              });
             });
-          });
+          }
 
           bottomDeck.innerHTML += `
             <div class="node-box type-cycler" onclick='openChamberInspector("${item.id}", "${item.name}")'>
@@ -1085,33 +1106,35 @@
       container.innerHTML = '';
 
       let activePacks = [];
-      labStore.tasks.forEach(t => {
-        t.subtasks.forEach(st => {
-          if (st.chamber === nodeId || st.cycler === nodeId) {
-            activePacks.push({
-              taskId: t.task_id,
-              bin: t.bin,
-              dvpName: t.dvp_name,
-              objective: t.objective,
-              component: t.component || "General Hardware",
-              engineer: t.engineer || "Unassigned",
-              stepName: st.name,
-              stepId: st.sub_id,
-              status: st.status,
-              logged: st.logged,
-              target: st.target,
-              unit: st.unit,
-              incharge: st.incharge,
-              associate: st.associate,
-              shift: st.shift,
-              chamber: st.chamber,
-              cycler: st.cycler,
-              channel: st.neware_channel,
-              grafana: st.grafana || "https://grafana.optilab.internal"
-            });
-          }
+      if (labStore.tasks) {
+        labStore.tasks.forEach(t => {
+          t.subtasks.forEach(st => {
+            if (st.chamber === nodeId || st.cycler === nodeId) {
+              activePacks.push({
+                taskId: t.task_id,
+                bin: t.bin,
+                dvpName: t.dvp_name,
+                objective: t.objective,
+                component: t.component || "General Hardware",
+                engineer: t.engineer || "Unassigned",
+                stepName: st.name,
+                stepId: st.sub_id,
+                status: st.status,
+                logged: st.logged,
+                target: st.target,
+                unit: st.unit,
+                incharge: st.incharge,
+                associate: st.associate,
+                shift: st.shift,
+                chamber: st.chamber,
+                cycler: st.cycler,
+                channel: st.neware_channel,
+                grafana: st.grafana || "https://grafana.optilab.internal"
+              });
+            }
+          });
         });
-      });
+      }
 
       if (activePacks.length === 0) {
         container.innerHTML = `<div style="padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 11px; font-weight: 800; color: #64748b; text-align: center;">No active battery packs currently mounted in ${nodeName}.</div>`;
@@ -1169,8 +1192,8 @@
       });
 
       alert(`✅ Updated PM & Calibration dates for ${selectedChamberId}!`);
-      fetchLabData();
       closeModal('inspector-modal');
+      await fetchLabData(); // 🚀 Instantly updates warning badges
     }
 
     async function submitChamberCheckInModal() {
@@ -1199,8 +1222,8 @@
       });
 
       alert(`✅ Chamber Daily Check Logged for ${selectedChamberId}!`);
-      fetchLabData();
       closeModal('inspector-modal');
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     async function submit5SChecksheet() {
@@ -1235,6 +1258,7 @@
       });
       const data = await res.json();
       alert('✅ ' + data.message);
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     async function deleteSingleTask(taskId) {
@@ -1244,14 +1268,14 @@
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ dept: activeLab, task_id: taskId })
         });
-        fetchLabData();
+        await fetchLabData();
       }
     }
 
     async function clearAllSystemData() {
       if (confirm("⚠️ WARNING: Are you sure you want to clear ALL tasks, roster assignments, and history across all labs?")) {
         await fetch('/api/lab/reset', { method: 'POST' });
-        fetchLabData();
+        await fetchLabData();
       }
     }
 
@@ -1274,7 +1298,7 @@
           add_progress: 0
         })
       });
-      fetchLabData();
+      await fetchLabData();
     }
 
     function toggleSubtasks(taskId) {
@@ -1312,8 +1336,8 @@
     }
 
     function createStepRowHTML(num, name, unit, target) {
-      const incharges = labStore.personnel.filter(p=>p.role==='Shift Incharge');
-      const associates = labStore.personnel;
+      const incharges = labStore.personnel ? labStore.personnel.filter(p=>p.role==='Shift Incharge') : [];
+      const associates = labStore.personnel || [];
       const today = new Date().toISOString().split('T')[0];
       return `
         <div class="step-row-item" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
@@ -1392,7 +1416,7 @@
         body: JSON.stringify(payload)
       });
       closeModal('modal-create-task');
-      fetchLabData();
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     function openLogModal(taskId, subId, stepName) {
@@ -1424,11 +1448,12 @@
         })
       });
       closeModal('modal-log-progress');
-      fetchLabData();
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     function renderConfigManager() {
       const compDeck = document.getElementById('comp-list-deck');
+      if (!compDeck) return;
       const uniqueComponents = Array.from(new Set(labStore.components || []));
       compDeck.innerHTML = uniqueComponents.map(c => `<span style="background:#e2e8f0; color:#334155; font-weight:800; font-size:11px; padding:4px 10px; border-radius:6px;">${c}</span>`).join('');
     }
@@ -1442,7 +1467,7 @@
           body: JSON.stringify({dept: activeLab, name: name})
         });
         document.getElementById('inp-new-comp').value = '';
-        fetchLabData();
+        await fetchLabData();
       }
     }
 
@@ -1450,37 +1475,39 @@
       const todoDeck = document.getElementById('kb-todo-deck');
       const runningDeck = document.getElementById('kb-running-deck');
       const blockedDeck = document.getElementById('kb-blocked-deck');
+      if (!todoDeck || !runningDeck || !blockedDeck) return;
       todoDeck.innerHTML = ''; runningDeck.innerHTML = ''; blockedDeck.innerHTML = '';
-      labStore.tasks.forEach(t => {
-        t.subtasks.forEach(st => {
-          if (st.shift === activeShift) {
-            const card = `
-              <div class="kanban-card">
-                <div style="display:flex; justify-content:space-between; font-weight:900; font-size:12px;">
-                  <span style="color:#2563eb;">${st.sub_id}</span>
-                  <span style="font-family:monospace;">${t.bin}</span>
+      
+      if (labStore.tasks) {
+        labStore.tasks.forEach(t => {
+          t.subtasks.forEach(st => {
+            if (st.shift === activeShift) {
+              const card = `
+                <div class="kanban-card">
+                  <div style="display:flex; justify-content:space-between; font-weight:900; font-size:12px;">
+                    <span style="color:#2563eb;">${st.sub_id}</span>
+                    <span style="font-family:monospace;">${t.bin}</span>
+                  </div>
+                  <div style="font-size:11px; font-weight:800; color:#0f172a; margin-top:4px;">${st.name}</div>
+                  <div style="font-size:10px; font-weight:700; color:#64748b; margin-top:4px;">Progress: <b>${st.logged} / ${st.target} ${st.unit}</b></div>
+                  <div style="font-size:10px; font-weight:800; color:#059669; margin-top:4px;">Incharge: ${st.incharge} | Assoc: ${st.associate}</div>
+                  <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${st.name}')" style="margin-top:8px; width:100%; background:#2563eb; color:#fff; border:none; border-radius:6px; font-weight:800; font-size:10px; padding:6px; cursor:pointer;">Log Progress & Telemetry</button>
                 </div>
-                <div style="font-size:11px; font-weight:800; color:#0f172a; margin-top:4px;">${st.name}</div>
-                <div style="font-size:10px; font-weight:700; color:#64748b; margin-top:4px;">Progress: <b>${st.logged} / ${st.target} ${st.unit}</b></div>
-                <div style="font-size:10px; font-weight:800; color:#059669; margin-top:4px;">Incharge: ${st.incharge} | Assoc: ${st.associate}</div>
-                <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${st.name}')" style="margin-top:8px; width:100%; background:#2563eb; color:#fff; border:none; border-radius:6px; font-weight:800; font-size:10px; padding:6px; cursor:pointer;">Log Progress & Telemetry</button>
-              </div>
-            `;
-            if (st.status === 'To Do') todoDeck.innerHTML += card;
-            if (st.status === 'In Progress' || st.status === 'Running') runningDeck.innerHTML += card;
-            if (st.status === 'Blocked' || st.status === 'Parts Missing') blockedDeck.innerHTML += card;
-          }
+              `;
+              if (st.status === 'To Do') todoDeck.innerHTML += card;
+              if (st.status === 'In Progress' || st.status === 'Running') runningDeck.innerHTML += card;
+              if (st.status === 'Blocked' || st.status === 'Parts Missing') blockedDeck.innerHTML += card;
+            }
+          });
         });
-      });
+      }
     }
 
     async function submitAttendancePunch(actionType) {
       const name = document.getElementById('punch-employee-name').value;
       const status = document.getElementById('punch-status').value;
-      if (!name) {
-        alert("Please add a team member first before marking attendance.");
-        return;
-      }
+      if (!name) return alert("Please add a team member first.");
+
       await fetch('/api/attendance/mark', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1492,7 +1519,7 @@
           status: status
         })
       });
-      fetchLabData();
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     async function submitPersonnel() {
@@ -1508,7 +1535,7 @@
         })
       });
       closeModal('modal-add-personnel');
-      fetchLabData();
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     async function submitExtraTask() {
@@ -1524,13 +1551,15 @@
         })
       });
       closeModal('modal-extra-task');
-      fetchLabData();
+      await fetchLabData(); // 🚀 Instant auto-update
     }
 
     async function loadRoster() {
       const res = await fetch(`/api/roster/${encodeURIComponent(activeLab)}`);
       const data = await res.json();
       const header = document.getElementById('roster-header-row');
+      if (!header) return;
+
       header.innerHTML = `
         <th class="col-freeze-1">ID</th>
         <th class="col-freeze-2">Personnel</th>
@@ -1539,8 +1568,10 @@
       `;
       data.days.forEach(d => header.innerHTML += `<th>D${d}</th>`);
       const body = document.getElementById('roster-body-rows');
+      if (!body) return;
       body.innerHTML = '';
-      if (data.matrix.length === 0) {
+
+      if (!data.matrix || data.matrix.length === 0) {
         body.innerHTML = `<tr><td colspan="34" style="text-align:center; padding:20px; color:#94a3b8; font-weight:700;">No team members added to ${activeLab} roster yet. Click '+ ADD TEAM MEMBER'.</td></tr>`;
         return;
       }
@@ -1600,10 +1631,8 @@
 
     async function submitRosterStamp() {
       const person = document.getElementById('stamp-person').value;
-      if (!person) {
-        alert("Please add a team member first before stamping a roster shift.");
-        return;
-      }
+      if (!person) return alert("Please add a team member first.");
+
       await fetch('/api/roster/stamp', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1618,10 +1647,14 @@
     }
 
     function renderCalculatedDonuts() {
+      if (!labStore.metrics || !labStore.metrics.cat_counts) return;
       const catCounts = labStore.metrics.cat_counts;
+
       const makeDonut = (id, running, complete) => {
+        const el = document.getElementById(id);
+        if (!el) return;
         if (chartInstances[id]) chartInstances[id].destroy();
-        const ctx = document.getElementById(id).getContext('2d');
+        const ctx = el.getContext('2d');
         chartInstances[id] = new Chart(ctx, {
           type: 'doughnut',
           data: {
@@ -1638,6 +1671,7 @@
 
     function renderAuditHistory() {
       const deck = document.getElementById('audit-history-deck');
+      if (!deck) return;
       deck.innerHTML = '';
       if (!labStore.audit_history || labStore.audit_history.length === 0) {
         deck.innerHTML = `<div style="text-align: center; color: #94a3b8; font-weight: 800; padding: 20px;">No audit logs recorded for ${activeLab} yet.</div>`;
@@ -1658,134 +1692,152 @@
     }
 
     function renderAnalyticsWorkspace() {
+      if (!labStore.metrics) return;
       const shiftComp = labStore.metrics.shift_completion;
       const stoppages = labStore.metrics.stoppage_breakdown;
       const inchargeStats = labStore.metrics.incharge_stats;
       const assocStats = labStore.metrics.associate_stats;
 
-      if (chartInstances['shiftComp']) chartInstances['shiftComp'].destroy();
-      const ctxShift = document.getElementById('chart-shift-comparison').getContext('2d');
-      chartInstances['shiftComp'] = new Chart(ctxShift, {
-        type: 'bar',
-        data: {
-          labels: ['Shift A', 'Shift B', 'Shift C'],
-          datasets: [{
-            label: 'Tasks Completed',
-            data: [
-              shiftComp['Shift A'] ? shiftComp['Shift A'].completed : 0,
-              shiftComp['Shift B'] ? shiftComp['Shift B'].completed : 0,
-              shiftComp['Shift C'] ? shiftComp['Shift C'].completed : 0
-            ],
-            backgroundColor: '#2563eb'
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
+      const elShift = document.getElementById('chart-shift-comparison');
+      if (elShift) {
+        if (chartInstances['shiftComp']) chartInstances['shiftComp'].destroy();
+        const ctxShift = elShift.getContext('2d');
+        chartInstances['shiftComp'] = new Chart(ctxShift, {
+          type: 'bar',
+          data: {
+            labels: ['Shift A', 'Shift B', 'Shift C'],
+            datasets: [{
+              label: 'Tasks Completed',
+              data: [
+                shiftComp['Shift A'] ? shiftComp['Shift A'].completed : 0,
+                shiftComp['Shift B'] ? shiftComp['Shift B'].completed : 0,
+                shiftComp['Shift C'] ? shiftComp['Shift C'].completed : 0
+              ],
+              backgroundColor: '#2563eb'
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false }
+        });
+      }
 
-      if (chartInstances['stoppages']) chartInstances['stoppages'].destroy();
-      const ctxStop = document.getElementById('chart-3m-breakdown').getContext('2d');
-      chartInstances['stoppages'] = new Chart(ctxStop, {
-        type: 'doughnut',
-        data: {
-          labels: ['No Parts 🧩', 'Chamber Down 🔴', 'Fixture Adjust 🔧'],
-          datasets: [{
-            data: [stoppages.no_parts, stoppages.chamber_down, stoppages.fixture_adjust],
-            backgroundColor: ['#e11d48', '#d97706', '#6366f1']
-          }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
-      });
+      const elStop = document.getElementById('chart-3m-breakdown');
+      if (elStop) {
+        if (chartInstances['stoppages']) chartInstances['stoppages'].destroy();
+        const ctxStop = elStop.getContext('2d');
+        chartInstances['stoppages'] = new Chart(ctxStop, {
+          type: 'doughnut',
+          data: {
+            labels: ['No Parts 🧩', 'Chamber Down 🔴', 'Fixture Adjust 🔧'],
+            datasets: [{
+              data: [stoppages.no_parts, stoppages.chamber_down, stoppages.fixture_adjust],
+              backgroundColor: ['#e11d48', '#d97706', '#6366f1']
+            }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+        });
+      }
 
       const shiftDeck = document.getElementById('scorecard-shifts');
-      shiftDeck.innerHTML = '';
-      ['Shift A', 'Shift B', 'Shift C'].forEach(sName => {
-        const c = shiftComp[sName] ? shiftComp[sName].completed : 0;
-        const a = shiftComp[sName] ? shiftComp[sName].assigned : 0;
-        shiftDeck.innerHTML += `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
-            <span>${sName}</span>
-            <span style="background:#f3e8ff; color:#7c3aed; padding:2px 8px; border-radius:4px;">${c} Tasks Completed</span>
-            <span style="color:#64748b;">(${c} / ${a} Assigned)</span>
-          </div>
-        `;
-      });
-
-      const incDeck = document.getElementById('scorecard-incharges');
-      incDeck.innerHTML = '';
-      const incharges = labStore.personnel.filter(p => p.role === 'Shift Incharge');
-      if (incharges.length === 0) {
-        incDeck.innerHTML = `<div style="font-size:11px; color:#94a3b8; font-weight:700;">No Shift Incharges registered.</div>`;
-      } else {
-        incharges.forEach(inc => {
-          const stats = inchargeStats[inc.name] || {completed: 0, managed: 0};
-          incDeck.innerHTML += `
+      if (shiftDeck) {
+        shiftDeck.innerHTML = '';
+        ['Shift A', 'Shift B', 'Shift C'].forEach(sName => {
+          const c = shiftComp[sName] ? shiftComp[sName].completed : 0;
+          const a = shiftComp[sName] ? shiftComp[sName].assigned : 0;
+          shiftDeck.innerHTML += `
             <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
-              <span>${inc.name}</span>
-              <span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
-              <span style="color:#64748b;">(${stats.completed} / ${stats.managed} Managed)</span>
+              <span>${sName}</span>
+              <span style="background:#f3e8ff; color:#7c3aed; padding:2px 8px; border-radius:4px;">${c} Tasks Completed</span>
+              <span style="color:#64748b;">(${c} / ${a} Assigned)</span>
             </div>
           `;
         });
+      }
+
+      const incDeck = document.getElementById('scorecard-incharges');
+      if (incDeck) {
+        incDeck.innerHTML = '';
+        const incharges = labStore.personnel ? labStore.personnel.filter(p => p.role === 'Shift Incharge') : [];
+        if (incharges.length === 0) {
+          incDeck.innerHTML = `<div style="font-size:11px; color:#94a3b8; font-weight:700;">No Shift Incharges registered.</div>`;
+        } else {
+          incharges.forEach(inc => {
+            const stats = inchargeStats[inc.name] || {completed: 0, managed: 0};
+            incDeck.innerHTML += `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
+                <span>${inc.name}</span>
+                <span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
+                <span style="color:#64748b;">(${stats.completed} / ${stats.managed} Managed)</span>
+              </div>
+            `;
+          });
+        }
       }
 
       const assocDeck = document.getElementById('scorecard-associates');
-      assocDeck.innerHTML = '';
-      const associates = labStore.personnel.filter(p => p.role === 'Associate');
-      if (associates.length === 0) {
-        assocDeck.innerHTML = `<div style="font-size:11px; color:#94a3b8; font-weight:700;">No Associates registered.</div>`;
-      } else {
-        associates.forEach(a => {
-          const stats = associateStats[a.name] || {completed: 0, assigned: 0};
-          assocDeck.innerHTML += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#f0fdf4; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
-              <span>${a.name}</span>
-              <span style="background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
-              <span style="color:#64748b;">(${stats.completed} / ${stats.assigned} Assigned)</span>
-            </div>
-          `;
-        });
+      if (assocDeck) {
+        assocDeck.innerHTML = '';
+        const associates = labStore.personnel ? labStore.personnel.filter(p => p.role === 'Associate') : [];
+        if (associates.length === 0) {
+          assocDeck.innerHTML = `<div style="font-size:11px; color:#94a3b8; font-weight:700;">No Associates registered.</div>`;
+        } else {
+          associates.forEach(a => {
+            const stats = associateStats[a.name] || {completed: 0, assigned: 0};
+            assocDeck.innerHTML += `
+              <div style="display:flex; justify-content:space-between; align-items:center; background:#f0fdf4; border:1px solid #cbd5e1; padding:8px 12px; border-radius:8px; font-size:11px; font-weight:800;">
+                <span>${a.name}</span>
+                <span style="background:#f0fdf4; color:#16a34a; padding:2px 8px; border-radius:4px;">${stats.completed} Completed</span>
+                <span style="color:#64748b;">(${stats.completed} / ${stats.assigned} Assigned)</span>
+              </div>
+            `;
+          });
+        }
       }
 
       const ledgerBody = document.getElementById('attendance-ledger-body');
-      ledgerBody.innerHTML = '';
-      if (associates.length === 0) {
-        ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; font-weight:800; padding:15px;">No associates registered in ${activeLab}.</td></tr>`;
-        return;
-      }
+      if (ledgerBody) {
+        ledgerBody.innerHTML = '';
+        const associates = labStore.personnel ? labStore.personnel.filter(p => p.role === 'Associate') : [];
+        if (associates.length === 0) {
+          ledgerBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; font-weight:800; padding:15px;">No associates registered in ${activeLab}.</td></tr>`;
+          return;
+        }
 
-      associates.forEach(a => {
-        let presentCount = 0;
-        let absentCount = 0;
-        let leaveCount = 0;
+        associates.forEach(a => {
+          let presentCount = 0;
+          let absentCount = 0;
+          let leaveCount = 0;
 
-        labStore.attendance.forEach(att => {
-          if (att.emp_name === a.name) {
-            if (att.status === 'Present' || att.status === 'Late') presentCount++;
-            if (att.status === 'Absent') absentCount++;
-            if (att.status === 'On Leave') leaveCount++;
+          if (labStore.attendance) {
+            labStore.attendance.forEach(att => {
+              if (att.emp_name === a.name) {
+                if (att.status === 'Present' || att.status === 'Late') presentCount++;
+                if (att.status === 'Absent') absentCount++;
+                if (att.status === 'On Leave') leaveCount++;
+              }
+            });
           }
+
+          const rosteredDays = 22;
+          const attPct = Math.round((presentCount / rosteredDays) * 100);
+          const isOnDuty = presentCount > 0;
+
+          ledgerBody.innerHTML += `
+            <tr>
+              <td style="font-weight:900;">${a.name}</td>
+              <td style="font-weight:800;">${rosteredDays} Days</td>
+              <td style="font-weight:900; color:#16a34a;">${presentCount}</td>
+              <td style="font-weight:900; color:#dc2626;">${absentCount}</td>
+              <td style="font-weight:900; color:#d97706;">${leaveCount}</td>
+              <td style="font-weight:900; color:#2563eb;">${attPct}%</td>
+              <td>
+                <span style="font-weight:900; font-size:11px; color:${isOnDuty?'#16a34a':'#dc2626'};">
+                  ${isOnDuty ? 'On Duty 🟢' : 'Off Duty 🔴'}
+                </span>
+              </td>
+            </tr>
+          `;
         });
-
-        const rosteredDays = 22;
-        const attPct = Math.round((presentCount / rosteredDays) * 100);
-        const isOnDuty = presentCount > 0;
-
-        ledgerBody.innerHTML += `
-          <tr>
-            <td style="font-weight:900;">${a.name}</td>
-            <td style="font-weight:800;">${rosteredDays} Days</td>
-            <td style="font-weight:900; color:#16a34a;">${presentCount}</td>
-            <td style="font-weight:900; color:#dc2626;">${absentCount}</td>
-            <td style="font-weight:900; color:#d97706;">${leaveCount}</td>
-            <td style="font-weight:900; color:#2563eb;">${attPct}%</td>
-            <td>
-              <span style="font-weight:900; font-size:11px; color:${isOnDuty?'#16a34a':'#dc2626'};">
-                ${isOnDuty ? 'On Duty 🟢' : 'Off Duty 🔴'}
-              </span>
-            </td>
-          </tr>
-        `;
-      });
+      }
     }
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
