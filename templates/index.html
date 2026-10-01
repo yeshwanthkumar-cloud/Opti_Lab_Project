@@ -50,8 +50,8 @@
     .node-box { border-radius: 12px; padding: 10px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: inline-flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; min-width: 135px; min-height: 120px; position: relative; background: #ffffff; transition: transform 0.15s; }
     .node-box.shaker-large { min-width: 250px; min-height: 150px; font-size: 13px; font-weight: 900; border: 3px solid #6366f1; background: #f5f3ff; }
     .node-box:hover { transform: translateY(-2px); }
-    .node-box img, .node-box .node-icon-placeholder { width: 48px; height: 40px; border-radius: 6px; margin-bottom: 4px; object-fit: contain; }
-    .node-icon-placeholder { display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .node-box img { width: 48px; height: 40px; border-radius: 6px; margin-bottom: 4px; object-fit: contain; }
+    .node-icon-placeholder { display: flex; align-items: center; justify-content: center; font-size: 24px; width: 48px; height: 40px; margin-bottom: 4px; }
     
     .due-badge { position: absolute; top: -8px; right: -6px; background: #dc2626; color: #fff; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 10px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4); }
     .type-chamber { border: 2px solid #ca8a04; background: #fefef0; color: #713f12; }
@@ -988,14 +988,6 @@
       const pathway = document.getElementById('twin-pathway');
       topDeck.innerHTML = ''; bottomDeck.innerHTML = '';
 
-      const renderImageHTML = (item) => {
-        if (item.img) {
-          const icon = item.type === 'cycler' ? '🔋' : '🌡️';
-          return `<img src="${item.img}" alt="${item.name}" onerror="this.outerHTML='<div class=&quot;node-icon-placeholder&quot;>${icon}</div>'">`;
-        }
-        return `<div class="node-icon-placeholder">${item.type==='cycler'?'🔋':'🌡️'}</div>`;
-      };
-
       const topRowData = (labStore.twin.top_row && labStore.twin.top_row.length > 0) 
         ? labStore.twin.top_row 
         : [
@@ -1032,7 +1024,7 @@
         topDeck.innerHTML += `
           <div class="node-box ${isShaker ? 'shaker-large' : 'type-chamber'}" onclick='openChamberInspector("${item.id}", "${item.name}")'>
             ${isDueSoon ? `<span class="due-badge">⚠️ PM/CAL DUE</span>` : ''}
-            ${renderImageHTML(item)}
+            <div class="node-icon-placeholder">${item.type==='cycler'?'🔋':'🌡️'}</div>
             <div>${item.name}</div>
             <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
               ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}
@@ -1056,7 +1048,7 @@
 
         bottomDeck.innerHTML += `
           <div class="node-box type-cycler" onclick='openChamberInspector("${item.id}", "${item.name}")'>
-            ${renderImageHTML(item)}
+            <div class="node-icon-placeholder">🔋</div>
             <div>${item.name}</div>
             <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#2563eb'};">
               ${activeCount > 0 ? `🟢 ${activeCount} Active` : 'Idle'}

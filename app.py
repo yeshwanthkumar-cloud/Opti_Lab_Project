@@ -9,7 +9,6 @@ import pandas as pd
 
 app = Flask(__name__)
 
-# Environment & Database Configuration
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
@@ -220,22 +219,22 @@ def calculate_dashboard_metrics(tasks):
         if cat not in cat_counts:
             cat_counts[cat] = {"running": 0, "complete": 0}
            
-        if t["status"] in ["Completed", "Awaiting Report"]:
+        if t.get("status") in ["Completed", "Awaiting Report"]:
             total_complete += 1
             cat_counts[cat]["complete"] += 1
-        elif t["status"] == "Running":
+        elif t.get("status") == "Running":
             total_running += 1
             cat_counts[cat]["running"] += 1
-        elif t["status"] in ["Blocked", "Parts Missing"]:
+        elif t.get("status") in ["Blocked", "Parts Missing"]:
             total_awaiting_res += 1
         else:
             total_awaiting_eng += 1
 
-        for st in t["subtasks"]:
+        for st in t.get("subtasks", []):
             shift = st.get("shift", "None")
             if shift in shift_completion:
                 shift_completion[shift]["assigned"] += 1
-                if st["status"] == "Completed":
+                if st.get("status") == "Completed":
                     shift_completion[shift]["completed"] += 1
 
             inc = st.get("incharge", "Unassigned")
@@ -243,7 +242,7 @@ def calculate_dashboard_metrics(tasks):
                 if inc not in incharge_stats:
                     incharge_stats[inc] = {"completed": 0, "managed": 0}
                 incharge_stats[inc]["managed"] += 1
-                if st["status"] == "Completed":
+                if st.get("status") == "Completed":
                     incharge_stats[inc]["completed"] += 1
 
             assoc = st.get("associate", "Unassigned")
@@ -251,12 +250,12 @@ def calculate_dashboard_metrics(tasks):
                 if assoc not in associate_stats:
                     associate_stats[assoc] = {"completed": 0, "assigned": 0}
                 associate_stats[assoc]["assigned"] += 1
-                if st["status"] == "Completed":
+                if st.get("status") == "Completed":
                     associate_stats[assoc]["completed"] += 1
 
-            if st["status"] == "Parts Missing":
+            if st.get("status") == "Parts Missing":
                 stoppage_breakdown["no_parts"] += 1
-            elif st["status"] == "Blocked":
+            elif st.get("status") == "Blocked":
                 stoppage_breakdown["chamber_down"] += 1
 
     return {
