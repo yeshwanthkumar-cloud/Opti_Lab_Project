@@ -84,7 +84,6 @@ LAB_DATA = {
 def get_db_connection():
     if DATABASE_URL:
         try:
-            # Connect using SSL mode required by Supabase Pooler
             return psycopg2.connect(
                 DATABASE_URL, 
                 sslmode='require',
@@ -152,17 +151,24 @@ def save_data_to_file():
         try:
             conn = get_db_connection()
             if not conn:
+                print("⚠️ DB Connection failed during save.")
                 return
             cursor = conn.cursor()
 
-            # SAFEGUARD: Never overwrite valid database records with an empty memory object
-            has_data = any(len(dept_data.get("tasks", [])) > 0 or len(dept_data.get("personnel", [])) > 0 for dept_data in LAB_DATA.values())
+            # PERMANENT PROTECTION: Ensure we never overwrite non-empty DB rows with blank memory
+            has_data = any(
+                len(dept_data.get("tasks", [])) > 0 or 
+                len(dept_data.get("personnel", [])) > 0 or
+                len(dept_data.get("roster_stamps", {})) > 0 or
+                len(dept_data.get("attendance", [])) > 0
+                for dept_data in LAB_DATA.values()
+            )
             
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
             existing = cursor.fetchone()
             
             if existing and not has_data:
-                print("⚠️ Prevented overwriting database with empty memory state.")
+                print("⚠️ Prevented overwriting existing database entries with empty state.")
                 cursor.close()
                 conn.close()
                 return
@@ -172,9 +178,11 @@ def save_data_to_file():
                 VALUES ('master', %s)
                 ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
             """, (json.dumps(LAB_DATA),))
+            
             conn.commit()
             cursor.close()
             conn.close()
+            print("✅ Successfully saved LAB_DATA to Supabase.")
         except Exception as e:
             print("DB Save Error:", e)
     else:
@@ -190,6 +198,7 @@ def load_data_from_file():
         try:
             conn = get_db_connection()
             if not conn:
+                print("⚠️ DB Connection failed during load.")
                 return
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
@@ -199,8 +208,9 @@ def load_data_from_file():
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
                         for k, v in saved_data[dept].items():
-                            if v:
+                            if v: # Only merge populated saved items
                                 LAB_DATA[dept][k] = v
+                print("✅ Successfully loaded stored tasks and rosters from Supabase.")
             cursor.close()
             conn.close()
         except Exception as e:
