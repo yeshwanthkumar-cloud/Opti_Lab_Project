@@ -83,13 +83,24 @@ LAB_DATA = {
 
 def get_db_connection():
     if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL)
+        try:
+            # Connect using SSL mode required by Supabase Pooler
+            return psycopg2.connect(
+                DATABASE_URL, 
+                sslmode='require',
+                connect_timeout=10
+            )
+        except Exception as e:
+            print("DB Connection Error:", e)
+            return None
     return None
 
 def init_db():
     if DATABASE_URL:
         try:
             conn = get_db_connection()
+            if not conn:
+                return
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS opti_lab_store (
@@ -140,7 +151,22 @@ def save_data_to_file():
     if DATABASE_URL:
         try:
             conn = get_db_connection()
+            if not conn:
+                return
             cursor = conn.cursor()
+
+            # SAFEGUARD: Never overwrite valid database records with an empty memory object
+            has_data = any(len(dept_data.get("tasks", [])) > 0 or len(dept_data.get("personnel", [])) > 0 for dept_data in LAB_DATA.values())
+            
+            cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
+            existing = cursor.fetchone()
+            
+            if existing and not has_data:
+                print("⚠️ Prevented overwriting database with empty memory state.")
+                cursor.close()
+                conn.close()
+                return
+
             cursor.execute("""
                 INSERT INTO opti_lab_store (id, data)
                 VALUES ('master', %s)
@@ -163,6 +189,8 @@ def load_data_from_file():
     if DATABASE_URL:
         try:
             conn = get_db_connection()
+            if not conn:
+                return
             cursor = conn.cursor(cursor_factory=RealDictCursor)
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
             row = cursor.fetchone()
@@ -171,7 +199,8 @@ def load_data_from_file():
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
                         for k, v in saved_data[dept].items():
-                            LAB_DATA[dept][k] = v
+                            if v:
+                                LAB_DATA[dept][k] = v
             cursor.close()
             conn.close()
         except Exception as e:
@@ -316,25 +345,6 @@ def delete_single_task():
             return jsonify({"success": True})
            
     return jsonify({"success": False, "message": "Task not found"}), 400
-
-@app.route("/api/lab/reset", methods=["POST"])
-def reset_all_lab_data():
-    global LAB_DATA
-    LAB_DATA = {
-        dept: {
-            "components": [],
-            "blueprints": {},
-            "personnel": [],
-            "tasks": [],
-            "attendance": [],
-            "extra_tasks": [],
-            "audit_history": [],
-            "roster_stamps": {},
-            "equipment_maintenance": {}
-        } for dept in DEPARTMENTS
-    }
-    save_data_to_file()
-    return jsonify({"success": True})
 
 @app.route("/api/blueprints/save", methods=["POST"])
 def save_blueprint():
@@ -576,8 +586,6 @@ def add_extra_task():
         save_data_to_file()
         return jsonify({"success": True, "extra": extra})
     return jsonify({"success": False}), 400
-
-# --- CHECKSHEET & MAINTENANCE API ---
 
 @app.route('/api/5s-submit', methods=['POST'])
 def submit_5s():
