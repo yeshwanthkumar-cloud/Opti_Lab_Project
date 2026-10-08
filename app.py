@@ -1,5 +1,6 @@
 import os
 import io
+import time
 import json
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
@@ -147,6 +148,15 @@ def init_db():
             print("Database initialization error:", e)
 
 def save_data_to_file():
+    # 1. ALWAYS write to local file storage FIRST
+    try:
+        with open(DATA_FILE, "w") as f:
+            json.dump(LAB_DATA, f, indent=4)
+        print("✅ Saved state to local storage (data.json).")
+    except Exception as e:
+        print("Local Save Error:", e)
+
+    # 2. Sync to Supabase PostgreSQL safely
     if DATABASE_URL:
         try:
             conn = get_db_connection()
@@ -155,23 +165,33 @@ def save_data_to_file():
                 return
             cursor = conn.cursor()
 
-            # PERMANENT PROTECTION: Ensure we never overwrite non-empty DB rows with blank memory
-            has_data = any(
-                len(dept_data.get("tasks", [])) > 0 or 
-                len(dept_data.get("personnel", [])) > 0 or
-                len(dept_data.get("roster_stamps", {})) > 0 or
-                len(dept_data.get("attendance", [])) > 0
+            memory_items = sum(
+                len(dept_data.get("tasks", [])) + 
+                len(dept_data.get("personnel", [])) + 
+                len(dept_data.get("roster_stamps", {}))
                 for dept_data in LAB_DATA.values()
             )
-            
+
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
-            existing = cursor.fetchone()
+            existing_row = cursor.fetchone()
             
-            if existing and not has_data:
-                print("⚠️ Prevented overwriting existing database entries with empty state.")
-                cursor.close()
-                conn.close()
-                return
+            if existing_row and existing_row[0]:
+                db_data = existing_row[0]
+                db_items = sum(
+                    len(dept_data.get("tasks", [])) + 
+                    len(dept_data.get("personnel", [])) + 
+                    len(dept_data.get("roster_stamps", {}))
+                    for dept_data in db_data.values()
+                )
+
+                if db_items > 0 and memory_items == 0:
+                    print("🛡️ FAILSAFE BLOCKED OVERWRITE! Restoring memory from DB...")
+                    for dept in DEPARTMENTS:
+                        if dept in db_data:
+                            LAB_DATA[dept] = db_data[dept]
+                    cursor.close()
+                    conn.close()
+                    return
 
             cursor.execute("""
                 INSERT INTO opti_lab_store (id, data)
@@ -185,47 +205,45 @@ def save_data_to_file():
             print("✅ Successfully saved LAB_DATA to Supabase.")
         except Exception as e:
             print("DB Save Error:", e)
-    else:
-        try:
-            with open(DATA_FILE, "w") as f:
-                json.dump(LAB_DATA, f, indent=4)
-        except Exception as e:
-            print("Error saving local file:", e)
 
 def load_data_from_file():
     global LAB_DATA
-    if DATABASE_URL:
+    # 1. Load from local disk file FIRST
+    if os.path.exists(DATA_FILE):
         try:
-            conn = get_db_connection()
-            if not conn:
-                print("⚠️ DB Connection failed during load.")
-                return
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
-            cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
-            row = cursor.fetchone()
-            if row and row.get('data'):
-                saved_data = row['data']
+            with open(DATA_FILE, "r") as f:
+                saved_data = json.load(f)
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
-                        for k, v in saved_data[dept].items():
-                            if v: # Only merge populated saved items
-                                LAB_DATA[dept][k] = v
-                print("✅ Successfully loaded stored tasks and rosters from Supabase.")
-            cursor.close()
-            conn.close()
+                        LAB_DATA[dept] = saved_data[dept]
+            print("✅ Loaded data from local storage (data.json).")
         except Exception as e:
-            print("DB Load Error:", e)
-    else:
-        if os.path.exists(DATA_FILE):
+            print("Local Load Error:", e)
+
+    # 2. Sync and load from Supabase if available
+    if DATABASE_URL:
+        for attempt in range(3):
             try:
-                with open(DATA_FILE, "r") as f:
-                    saved_data = json.load(f)
+                conn = get_db_connection()
+                if not conn:
+                    print(f"⚠️ DB Connection attempt {attempt+1}/3 failed. Retrying...")
+                    time.sleep(2)
+                    continue
+                cursor = conn.cursor(cursor_factory=RealDictCursor)
+                cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
+                row = cursor.fetchone()
+                if row and row.get('data'):
+                    saved_data = row['data']
                     for dept in DEPARTMENTS:
-                        if dept in saved_data:
-                            for k, v in saved_data[dept].items():
-                                LAB_DATA[dept][k] = v
+                        if dept in saved_data and saved_data[dept]:
+                            LAB_DATA[dept] = saved_data[dept]
+                    print("✅ Successfully merged stored tasks and rosters from Supabase.")
+                cursor.close()
+                conn.close()
+                break
             except Exception as e:
-                print("Error loading local file:", e)
+                print(f"DB Load Error (attempt {attempt+1}):", e)
+                time.sleep(2)
 
 init_db()
 load_data_from_file()
@@ -338,6 +356,18 @@ def get_lab_data(dept_name):
         "metrics": metrics,
         "twin": twin_config
     })
+
+@app.route('/api/download-backup', methods=['GET'])
+def download_backup():
+    buffer = io.BytesIO()
+    buffer.write(json.dumps(LAB_DATA, indent=4).encode('utf-8'))
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        mimetype='application/json',
+        as_attachment=True,
+        download_name=f'OptiLab_Full_Backup_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    )
 
 @app.route("/api/tasks/delete", methods=["POST"])
 def delete_single_task():
