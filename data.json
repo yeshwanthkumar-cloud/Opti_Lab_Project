@@ -116,6 +116,44 @@
           "Shift B",
           "Shift B"
         ]
+      },
+      {
+        "id": "CT-5311",
+        "name": "lal krishna",
+        "role": "Associate",
+        "shift": "Shift C",
+        "schedule": [
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C",
+          "Shift C"
+        ]
       }
     ],
     "tasks": [
@@ -659,6 +697,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-09 11:50:21",
+        "title": "Personnel Added",
+        "detail": "Registered lal krishna (Associate) to Shift C.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-09 11:47:14",
         "title": "Subtask Progress Logged",
