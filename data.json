@@ -582,6 +582,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-09 08:52:17",
+        "title": "Roster Stamped",
+        "detail": "Stamped Shift A for sathya narayan on 2026-10-09.",
+        "user": "System"
+      },
+      {
         "timestamp": "2026-10-09 08:52:06",
         "title": "Personnel Added",
         "detail": "Registered sathya narayan (Associate) to Shift A.",
@@ -786,7 +792,9 @@
         "user": "Raj Kumar"
       }
     ],
-    "roster_stamps": {}
+    "roster_stamps": {
+      "sathya narayan_2026-10-09": "Shift A"
+    }
   },
   "Cell Lab": {
     "components": [],
