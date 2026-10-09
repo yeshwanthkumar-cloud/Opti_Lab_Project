@@ -1,776 +1,821 @@
 {
-    "Battery Lab": {
-        "components": [],
-        "blueprints": {},
-        "personnel": [],
-        "tasks": [
-            {
-                "task_id": "TSK-400001",
-                "prio": "P1",
-                "bin": "STB-9702",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "Life cycle 11P BAK NMC",
-                "category": "450",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Life Cycle Test to validate the 11P pack ",
-                "background": "Life Cycle Test to validate the 11P pack ",
-                "engineer": "Raj Kumar",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Life Cycle Test ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 1000.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            },
-            {
-                "task_id": "TSK-400002",
-                "prio": "P1",
-                "bin": "STB-0924",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "Life cycle 15P LGM52V  NMC",
-                "category": "450",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Life Cycle Test to validate the 11P pack ",
-                "background": "Life Cycle Test to validate the 11P pack ",
-                "engineer": "Raj Kumar",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Life Cycle Test ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 1000.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "Unassigned",
-                        "associate": "Unassigned",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": [],
-                        "cycler": "None",
-                        "neware_channel": ""
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            },
-            {
-                "task_id": "TSK-400003",
-                "prio": "P1",
-                "bin": "EL-Pre-X1-59",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "Fleet rep cycle PRE-X1",
-                "category": "EL",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Life Cycle Test to validate the 10P EL  pack ",
-                "background": "Life Cycle Test to validate the 10P EL pack ",
-                "engineer": "Yeshwanth",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift A",
-                        "incharge": "Unassigned",
-                        "associate": "Unassigned",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Life Cycle Test ",
-                        "status": "To Do",
-                        "logged": 0,
-                        "target": 1000.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift A",
-                        "incharge": "Unassigned",
-                        "associate": "Unassigned",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift A",
-                        "incharge": "Unassigned",
-                        "associate": "Unassigned",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            },
-            {
-                "task_id": "TSK-400004",
-                "prio": "P1",
-                "bin": "EL-Gen-0-97",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "Aggressive profile ",
-                "category": "EL",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Life Cycle Test to validate the Gen-0 8P Pack ",
-                "background": "Life Cycle Test to validate the Gen-0 8P Pack ",
-                "engineer": "Yeshwanth",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Life Cycle Test ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 1000.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            },
-            {
-                "task_id": "TSK-400005",
-                "prio": "P1",
-                "bin": "DSL-6692",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "PA6 Cell holder ",
-                "category": "DIESEL",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Life Cycle Test to validate the Gen-0 8P Pack ",
-                "background": "Life Cycle Test to validate the Gen-0 8P Pack ",
-                "engineer": "Raj Kumar",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Thermal Cycling ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 836.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "Unassigned",
-                        "associate": "Unassigned",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": [],
-                        "cycler": "None",
-                        "neware_channel": ""
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Z-axis 4hrs ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 4.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700004",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700005",
-                        "name": "Air leak/soap Bubble ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 2.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700006",
-                        "name": "Dunk Test",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 24.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700007",
-                        "name": "Post Observation ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 4.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            },
-            {
-                "task_id": "TSK-400006",
-                "prio": "P1",
-                "bin": "STB-1834",
-                "component": "General Hardware",
-                "trf_ref": "-",
-                "dvp_name": "Laser Weld pack 15P",
-                "category": "450",
-                "sprint_no": "Sprint 27.2.2",
-                "objective": "Laser Weld pack 15P",
-                "background": "Laser Weld pack 15P",
-                "engineer": "Raj Kumar",
-                "progress": 0,
-                "status": "Running",
-                "shift": "Multi-Shift",
-                "trf_status": "Testing Active",
-                "subtasks": [
-                    {
-                        "sub_id": "SUB-700001",
-                        "name": "Pre-Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700002",
-                        "name": "Thermal Cycling ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 418.0,
-                        "unit": "Cycles",
-                        "assign_date": "2026-09-29",
-                        "shift": "Shift C",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700003",
-                        "name": "Z-axis 4hrs ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 4.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700004",
-                        "name": "Post Capacity",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 12.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700005",
-                        "name": "Air leak/soap Bubble ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 2.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700006",
-                        "name": "Dunk Test",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 24.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    },
-                    {
-                        "sub_id": "SUB-700007",
-                        "name": "Post Observation ",
-                        "status": "To Do",
-                        "logged": 0.0,
-                        "target": 4.0,
-                        "unit": "Hours",
-                        "assign_date": "2026-09-29",
-                        "shift": "None",
-                        "incharge": "",
-                        "associate": "",
-                        "parts_status": "Parts Available",
-                        "chamber": "Chamber-1",
-                        "grafana": "",
-                        "observations": []
-                    }
-                ]
-            }
-        ],
-        "attendance": [],
-        "extra_tasks": [],
-        "audit_history": [
-            {
-                "timestamp": "2026-09-29 20:25:10",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400005 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
-                "user": "Unassigned"
-            },
-            {
-                "timestamp": "2026-09-29 20:24:32",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400002 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
-                "user": "Unassigned"
-            },
-            {
-                "timestamp": "2026-09-29 17:24:22",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700007 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:24:17",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700006 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:24:11",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700005 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:24:04",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700004 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:57",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700003 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:50",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400006 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:44",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:35",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700007 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:24",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700006 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:17",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700005 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:08",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700004 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:23:00",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700003 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:51",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400004 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:46",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:38",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700003 on TSK-400004 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:33",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400004 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:27",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400004 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:21",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700003 on TSK-400002 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:10",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700003 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:22:05",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400001 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:21:59",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:21:54",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400002 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 17:21:50",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400002 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 15:45:09",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700002 on TSK-400001 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 15:45:00",
-                "title": "Subtask Progress Logged",
-                "detail": "SUB-700001 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
-                "user": ""
-            },
-            {
-                "timestamp": "2026-09-29 15:44:26",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400006 (STB-1834) generated with 7 steps.",
-                "user": "Raj Kumar"
-            },
-            {
-                "timestamp": "2026-09-29 15:43:37",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400005 (DSL-6692) generated with 7 steps.",
-                "user": "Raj Kumar"
-            },
-            {
-                "timestamp": "2026-09-29 15:41:30",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400004 (EL-Gen-0-97) generated with 3 steps.",
-                "user": "Yeshwanth"
-            },
-            {
-                "timestamp": "2026-09-29 15:40:53",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400003 (EL-Pre-X1-59) generated with 3 steps.",
-                "user": "Yeshwanth"
-            },
-            {
-                "timestamp": "2026-09-29 15:39:53",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400002 (STB-0924) generated with 3 steps.",
-                "user": "Raj Kumar"
-            },
-            {
-                "timestamp": "2026-09-29 15:39:07",
-                "title": "Master Task Created",
-                "detail": "Task TSK-400001 (STB-9702) generated with 3 steps.",
-                "user": "Raj Kumar"
-            }
-        ],
-        "roster_stamps": {}
-    },
-    "Cell Lab": {
-        "components": [],
-        "blueprints": {},
-        "personnel": [],
-        "tasks": [],
-        "attendance": [],
-        "extra_tasks": [],
-        "audit_history": [],
-        "roster_stamps": {}
-    },
-    "Vibration Team": {
-        "components": [],
-        "blueprints": {},
-        "personnel": [],
-        "tasks": [],
-        "attendance": [],
-        "extra_tasks": [],
-        "audit_history": [],
-        "roster_stamps": {}
-    },
-    "E&E Lab": {
-        "components": [],
-        "blueprints": {},
-        "personnel": [],
-        "tasks": [],
-        "attendance": [],
-        "extra_tasks": [],
-        "audit_history": [],
-        "roster_stamps": {}
-    }
+  "Battery Lab": {
+    "components": [],
+    "blueprints": {},
+    "personnel": [
+      {
+        "id": "CT10223",
+        "name": "sathya narayan",
+        "role": "Associate",
+        "shift": "Shift A",
+        "schedule": [
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "TSK-400001",
+        "prio": "P1",
+        "bin": "STB-9702",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "Life cycle 11P BAK NMC",
+        "category": "450",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Life Cycle Test to validate the 11P pack ",
+        "background": "Life Cycle Test to validate the 11P pack ",
+        "engineer": "Raj Kumar",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Life Cycle Test ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 1000.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      },
+      {
+        "task_id": "TSK-400002",
+        "prio": "P1",
+        "bin": "STB-0924",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "Life cycle 15P LGM52V  NMC",
+        "category": "450",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Life Cycle Test to validate the 11P pack ",
+        "background": "Life Cycle Test to validate the 11P pack ",
+        "engineer": "Raj Kumar",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Life Cycle Test ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 1000.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": [],
+            "cycler": "None",
+            "neware_channel": ""
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      },
+      {
+        "task_id": "TSK-400003",
+        "prio": "P1",
+        "bin": "EL-Pre-X1-59",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "Fleet rep cycle PRE-X1",
+        "category": "EL",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Life Cycle Test to validate the 10P EL  pack ",
+        "background": "Life Cycle Test to validate the 10P EL pack ",
+        "engineer": "Yeshwanth",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift A",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Life Cycle Test ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 1000.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift A",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift A",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      },
+      {
+        "task_id": "TSK-400004",
+        "prio": "P1",
+        "bin": "EL-Gen-0-97",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "Aggressive profile ",
+        "category": "EL",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Life Cycle Test to validate the Gen-0 8P Pack ",
+        "background": "Life Cycle Test to validate the Gen-0 8P Pack ",
+        "engineer": "Yeshwanth",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Life Cycle Test ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 1000.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      },
+      {
+        "task_id": "TSK-400005",
+        "prio": "P1",
+        "bin": "DSL-6692",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "PA6 Cell holder ",
+        "category": "DIESEL",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Life Cycle Test to validate the Gen-0 8P Pack ",
+        "background": "Life Cycle Test to validate the Gen-0 8P Pack ",
+        "engineer": "Raj Kumar",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Thermal Cycling ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 836.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": [],
+            "cycler": "None",
+            "neware_channel": ""
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Z-axis 4hrs ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 4.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700004",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700005",
+            "name": "Air leak/soap Bubble ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 2.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700006",
+            "name": "Dunk Test",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 24.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700007",
+            "name": "Post Observation ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 4.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      },
+      {
+        "task_id": "TSK-400006",
+        "prio": "P1",
+        "bin": "STB-1834",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "Laser Weld pack 15P",
+        "category": "450",
+        "sprint_no": "Sprint 27.2.2",
+        "objective": "Laser Weld pack 15P",
+        "background": "Laser Weld pack 15P",
+        "engineer": "Raj Kumar",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Thermal Cycling ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 418.0,
+            "unit": "Cycles",
+            "assign_date": "2026-09-29",
+            "shift": "Shift C",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Z-axis 4hrs ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 4.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700004",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 12.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700005",
+            "name": "Air leak/soap Bubble ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 2.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700006",
+            "name": "Dunk Test",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 24.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700007",
+            "name": "Post Observation ",
+            "status": "To Do",
+            "logged": 0.0,
+            "target": 4.0,
+            "unit": "Hours",
+            "assign_date": "2026-09-29",
+            "shift": "None",
+            "incharge": "",
+            "associate": "",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "grafana": "",
+            "observations": []
+          }
+        ]
+      }
+    ],
+    "attendance": [],
+    "extra_tasks": [],
+    "audit_history": [
+      {
+        "timestamp": "2026-10-09 08:52:06",
+        "title": "Personnel Added",
+        "detail": "Registered sathya narayan (Associate) to Shift A.",
+        "user": "System"
+      },
+      {
+        "timestamp": "2026-09-29 20:25:10",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400005 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
+        "user": "Unassigned"
+      },
+      {
+        "timestamp": "2026-09-29 20:24:32",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400002 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
+        "user": "Unassigned"
+      },
+      {
+        "timestamp": "2026-09-29 17:24:22",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700007 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:24:17",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700006 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:24:11",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700005 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:24:04",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700004 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:57",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700003 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:50",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400006 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:44",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:35",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700007 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:24",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700006 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:17",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700005 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:08",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700004 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:23:00",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700003 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:51",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400004 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:46",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400005 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:38",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700003 on TSK-400004 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:33",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400004 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:27",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400004 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:21",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700003 on TSK-400002 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:10",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700003 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:22:05",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400001 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:21:59",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:21:54",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400002 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 17:21:50",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400002 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 15:45:09",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400001 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 15:45:00",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1.",
+        "user": ""
+      },
+      {
+        "timestamp": "2026-09-29 15:44:26",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400006 (STB-1834) generated with 7 steps.",
+        "user": "Raj Kumar"
+      },
+      {
+        "timestamp": "2026-09-29 15:43:37",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400005 (DSL-6692) generated with 7 steps.",
+        "user": "Raj Kumar"
+      },
+      {
+        "timestamp": "2026-09-29 15:41:30",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400004 (EL-Gen-0-97) generated with 3 steps.",
+        "user": "Yeshwanth"
+      },
+      {
+        "timestamp": "2026-09-29 15:40:53",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400003 (EL-Pre-X1-59) generated with 3 steps.",
+        "user": "Yeshwanth"
+      },
+      {
+        "timestamp": "2026-09-29 15:39:53",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400002 (STB-0924) generated with 3 steps.",
+        "user": "Raj Kumar"
+      },
+      {
+        "timestamp": "2026-09-29 15:39:07",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400001 (STB-9702) generated with 3 steps.",
+        "user": "Raj Kumar"
+      }
+    ],
+    "roster_stamps": {}
+  },
+  "Cell Lab": {
+    "components": [],
+    "blueprints": {},
+    "personnel": [],
+    "tasks": [],
+    "attendance": [],
+    "extra_tasks": [],
+    "audit_history": [],
+    "roster_stamps": {}
+  },
+  "Vibration Team": {
+    "components": [],
+    "blueprints": {},
+    "personnel": [],
+    "tasks": [],
+    "attendance": [],
+    "extra_tasks": [],
+    "audit_history": [],
+    "roster_stamps": {}
+  },
+  "E&E Lab": {
+    "components": [],
+    "blueprints": {},
+    "personnel": [],
+    "tasks": [],
+    "attendance": [],
+    "extra_tasks": [],
+    "audit_history": [],
+    "roster_stamps": {}
+  }
 }
