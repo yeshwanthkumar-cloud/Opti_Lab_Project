@@ -78,6 +78,44 @@
           "Shift A",
           "Shift A"
         ]
+      },
+      {
+        "id": "CT4128",
+        "name": "Yosvaraj",
+        "role": "Associate",
+        "shift": "Shift B",
+        "schedule": [
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B"
+        ]
       }
     ],
     "tasks": [
@@ -619,6 +657,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-09 11:44:49",
+        "title": "Personnel Added",
+        "detail": "Registered Yosvaraj (Associate) to Shift B.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-09 08:57:37",
         "title": "Personnel Added",
