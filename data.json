@@ -143,14 +143,16 @@
             "logged": 0.0,
             "target": 12.0,
             "unit": "Hours",
-            "assign_date": "2026-09-29",
-            "shift": "Shift C",
-            "incharge": "",
-            "associate": "",
+            "assign_date": "2026-10-09",
+            "shift": "Shift B",
+            "incharge": "Unassigned",
+            "associate": "sathya narayan",
             "parts_status": "Parts Available",
             "chamber": "Chamber-1",
             "grafana": "",
-            "observations": []
+            "observations": [],
+            "cycler": "None",
+            "neware_channel": ""
           },
           {
             "sub_id": "SUB-700002",
@@ -657,6 +659,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-09 11:47:14",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400001 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-09 11:44:57",
         "title": "Roster Stamped",
