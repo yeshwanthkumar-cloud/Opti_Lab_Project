@@ -2,6 +2,8 @@ import os
 import io
 import time
 import json
+import base64
+import requests
 import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from flask import Flask, render_template, jsonify, request, send_file
@@ -13,6 +15,12 @@ app = Flask(__name__)
 # Environment & Database Configuration
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
+
+# GitHub API Database Configuration
+GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "")  # Format: "your-username/your-repo-name"
+FILE_PATH = "data.json"
+
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
 
 DEFAULT_CHAMBERS = [
@@ -86,7 +94,7 @@ def get_db_connection():
     if DATABASE_URL:
         try:
             return psycopg2.connect(
-                DATABASE_URL, 
+                DATABASE_URL,
                 sslmode='require',
                 connect_timeout=10
             )
@@ -156,7 +164,36 @@ def save_data_to_file():
     except Exception as e:
         print("Local Save Error:", e)
 
-    # 2. Sync to Supabase PostgreSQL safely
+    # 2. Sync directly to GitHub Repository via API
+    if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
+        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
+        headers = {
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+        try:
+            get_res = requests.get(url, headers=headers)
+            sha = get_res.json().get("sha") if get_res.status_code == 200 else None
+
+            content_bytes = json.dumps(LAB_DATA, indent=2).encode('utf-8')
+            encoded_content = base64.b64encode(content_bytes).decode('utf-8')
+
+            payload = {
+                "message": "Automated DB Update from Web App",
+                "content": encoded_content
+            }
+            if sha:
+                payload["sha"] = sha
+
+            put_res = requests.put(url, json=payload, headers=headers)
+            if put_res.status_code in [200, 201]:
+                print("✅ Successfully saved LAB_DATA to GitHub DB.")
+            else:
+                print("GitHub Save Error:", put_res.json())
+        except Exception as e:
+            print("GitHub Sync Exception:", e)
+
+    # 3. Sync to Supabase PostgreSQL safely (Fallback / Secondary DB)
     if DATABASE_URL:
         try:
             conn = get_db_connection()
@@ -164,26 +201,23 @@ def save_data_to_file():
                 print("⚠️ DB Connection failed during save.")
                 return
             cursor = conn.cursor()
-
             memory_items = sum(
-                len(dept_data.get("tasks", [])) + 
-                len(dept_data.get("personnel", [])) + 
+                len(dept_data.get("tasks", [])) +
+                len(dept_data.get("personnel", [])) +
                 len(dept_data.get("roster_stamps", {}))
                 for dept_data in LAB_DATA.values()
             )
-
             cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
             existing_row = cursor.fetchone()
-            
+           
             if existing_row and existing_row[0]:
                 db_data = existing_row[0]
                 db_items = sum(
-                    len(dept_data.get("tasks", [])) + 
-                    len(dept_data.get("personnel", [])) + 
+                    len(dept_data.get("tasks", [])) +
+                    len(dept_data.get("personnel", [])) +
                     len(dept_data.get("roster_stamps", {}))
                     for dept_data in db_data.values()
                 )
-
                 if db_items > 0 and memory_items == 0:
                     print("🛡️ FAILSAFE BLOCKED OVERWRITE! Restoring memory from DB...")
                     for dept in DEPARTMENTS:
@@ -192,13 +226,12 @@ def save_data_to_file():
                     cursor.close()
                     conn.close()
                     return
-
             cursor.execute("""
                 INSERT INTO opti_lab_store (id, data)
                 VALUES ('master', %s)
                 ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
             """, (json.dumps(LAB_DATA),))
-            
+           
             conn.commit()
             cursor.close()
             conn.close()
@@ -208,7 +241,28 @@ def save_data_to_file():
 
 def load_data_from_file():
     global LAB_DATA
-    # 1. Load from local disk file FIRST
+    # 1. Load directly from GitHub Repository FIRST (Primary Database)
+    if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
+        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
+        headers = {
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+        try:
+            res = requests.get(url, headers=headers)
+            if res.status_code == 200:
+                file_json = res.json()
+                decoded_bytes = base64.b64decode(file_json["content"])
+                saved_data = json.loads(decoded_bytes.decode('utf-8'))
+                for dept in DEPARTMENTS:
+                    if dept in saved_data:
+                        LAB_DATA[dept] = saved_data[dept]
+                print("✅ Successfully restored data from GitHub DB.")
+                return
+        except Exception as e:
+            print("GitHub Load Error:", e)
+
+    # 2. Fallback: Load from local disk file
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r") as f:
@@ -220,7 +274,7 @@ def load_data_from_file():
         except Exception as e:
             print("Local Load Error:", e)
 
-    # 2. Sync and load from Supabase if available
+    # 3. Fallback: Sync and load from Supabase
     if DATABASE_URL:
         for attempt in range(3):
             try:
@@ -271,7 +325,6 @@ def calculate_dashboard_metrics(tasks):
     shift_completion = {"Shift A": {"completed": 0, "assigned": 0}, "Shift B": {"completed": 0, "assigned": 0}, "Shift C": {"completed": 0, "assigned": 0}}
     incharge_stats = {}
     associate_stats = {}
-
     for t in tasks:
         cat = t.get("category", "450")
         if cat not in cat_counts:
@@ -287,14 +340,12 @@ def calculate_dashboard_metrics(tasks):
             total_awaiting_res += 1
         else:
             total_awaiting_eng += 1
-
         for st in t.get("subtasks", []):
             shift = st.get("shift", "None")
             if shift in shift_completion:
                 shift_completion[shift]["assigned"] += 1
                 if st.get("status") == "Completed":
                     shift_completion[shift]["completed"] += 1
-
             inc = st.get("incharge", "Unassigned")
             if inc != "Unassigned":
                 if inc not in incharge_stats:
@@ -302,7 +353,6 @@ def calculate_dashboard_metrics(tasks):
                 incharge_stats[inc]["managed"] += 1
                 if st.get("status") == "Completed":
                     incharge_stats[inc]["completed"] += 1
-
             assoc = st.get("associate", "Unassigned")
             if assoc != "Unassigned":
                 if assoc not in associate_stats:
@@ -310,12 +360,10 @@ def calculate_dashboard_metrics(tasks):
                 associate_stats[assoc]["assigned"] += 1
                 if st.get("status") == "Completed":
                     associate_stats[assoc]["completed"] += 1
-
             if st.get("status") == "Parts Missing":
                 stoppage_breakdown["no_parts"] += 1
             elif st.get("status") == "Blocked":
                 stoppage_breakdown["chamber_down"] += 1
-
     return {
         "complete": total_complete,
         "running": total_running,
@@ -329,7 +377,6 @@ def calculate_dashboard_metrics(tasks):
     }
 
 # --- ROUTES ---
-
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -342,7 +389,6 @@ def get_lab_data(dept_name):
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
    
     twin_config = DIGITAL_TWINS.get(dept, DIGITAL_TWINS["Battery Lab"])
-
     return jsonify({
         "dept": dept,
         "components": dept_components,
@@ -634,7 +680,7 @@ def submit_5s():
     if conn:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO lab_fives_submissions 
+            INSERT INTO lab_fives_submissions
             (lab_name, shift, submitted_by, verified_by, fives_data, notes, status)
             VALUES (%s, %s, %s, %s, %s, %s, %s);
         ''', (
@@ -649,12 +695,11 @@ def submit_5s():
         conn.commit()
         cur.close()
         conn.close()
-    
+   
     dept = data.get('lab_name', 'Battery Lab')
     if dept in LAB_DATA:
         log_audit_event(dept, "5S Checksheet Submitted", f"5S log recorded for {data.get('shift')} by {data.get('submitted_by')}.")
         save_data_to_file()
-
     return jsonify({"status": "success", "message": f"5S Check Sheet for {data.get('lab_name')} ({data.get('shift')}) recorded!"})
 
 @app.route('/api/chamber-check-submit', methods=['POST'])
@@ -662,12 +707,11 @@ def submit_chamber_check():
     data = request.json or {}
     chamber_name = data.get('chamber_name', 'Chamber-1')
     dept = data.get('dept', 'Battery Lab')
-
     conn = get_db_connection()
     if conn:
         cur = conn.cursor()
         cur.execute('''
-            INSERT INTO chamber_daily_submissions 
+            INSERT INTO chamber_daily_submissions
             (chamber_name, shift, submitted_by, checks_data, notes, status)
             VALUES (%s, %s, %s, %s, %s, %s);
         ''', (
@@ -681,13 +725,12 @@ def submit_chamber_check():
         conn.commit()
         cur.close()
         conn.close()
-
     if dept in LAB_DATA:
         if "equipment_maintenance" not in LAB_DATA[dept]:
             LAB_DATA[dept]["equipment_maintenance"] = {}
         if chamber_name not in LAB_DATA[dept]["equipment_maintenance"]:
             LAB_DATA[dept]["equipment_maintenance"][chamber_name] = {}
-        
+       
         LAB_DATA[dept]["equipment_maintenance"][chamber_name]["last_check"] = {
             "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
             "submitted_by": data.get('submitted_by'),
@@ -696,7 +739,6 @@ def submit_chamber_check():
         }
         log_audit_event(dept, "Chamber Check Logged", f"Daily maintenance check completed for {chamber_name}.", data.get('submitted_by'))
         save_data_to_file()
-
     return jsonify({"status": "success", "message": f"Daily Check Sheet for {chamber_name} recorded!"})
 
 @app.route('/api/equipment', methods=['POST'])
@@ -706,15 +748,14 @@ def update_equipment():
     dept = data.get('dept', 'Battery Lab')
     pm_date = data.get('pm_date')
     calib_date = data.get('calibration_due_date')
-
     conn = get_db_connection()
     if conn:
         cur = conn.cursor()
         cur.execute('''
             INSERT INTO equipment_master (equipment_name, pm_date, calibration_due_date)
             VALUES (%s, %s, %s)
-            ON CONFLICT (equipment_name) 
-            DO UPDATE SET 
+            ON CONFLICT (equipment_name)
+            DO UPDATE SET
                 pm_date = EXCLUDED.pm_date,
                 calibration_due_date = EXCLUDED.calibration_due_date;
         ''', (
@@ -725,30 +766,27 @@ def update_equipment():
         conn.commit()
         cur.close()
         conn.close()
-
     if dept in LAB_DATA:
         if "equipment_maintenance" not in LAB_DATA[dept]:
             LAB_DATA[dept]["equipment_maintenance"] = {}
         if chamber_name not in LAB_DATA[dept]["equipment_maintenance"]:
             LAB_DATA[dept]["equipment_maintenance"][chamber_name] = {}
-        
+       
         if pm_date:
             LAB_DATA[dept]["equipment_maintenance"][chamber_name]["pm_date"] = pm_date
         if calib_date:
             LAB_DATA[dept]["equipment_maintenance"][chamber_name]["calibration_due_date"] = calib_date
-        
+       
         log_audit_event(dept, "Equipment PM/Calib Updated", f"Updated PM ({pm_date}) & Calibration ({calib_date}) dates for {chamber_name}.")
         save_data_to_file()
-
     return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {chamber_name}!"})
 
 @app.route('/api/export-excel', methods=['GET'])
 def export_excel():
     conn = get_db_connection()
     output = io.BytesIO()
-    
+   
     thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
-
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         if conn:
             df_5s = pd.read_sql_query(f"SELECT * FROM lab_fives_submissions WHERE submitted_at >= '{thirty_days_ago}' ORDER BY submitted_at DESC;", conn)
@@ -759,7 +797,7 @@ def export_excel():
             df_5s = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
             df_chamber = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
             df_equip = pd.DataFrame([{"info": "30-Day Logs stored in cloud session"}])
-            
+           
         df_chamber.to_excel(writer, sheet_name='30-Day Chamber Daily Logs', index=False)
         df_5s.to_excel(writer, sheet_name='30-Day Lab 5S Logs', index=False)
         df_equip.to_excel(writer, sheet_name='Equipment PM & Calib Dates', index=False)
