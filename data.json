@@ -658,6 +658,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-09 11:44:57",
+        "title": "Roster Stamped",
+        "detail": "Stamped Shift B for Yosvaraj on 2026-10-09.",
+        "user": "System"
+      },
+      {
         "timestamp": "2026-10-09 11:44:49",
         "title": "Personnel Added",
         "detail": "Registered Yosvaraj (Associate) to Shift B.",
@@ -881,7 +887,8 @@
       }
     ],
     "roster_stamps": {
-      "sathya narayan_2026-10-09": "Shift A"
+      "sathya narayan_2026-10-09": "Shift A",
+      "Yosvaraj_2026-10-09": "Shift B"
     }
   },
   "Cell Lab": {
