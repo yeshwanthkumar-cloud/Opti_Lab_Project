@@ -698,6 +698,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-09 11:50:31",
+        "title": "Roster Stamped",
+        "detail": "Stamped Shift C for lal krishna on 2026-10-09.",
+        "user": "System"
+      },
+      {
         "timestamp": "2026-10-09 11:50:21",
         "title": "Personnel Added",
         "detail": "Registered lal krishna (Associate) to Shift C.",
@@ -940,7 +946,8 @@
     ],
     "roster_stamps": {
       "sathya narayan_2026-10-09": "Shift A",
-      "Yosvaraj_2026-10-09": "Shift B"
+      "Yosvaraj_2026-10-09": "Shift B",
+      "lal krishna_2026-10-09": "Shift C"
     }
   },
   "Cell Lab": {
