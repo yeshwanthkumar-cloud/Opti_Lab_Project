@@ -40,6 +40,44 @@
           "Shift A",
           "Shift A"
         ]
+      },
+      {
+        "id": "CT7009",
+        "name": "Sanjay",
+        "role": "Associate",
+        "shift": "Shift A",
+        "schedule": [
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A"
+        ]
       }
     ],
     "tasks": [
@@ -581,6 +619,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-09 08:57:37",
+        "title": "Personnel Added",
+        "detail": "Registered Sanjay (Associate) to Shift A.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-09 08:52:17",
         "title": "Roster Stamped",
