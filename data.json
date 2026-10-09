@@ -736,6 +736,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-09 11:57:37",
+        "title": "Roster Stamped",
+        "detail": "Stamped Shift A for sathya narayan on 2026-10-09.",
+        "user": "System"
+      },
+      {
         "timestamp": "2026-10-09 11:56:47",
         "title": "Personnel Added",
         "detail": "Registered Riyaz (Shift Incharge) to Shift A.",
