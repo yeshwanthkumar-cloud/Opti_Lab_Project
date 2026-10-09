@@ -154,6 +154,44 @@
           "Shift C",
           "Shift C"
         ]
+      },
+      {
+        "id": "",
+        "name": "Riyaz",
+        "role": "Shift Incharge",
+        "shift": "Shift A",
+        "schedule": [
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A"
+        ]
       }
     ],
     "tasks": [
@@ -697,6 +735,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-09 11:56:47",
+        "title": "Personnel Added",
+        "detail": "Registered Riyaz (Shift Incharge) to Shift A.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-09 11:50:31",
         "title": "Roster Stamped",
