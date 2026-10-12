@@ -384,10 +384,10 @@
             "logged": 0.0,
             "target": 1000.0,
             "unit": "Cycles",
-            "assign_date": "2026-09-29",
-            "shift": "Shift C",
-            "incharge": "Unassigned",
-            "associate": "Unassigned",
+            "assign_date": "2026-10-12",
+            "shift": "Shift A",
+            "incharge": "Raja ",
+            "associate": "sathya narayan",
             "parts_status": "Parts Available",
             "chamber": "Chamber-1",
             "grafana": "",
@@ -816,10 +816,10 @@
     "extra_tasks": [],
     "audit_history": [
       {
-        "timestamp": "2026-10-12 04:39:09",
+        "timestamp": "2026-10-12 04:39:29",
         "title": "Subtask Progress Logged",
         "detail": "SUB-700002 on TSK-400002 updated (+0.0 Cycles). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
-        "user": "Unassigned"
+        "user": "sathya narayan"
       },
       {
         "timestamp": "2026-10-12 04:39:03",
