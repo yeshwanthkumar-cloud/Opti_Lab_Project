@@ -192,6 +192,44 @@
           "Shift A",
           "Shift A"
         ]
+      },
+      {
+        "id": "",
+        "name": "Raja ",
+        "role": "Shift Incharge",
+        "shift": "Shift A",
+        "schedule": [
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A",
+          "Shift A"
+        ]
       }
     ],
     "tasks": [
@@ -735,6 +773,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-12 04:14:06",
+        "title": "Personnel Added",
+        "detail": "Registered Raja  (Shift Incharge) to Shift A.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-09 11:57:37",
         "title": "Roster Stamped",
