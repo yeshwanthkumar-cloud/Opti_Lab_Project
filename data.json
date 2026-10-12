@@ -230,6 +230,44 @@
           "Shift A",
           "Shift A"
         ]
+      },
+      {
+        "id": "",
+        "name": "Praveen Kumar",
+        "role": "Shift Incharge",
+        "shift": "Shift B",
+        "schedule": [
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B",
+          "Shift B"
+        ]
       }
     ],
     "tasks": [
@@ -773,6 +811,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-12 04:14:16",
+        "title": "Personnel Added",
+        "detail": "Registered Praveen Kumar (Shift Incharge) to Shift B.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-12 04:14:06",
         "title": "Personnel Added",
