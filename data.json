@@ -1007,7 +1007,7 @@
         "objective": "TL-2 pack \n",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 0,
+        "progress": 16,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -1015,8 +1015,8 @@
           {
             "sub_id": "SUB-700001",
             "name": "Thermal cycling ",
-            "status": "To Do",
-            "logged": 0,
+            "status": "Running",
+            "logged": 32.0,
             "target": 166.0,
             "unit": "Cycles",
             "assign_date": "2026-10-12",
@@ -1024,7 +1024,7 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "Chamber-7",
             "cycler": "None",
             "neware_channel": "",
             "grafana": "",
@@ -1108,6 +1108,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-12 07:29:19",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400009 updated (+32.0 Cycles). Status: Running. Equipment: Chamber-7 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-12 04:55:09",
         "title": "Master Task Created",
