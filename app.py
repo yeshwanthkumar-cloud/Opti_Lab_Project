@@ -384,17 +384,36 @@ def index():
 @app.route("/api/lab/<dept_name>")
 def get_lab_data(dept_name):
     dept = dept_name if dept_name in LAB_DATA else "Battery Lab"
-    tasks = LAB_DATA[dept]["tasks"]
-    metrics = calculate_dashboard_metrics(tasks)
+    shift_filter = request.args.get("shift")  # Optional query parameter: e.g., ?shift=Shift%20A
+    
+    all_tasks = LAB_DATA[dept]["tasks"]
+    
+    # Filter subtasks by shift if requested so Shift A tasks do not leak into Shift B
+    if shift_filter:
+        filtered_tasks = []
+        for t in all_tasks:
+            matching_subtasks = [
+                st for st in t.get("subtasks", [])
+                if st.get("shift") == shift_filter or st.get("shift") in ["Multi-Shift", "None"]
+            ]
+            if matching_subtasks:
+                task_copy = dict(t)
+                task_copy["subtasks"] = matching_subtasks
+                filtered_tasks.append(task_copy)
+        tasks_to_return = filtered_tasks
+    else:
+        tasks_to_return = all_tasks
+
+    metrics = calculate_dashboard_metrics(all_tasks)
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
-   
     twin_config = DIGITAL_TWINS.get(dept, DIGITAL_TWINS["Battery Lab"])
+
     return jsonify({
         "dept": dept,
         "components": dept_components,
         "blueprints": LAB_DATA[dept]["blueprints"],
         "personnel": LAB_DATA[dept]["personnel"],
-        "tasks": tasks,
+        "tasks": tasks_to_return,
         "attendance": LAB_DATA[dept]["attendance"],
         "extra_tasks": LAB_DATA[dept]["extra_tasks"],
         "audit_history": LAB_DATA[dept]["audit_history"],
