@@ -558,11 +558,108 @@
             "observations": []
           }
         ]
+      },
+      {
+        "task_id": "TSK-400005",
+        "prio": "P2",
+        "bin": "BFKTBC14000208",
+        "component": "EL",
+        "trf_ref": "-",
+        "dvp_name": "PBMS (S+R2) PreX1 Lot3  DVP",
+        "category": "EL",
+        "sprint_no": "27.3.3 ",
+        "objective": "EL Pre X1 Lot 3 (modified cells to address weld bug)",
+        "background": "",
+        "engineer": "Yeshwanth",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-ageing",
+            "status": "To Do",
+            "logged": 0,
+            "target": 48.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-12",
+            "shift": "Shift A",
+            "incharge": "Raja ",
+            "associate": "sathya narayan",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Random Vibration ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 40.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-12",
+            "shift": "Shift A",
+            "incharge": "Raja ",
+            "associate": "sathya narayan",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Mechanical Shock ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 3.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-12",
+            "shift": "Shift C",
+            "incharge": "Riyaz",
+            "associate": "Yosvaraj",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700004",
+            "name": "Post Observation",
+            "status": "To Do",
+            "logged": 0,
+            "target": 1.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-12",
+            "shift": "Shift C",
+            "incharge": "Riyaz",
+            "associate": "Yosvaraj",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          }
+        ]
       }
     ],
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-12 04:51:57",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400005 (BFKTBC14000208) generated with 4 steps.",
+        "user": "Yeshwanth"
+      },
       {
         "timestamp": "2026-10-12 04:46:35",
         "title": "Component Registered",
