@@ -2,7 +2,8 @@
   "Battery Lab": {
     "components": [
       "EL",
-      "450"
+      "450",
+      "Diesel"
     ],
     "blueprints": {},
     "personnel": [
@@ -562,6 +563,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-12 04:46:35",
+        "title": "Component Registered",
+        "detail": "Added component: Diesel to Battery Lab",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-12 04:46:26",
         "title": "Component Registered",
