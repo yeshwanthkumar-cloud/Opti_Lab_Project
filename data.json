@@ -859,11 +859,11 @@
             "sub_id": "SUB-700002",
             "name": "Random Vibration ",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 40.0,
             "unit": "Hours",
-            "assign_date": "2026-10-12",
-            "shift": "None",
+            "assign_date": "2026-10-16",
+            "shift": "Shift A",
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
@@ -1187,6 +1187,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:16:13",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400007 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:15:43",
         "title": "Subtask Progress Logged",
