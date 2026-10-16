@@ -562,7 +562,7 @@
         "objective": "Life Cycle Test to validate the Gen-0 8P Pack ",
         "background": "Life Cycle Test to validate the Gen-0 8P Pack ",
         "engineer": "Yeshwanth",
-        "progress": 2,
+        "progress": 14,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -607,8 +607,8 @@
           {
             "sub_id": "SUB-700002",
             "name": "Life Cycle Test ",
-            "status": "To Do",
-            "logged": 0.0,
+            "status": "Blocked",
+            "logged": 129.0,
             "target": 1000.0,
             "unit": "Cycles",
             "assign_date": "2026-10-12",
@@ -616,10 +616,20 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "grafana": "",
-            "observations": [],
-            "cycler": "None",
+            "chamber": "Chamber-3",
+            "grafana": "N/A",
+            "observations": [
+              {
+                "date": "2026-10-16 03:23",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-3",
+                "cycler": "EA-Cycler-2",
+                "channel": "",
+                "notes": "Test is Stopped at  129 cycles & Pack send to NS Palya"
+              }
+            ],
+            "cycler": "EA-Cycler-2",
             "neware_channel": ""
           },
           {
@@ -1249,6 +1259,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:23:52",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400004 updated (+129.0 Cycles). Status: Blocked. Equipment: Chamber-3 & EA-Cycler-2 (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:22:23",
         "title": "Subtask Progress Logged",
