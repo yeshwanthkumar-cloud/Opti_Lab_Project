@@ -731,7 +731,7 @@
         "objective": "EL Pre X1 Lot 3 (modified cells to address weld bug)",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 95,
+        "progress": 147,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -740,7 +740,7 @@
             "sub_id": "SUB-700001",
             "name": "Pre-ageing",
             "status": "Completed",
-            "logged": 48.0,
+            "logged": 96.0,
             "target": 48.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -753,6 +753,15 @@
             "neware_channel": "",
             "grafana": "https://drive.google.com/drive/folders/1GrWPZ-N254LH07kROlomYursYkVVtiBE?usp=drive_link",
             "observations": [
+              {
+                "date": "2026-10-16 03:18",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-5",
+                "cycler": "None",
+                "channel": "",
+                "notes": "Passive Pack Pre Aging Completed"
+              },
               {
                 "date": "2026-10-16 03:18",
                 "associate": "sathya narayan",
@@ -1207,6 +1216,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:18:03",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400006 updated (+48.0 Hours). Status: Completed. Equipment: Chamber-5 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:18:01",
         "title": "Subtask Progress Logged",
