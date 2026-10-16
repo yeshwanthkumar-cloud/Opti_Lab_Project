@@ -731,7 +731,7 @@
         "objective": "EL Pre X1 Lot 3 (modified cells to address weld bug)",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 147,
+        "progress": 95,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -740,7 +740,7 @@
             "sub_id": "SUB-700001",
             "name": "Pre-ageing",
             "status": "Completed",
-            "logged": 96.0,
+            "logged": 48.0,
             "target": 48.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -753,15 +753,6 @@
             "neware_channel": "",
             "grafana": "https://drive.google.com/drive/folders/1GrWPZ-N254LH07kROlomYursYkVVtiBE?usp=drive_link",
             "observations": [
-              {
-                "date": "2026-10-16 03:18",
-                "associate": "sathya narayan",
-                "shift": "Shift A",
-                "chamber": "Chamber-5",
-                "cycler": "None",
-                "channel": "",
-                "notes": "Passive Pack Pre Aging Completed"
-              },
               {
                 "date": "2026-10-16 03:18",
                 "associate": "sathya narayan",
@@ -851,7 +842,7 @@
         "objective": "CBAK pre plated bouncy epoxy , lot-2 lambus +bad dimple welds and created electrolyte offset at multiple locations ",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 33,
+        "progress": 74,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -859,8 +850,8 @@
           {
             "sub_id": "SUB-700001",
             "name": "Pre-ageing",
-            "status": "To Do",
-            "logged": 0,
+            "status": "Completed",
+            "logged": 48.0,
             "target": 48.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -868,11 +859,21 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "Chamber-5",
             "cycler": "None",
             "neware_channel": "",
-            "grafana": "",
-            "observations": []
+            "grafana": "https://drive.google.com/drive/folders/1ZCGhD-IAzWDFyVcWQ2xVSvd__0NpZ6vm?usp=drive_link",
+            "observations": [
+              {
+                "date": "2026-10-16 03:18",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-5",
+                "cycler": "None",
+                "channel": "",
+                "notes": "Passive Pack Pre Aging Completed"
+              }
+            ]
           },
           {
             "sub_id": "SUB-700002",
@@ -1217,9 +1218,9 @@
     "extra_tasks": [],
     "audit_history": [
       {
-        "timestamp": "2026-10-16 03:18:03",
+        "timestamp": "2026-10-16 03:18:25",
         "title": "Subtask Progress Logged",
-        "detail": "SUB-700001 on TSK-400006 updated (+48.0 Hours). Status: Completed. Equipment: Chamber-5 & None (Ch: ).",
+        "detail": "SUB-700001 on TSK-400007 updated (+48.0 Hours). Status: Completed. Equipment: Chamber-5 & None (Ch: ).",
         "user": "sathya narayan"
       },
       {
