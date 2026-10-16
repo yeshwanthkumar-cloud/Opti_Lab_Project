@@ -287,7 +287,7 @@
         "objective": "Life Cycle Test to validate the 11P pack ",
         "background": "Life Cycle Test to validate the 11P pack ",
         "engineer": "Raj Kumar",
-        "progress": 0,
+        "progress": 1,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -295,8 +295,8 @@
           {
             "sub_id": "SUB-700001",
             "name": "Pre-Capacity",
-            "status": "To Do",
-            "logged": 0.0,
+            "status": "Completed",
+            "logged": 12.0,
             "target": 12.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -304,11 +304,21 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "grafana": "",
-            "observations": [],
-            "cycler": "None",
-            "neware_channel": ""
+            "chamber": "None",
+            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=1762917309019&to=1762961642683&var-timeinterval_in_ms=1000&var-bike=s_6659&orgId=1",
+            "observations": [
+              {
+                "date": "2026-10-16 03:09",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "None",
+                "cycler": "Neware-2",
+                "channel": "1",
+                "notes": "Pre Capacity Test is completed\nCapacity Value is 54.2009Ah"
+              }
+            ],
+            "cycler": "Neware-2",
+            "neware_channel": "1"
           },
           {
             "sub_id": "SUB-700002",
@@ -1108,6 +1118,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:09:21",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400001 updated (+12.0 Hours). Status: Completed. Equipment: None & Neware-2 (Ch: 1).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-12 07:29:19",
         "title": "Subtask Progress Logged",
