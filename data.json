@@ -1031,7 +1031,7 @@
         "objective": "only bottom epoxy\n",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 0,
+        "progress": 40,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -1039,8 +1039,8 @@
           {
             "sub_id": "SUB-700001",
             "name": "Pre-ageing",
-            "status": "To Do",
-            "logged": 0,
+            "status": "Completed",
+            "logged": 48.0,
             "target": 48.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -1048,11 +1048,21 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "Chamber-5",
             "cycler": "None",
             "neware_channel": "",
-            "grafana": "",
-            "observations": []
+            "grafana": "N/A",
+            "observations": [
+              {
+                "date": "2026-10-16 03:25",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-5",
+                "cycler": "None",
+                "channel": "",
+                "notes": "Passive Pack Pre Aging completed. Need to take observation."
+              }
+            ]
           },
           {
             "sub_id": "SUB-700002",
@@ -1259,6 +1269,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:25:32",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400008 updated (+48.0 Hours). Status: Completed. Equipment: Chamber-5 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:23:52",
         "title": "Subtask Progress Logged",
