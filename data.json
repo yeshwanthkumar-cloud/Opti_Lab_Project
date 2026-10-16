@@ -378,7 +378,7 @@
         "objective": "Life Cycle Test to validate the 11P pack ",
         "background": "Life Cycle Test to validate the 11P pack ",
         "engineer": "Raj Kumar",
-        "progress": 1,
+        "progress": 42,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -414,8 +414,8 @@
           {
             "sub_id": "SUB-700002",
             "name": "Life Cycle Test ",
-            "status": "To Do",
-            "logged": 0.0,
+            "status": "Running",
+            "logged": 424.0,
             "target": 1000.0,
             "unit": "Cycles",
             "assign_date": "2026-10-12",
@@ -423,10 +423,20 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "grafana": "",
-            "observations": [],
-            "cycler": "None",
+            "chamber": "Chamber-3",
+            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=now-6h&to=now&var-timeinterval_in_ms=1000&var-bike=s_4518&orgId=1&timezone=browser",
+            "observations": [
+              {
+                "date": "2026-10-16 03:22",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-3",
+                "cycler": "ITECH-2",
+                "channel": "",
+                "notes": "Test is running Fine. 424 cycles completed"
+              }
+            ],
+            "cycler": "ITECH-2",
             "neware_channel": ""
           },
           {
@@ -1239,6 +1249,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:22:23",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400002 updated (+424.0 Cycles). Status: Running. Equipment: Chamber-3 & ITECH-2 (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:21:32",
         "title": "Subtask Progress Logged",
