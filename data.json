@@ -1178,6 +1178,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-16 03:15:17",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
+        "user": "sathya narayan"
+      },
+      {
         "timestamp": "2026-10-16 03:15:15",
         "title": "Subtask Progress Logged",
         "detail": "SUB-700002 on TSK-400006 updated (+0.0 Hours). Status: To Do. Equipment: Chamber-1 & None (Ch: ).",
