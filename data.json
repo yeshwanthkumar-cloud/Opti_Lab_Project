@@ -620,7 +620,7 @@
         "objective": "EL Pre X1 Lot 3 (modified cells to address weld bug)",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 52,
+        "progress": 95,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -656,8 +656,8 @@
           {
             "sub_id": "SUB-700002",
             "name": "Random Vibration ",
-            "status": "To Do",
-            "logged": 0,
+            "status": "Completed",
+            "logged": 40.0,
             "target": 40.0,
             "unit": "Hours",
             "assign_date": "2026-10-12",
@@ -665,11 +665,21 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "Shaker-SDYN",
             "cycler": "None",
             "neware_channel": "",
-            "grafana": "",
-            "observations": []
+            "grafana": "https://drive.google.com/drive/folders/1k6oB1PDpMB9wJM67Iu2pTfnNDqxAZHdl?usp=drive_link",
+            "observations": [
+              {
+                "date": "2026-10-16 03:14",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Shaker-SDYN",
+                "cycler": "None",
+                "channel": "",
+                "notes": "Passive Pack Vibration  & Mechanical Shock completed"
+              }
+            ]
           },
           {
             "sub_id": "SUB-700003",
@@ -1167,6 +1177,12 @@
     "attendance": [],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-16 03:14:25",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400005 updated (+40.0 Hours). Status: Completed. Equipment: Shaker-SDYN & None (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-16 03:13:40",
         "title": "Subtask Progress Logged",
