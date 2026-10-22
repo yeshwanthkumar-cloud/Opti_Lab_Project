@@ -1274,10 +1274,24 @@
         "action": "Check In",
         "status": "Present",
         "time_in": "04:04"
+      },
+      {
+        "date": "2026-10-22",
+        "emp_name": "Yosvaraj",
+        "shift": "Shift B",
+        "action": "Check Out",
+        "status": "Present",
+        "time_in": "16:09"
       }
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-22 16:09:18",
+        "title": "Attendance Punch",
+        "detail": "Yosvaraj logged Check Out on Shift B (Present).",
+        "user": "Yosvaraj"
+      },
       {
         "timestamp": "2026-10-22 04:04:47",
         "title": "Attendance Punch",
