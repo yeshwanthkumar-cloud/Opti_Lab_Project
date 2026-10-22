@@ -378,7 +378,7 @@
         "objective": "Life Cycle Test to validate the 11P pack ",
         "background": "Life Cycle Test to validate the 11P pack ",
         "engineer": "Raj Kumar",
-        "progress": 97,
+        "progress": 151,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -414,8 +414,8 @@
           {
             "sub_id": "SUB-700002",
             "name": "Life Cycle Test ",
-            "status": "Running",
-            "logged": 982.0,
+            "status": "Completed",
+            "logged": 1540.0,
             "target": 1000.0,
             "unit": "Cycles",
             "assign_date": "2026-10-12",
@@ -434,6 +434,15 @@
                 "cycler": "ITECH-2",
                 "channel": "",
                 "notes": "Test is running Fine. 424 cycles completed"
+              },
+              {
+                "date": "2026-10-22 16:42",
+                "associate": "sathya narayan",
+                "shift": "Shift A",
+                "chamber": "Chamber-1",
+                "cycler": "EA-Cycler-1",
+                "channel": "",
+                "notes": "Test is running no abnormalities"
               }
             ],
             "cycler": "EA-Cycler-1",
@@ -1286,6 +1295,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-22 16:42:29",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400002 updated (+558.0 Cycles). Status: Running. Equipment: Chamber-1 & EA-Cycler-1 (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-22 16:11:07",
         "title": "Subtask Progress Logged",
