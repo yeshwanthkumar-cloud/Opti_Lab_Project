@@ -287,7 +287,7 @@
         "objective": "Life Cycle Test to validate the 11P pack ",
         "background": "Life Cycle Test to validate the 11P pack ",
         "engineer": "Raj Kumar",
-        "progress": 54,
+        "progress": 108,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -323,8 +323,8 @@
           {
             "sub_id": "SUB-700002",
             "name": "Life Cycle Test ",
-            "status": "Running",
-            "logged": 544.0,
+            "status": "Completed",
+            "logged": 1102.0,
             "target": 1000.0,
             "unit": "Cycles",
             "assign_date": "2026-10-12",
@@ -332,8 +332,8 @@
             "incharge": "Raja ",
             "associate": "sathya narayan",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-3",
-            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=now-6h&to=now&var-timeinterval_in_ms=1000&var-bike=s_4510&orgId=1&timezone=browser",
+            "chamber": "Chamber-1",
+            "grafana": "",
             "observations": [
               {
                 "date": "2026-10-16 03:21",
@@ -345,7 +345,7 @@
                 "notes": "Test is running Fine. 544 cycles completed"
               }
             ],
-            "cycler": "ITECH-1",
+            "cycler": "EA-Cycler-1",
             "neware_channel": ""
           },
           {
@@ -1286,6 +1286,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-22 16:09:52",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700002 on TSK-400001 updated (+558.0 Cycles). Status: Running. Equipment: Chamber-1 & EA-Cycler-1 (Ch: ).",
+        "user": "sathya narayan"
+      },
       {
         "timestamp": "2026-10-22 16:09:18",
         "title": "Attendance Punch",
