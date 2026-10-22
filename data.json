@@ -1266,9 +1266,24 @@
         ]
       }
     ],
-    "attendance": [],
+    "attendance": [
+      {
+        "date": "2026-10-22",
+        "emp_name": "lal krishna",
+        "shift": "Shift A",
+        "action": "Check In",
+        "status": "Present",
+        "time_in": "04:04"
+      }
+    ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-22 04:04:47",
+        "title": "Attendance Punch",
+        "detail": "lal krishna logged Check In on Shift A (Present).",
+        "user": "lal krishna"
+      },
       {
         "timestamp": "2026-10-16 03:25:32",
         "title": "Subtask Progress Logged",
