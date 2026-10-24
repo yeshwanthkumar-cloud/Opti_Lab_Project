@@ -1141,7 +1141,7 @@
         "objective": "\"Cell holder \nPA6 GF30 HBF\"",
         "background": "\"Cell holder \nPA6 GF30 HBF\"",
         "engineer": "Raj Kumar",
-        "progress": 126,
+        "progress": 189,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -1168,7 +1168,7 @@
             "sub_id": "SUB-700002",
             "name": "Thermal Cycling ",
             "status": "Running",
-            "logged": 1122.0,
+            "logged": 1684.0,
             "target": 836.0,
             "unit": "Cycles",
             "assign_date": "2026-10-24",
@@ -1179,8 +1179,18 @@
             "chamber": "Chamber-3",
             "cycler": "ITECH-2",
             "neware_channel": "",
-            "grafana": "",
-            "observations": []
+            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=now-12h&to=now&var-timeinterval_in_ms=1000&var-bike=s_4510&orgId=1&timezone=browser",
+            "observations": [
+              {
+                "date": "2026-10-24 17:05",
+                "associate": "Unassigned",
+                "shift": "Shift B",
+                "chamber": "Chamber-3",
+                "cycler": "ITECH-2",
+                "channel": "",
+                "notes": "Test is running Fine"
+              }
+            ]
           },
           {
             "sub_id": "SUB-700003",
@@ -1949,6 +1959,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 17:05:12",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700002 on TSK-400012: Shift=Shift B, Inc=Unassigned, Assoc=Unassigned, Chamber=Chamber-3.",
+        "user": "Unassigned"
+      },
       {
         "timestamp": "2026-10-24 17:03:16",
         "title": "Subtask Assigned / Updated",
