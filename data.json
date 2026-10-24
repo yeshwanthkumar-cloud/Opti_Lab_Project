@@ -1296,7 +1296,7 @@
         "objective": "\"Corner Case Build_1- Worst case Sealing sample\n(Seal Durabilty Sample 1)",
         "background": "\"Corner Case Build_1- Worst case Sealing sample\n(Seal Durabilty Sample 1)",
         "engineer": "Yeshwanth",
-        "progress": 19,
+        "progress": 35,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -1323,7 +1323,7 @@
             "sub_id": "SUB-700002",
             "name": "Pre-ageing ",
             "status": "Running",
-            "logged": 561.0,
+            "logged": 1000.0,
             "target": 48.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1331,11 +1331,21 @@
             "incharge": "Riyaz",
             "associate": "Yosvaraj",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "cycler": "None",
+            "chamber": "Chamber-3",
+            "cycler": "ITECH-1",
             "neware_channel": "",
-            "grafana": "",
-            "observations": []
+            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=now-12h&to=now&var-timeinterval_in_ms=1000&var-bike=s_4510&orgId=1&timezone=browser",
+            "observations": [
+              {
+                "date": "2026-10-24 17:05",
+                "associate": "Yosvaraj",
+                "shift": "Shift B",
+                "chamber": "Chamber-3",
+                "cycler": "ITECH-1",
+                "channel": "",
+                "notes": "Test is running Fine"
+              }
+            ]
           },
           {
             "sub_id": "SUB-700003",
@@ -1959,6 +1969,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 17:05:44",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700002 on TSK-400013: Shift=Shift B, Inc=Riyaz, Assoc=Yosvaraj, Chamber=Chamber-3.",
+        "user": "Yosvaraj"
+      },
       {
         "timestamp": "2026-10-24 17:05:12",
         "title": "Subtask Assigned / Updated",
