@@ -156,7 +156,7 @@ def init_db():
             print("Database initialization error:", e)
 
 def save_data_to_file():
-    # 1. ALWAYS write to local file storage FIRST
+    # 1. Write to local file cache
     try:
         with open(DATA_FILE, "w") as f:
             json.dump(LAB_DATA, f, indent=4)
@@ -384,25 +384,33 @@ def index():
 @app.route("/api/lab/<dept_name>")
 def get_lab_data(dept_name):
     dept = dept_name if dept_name in LAB_DATA else "Battery Lab"
-    shift_filter = request.args.get("shift")  # Optional query parameter: e.g., ?shift=Shift%20A
+    shift_filter = request.args.get("shift")  # e.g., "Shift A", "Shift B", "Shift C"
     
     all_tasks = LAB_DATA[dept]["tasks"]
     
-    # Filter subtasks by shift if requested so Shift A tasks do not leak into Shift B
-    if shift_filter:
-        filtered_tasks = []
-        for t in all_tasks:
-            matching_subtasks = [
-                st for st in t.get("subtasks", [])
-                if st.get("shift") == shift_filter or st.get("shift") in ["Multi-Shift", "None"]
-            ]
-            if matching_subtasks:
-                task_copy = dict(t)
-                task_copy["subtasks"] = matching_subtasks
-                filtered_tasks.append(task_copy)
-        tasks_to_return = filtered_tasks
-    else:
-        tasks_to_return = all_tasks
+    # Process tasks and rollover subtasks across shifts
+    processed_tasks = []
+    for t in all_tasks:
+        task_copy = dict(t)
+        subtask_list = []
+        for st in t.get("subtasks", []):
+            st_copy = dict(st)
+            
+            # If subtask has no shift or shift is empty/None, default it to Multi-Shift so it shows everywhere
+            if not st_copy.get("shift") or st_copy.get("shift") in ["None", ""]:
+                st_copy["shift"] = "Multi-Shift"
+                
+            # If the subtask is not yet completed, make sure it stays active across shifts
+            if shift_filter and st_copy.get("status") in ["To Do", "Running", "Blocked", "Parts Missing"]:
+                # Rollover: mark it available in the active shift view
+                if st_copy.get("shift") not in [shift_filter, "Multi-Shift"]:
+                    st_copy["rollover_from"] = st_copy.get("shift")
+                    st_copy["shift"] = shift_filter
+            
+            subtask_list.append(st_copy)
+            
+        task_copy["subtasks"] = subtask_list
+        processed_tasks.append(task_copy)
 
     metrics = calculate_dashboard_metrics(all_tasks)
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
@@ -413,7 +421,7 @@ def get_lab_data(dept_name):
         "components": dept_components,
         "blueprints": LAB_DATA[dept]["blueprints"],
         "personnel": LAB_DATA[dept]["personnel"],
-        "tasks": tasks_to_return,
+        "tasks": processed_tasks,
         "attendance": LAB_DATA[dept]["attendance"],
         "extra_tasks": LAB_DATA[dept]["extra_tasks"],
         "audit_history": LAB_DATA[dept]["audit_history"],
@@ -496,7 +504,7 @@ def create_master_task():
                 "target": float(s.get("target", 1)),
                 "unit": s.get("unit", "Hours"),
                 "assign_date": s.get("assign_date", datetime.now().strftime("%Y-%m-%d")),
-                "shift": s.get("shift", "None"),
+                "shift": s.get("shift", "Multi-Shift"),
                 "incharge": s.get("incharge", "Unassigned"),
                 "associate": s.get("associate", "Unassigned"),
                 "parts_status": "Parts Available",
@@ -544,47 +552,69 @@ def update_subtask():
             if t["task_id"] == task_id:
                 for st in t["subtasks"]:
                     if st["sub_id"] == sub_id:
-                        st["associate"] = data.get("associate", st["associate"])
-                        st["incharge"] = data.get("incharge", st["incharge"])
-                        st["shift"] = data.get("shift", st["shift"])
-                        st["assign_date"] = data.get("assign_date", st["assign_date"])
-                       
+                        st["associate"] = data.get("associate", st.get("associate", "Unassigned"))
+                        st["incharge"] = data.get("incharge", st.get("incharge", "Unassigned"))
+                        
+                        # Preserve shift safely: only update if valid non-empty string is provided
+                        req_shift = data.get("shift")
+                        if req_shift and req_shift not in ["", "None", None]:
+                            st["shift"] = req_shift
+                        elif not st.get("shift") or st.get("shift") == "None":
+                            st["shift"] = "Multi-Shift"
+                            
+                        st["assign_date"] = data.get("assign_date", st.get("assign_date", datetime.now().strftime("%Y-%m-%d")))
                         st["chamber"] = data.get("chamber", st.get("chamber", "Chamber-1"))
                         st["cycler"] = data.get("cycler", st.get("cycler", "None"))
                         st["neware_channel"] = data.get("neware_channel", st.get("neware_channel", ""))
                         st["grafana"] = data.get("grafana", st.get("grafana", ""))
                        
-                        add_p = float(data.get("add_progress", 0))
-                        st["logged"] += add_p
+                        try:
+                            add_p = float(data.get("add_progress", 0))
+                        except (ValueError, TypeError):
+                            add_p = 0.0
+                            
+                        st["logged"] = float(st.get("logged", 0)) + add_p
                        
-                        status = data.get("status", st["status"])
-                        st["status"] = status
+                        # RESPECT USER SELECTION:
+                        # Only mark 'Completed' if user explicitly picked it in dropdown OR if user didn't pick anything and target reached
+                        manual_status = data.get("status")
+                        if manual_status:
+                            st["status"] = manual_status
+                        else:
+                            target_val = float(st.get("target", 1))
+                            if target_val > 0 and st["logged"] >= target_val:
+                                st["status"] = "Completed"
+                            else:
+                                st["status"] = st.get("status", "Running")
                        
                         notes = data.get("notes", "").strip()
                         if notes:
+                            if "observations" not in st:
+                                st["observations"] = []
                             st["observations"].append({
                                 "date": datetime.now().strftime("%Y-%m-%d %H:%M"),
-                                "associate": st["associate"],
-                                "shift": st["shift"],
-                                "chamber": st["chamber"],
-                                "cycler": st["cycler"],
-                                "channel": st["neware_channel"],
+                                "associate": st.get("associate"),
+                                "shift": st.get("shift"),
+                                "chamber": st.get("chamber"),
+                                "cycler": st.get("cycler"),
+                                "channel": st.get("neware_channel"),
                                 "notes": notes
                             })
                            
-                        if st["logged"] >= st["target"]:
-                            st["status"] = "Completed"
-                           
-                        total_target = sum(s["target"] for s in t["subtasks"])
-                        total_logged = sum(s["logged"] for s in t["subtasks"])
+                        total_target = sum(float(s.get("target", 1)) for s in t["subtasks"])
+                        total_logged = sum(float(s.get("logged", 0)) for s in t["subtasks"])
                         t["progress"] = int((total_logged / total_target) * 100) if total_target > 0 else 0
-                        if all(s["status"] == "Completed" for s in t["subtasks"]):
+                        
+                        # Master task status updates based on subtask statuses
+                        if all(s.get("status") == "Completed" for s in t["subtasks"]):
                             t["status"] = "Completed"
+                        elif any(s.get("status") in ["Running", "Blocked", "Parts Missing"] for s in t["subtasks"]):
+                            t["status"] = "Running"
                            
-                        log_audit_event(dept, "Subtask Progress Logged", f"{sub_id} on {t['task_id']} updated (+{add_p} {st['unit']}). Status: {status}. Equipment: {st['chamber']} & {st['cycler']} (Ch: {st['neware_channel']}).", st["associate"])
+                        log_audit_event(dept, "Subtask Progress Logged", f"{sub_id} on {t['task_id']} updated (+{add_p} {st.get('unit', 'Hours')}). Status: {st['status']}.", st.get("associate", "System"))
                         save_data_to_file()
                         return jsonify({"success": True, "subtask": st, "task_progress": t["progress"]})
-    return jsonify({"success": False}), 400
+    return jsonify({"success": False, "message": "Task or subtask not found"}), 400
 
 @app.route("/api/personnel/add", methods=["POST"])
 def add_personnel():
