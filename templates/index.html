@@ -626,6 +626,7 @@
           <textarea id="edit-objective" rows="2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea>
         </div>
 
+        <!-- Editable Subtask Steps Deck -->
         <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; margin-top: 6px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <span style="font-size: 11px; font-weight: 900; color: #7c3aed;">SUBTASK STEPS:</span>
@@ -996,7 +997,10 @@
             <td colspan="11" style="padding: 0 8px;">
               <div class="subtask-container">
                 ${(t.subtasks || []).map((st) => {
-                  const currentShift = st.shift || "None";
+                  const currentShift = (st.shift || "None").trim();
+                  const currentInc = (st.incharge || "Unassigned").trim();
+                  const currentAssoc = (st.associate || "Unassigned").trim();
+
                   return `
                   <div class="subtask-row" data-task-id="${t.task_id}" data-sub-id="${st.sub_id}">
                     <div style="display:flex; gap:6px; align-items:center; overflow:hidden;">
@@ -1018,13 +1022,13 @@
                     <div style="font-size:10px; font-weight:800;">INC: 
                       <select class="row-assign-inc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name}" ${st.incharge===i.name?'selected':''}>${i.name}</option>`).join('')}
+                        ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name.trim()}" ${currentInc===i.name.trim()?'selected':''}>${i.name}</option>`).join('')}
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">ASSOC: 
                       <select class="row-assign-assoc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${(labStore.personnel || []).map(a=>`<option value="${a.name}" ${st.associate===a.name?'selected':''}>${a.name}</option>`).join('')}
+                        ${(labStore.personnel || []).map(a=>`<option value="${a.name.trim()}" ${currentAssoc===a.name.trim()?'selected':''}>${a.name}</option>`).join('')}
                       </select>
                     </div>
                     <button type="button" onclick="saveInlineStepAssignmentDirect(this)" class="btn-assign-step">ASSIGN ➔</button>
@@ -1083,7 +1087,6 @@
         if (labStore.tasks) {
           labStore.tasks.forEach(t => {
             (t.subtasks || []).forEach(st => {
-              // ONLY COUNT IF EXPLICITLY ASSIGNED TO THIS CHAMBER
               if (st.chamber === item.id && st.chamber !== 'None' && (st.status === 'Running' || st.status === 'In Progress')) {
                 activeCount++;
               }
@@ -1118,7 +1121,6 @@
         if (labStore.tasks) {
           labStore.tasks.forEach(t => {
             (t.subtasks || []).forEach(st => {
-              // ONLY COUNT IF EXPLICITLY ASSIGNED TO THIS CYCLER
               if (st.cycler === item.id && st.cycler !== 'None' && (st.status === 'Running' || st.status === 'In Progress')) {
                 activeCount++;
               }
@@ -1163,7 +1165,6 @@
       if (labStore.tasks) {
         labStore.tasks.forEach(t => {
           (t.subtasks || []).forEach(st => {
-            // STRICT FILTER: Subtask chamber/cycler must explicitly match and NOT be 'None'
             const chamberMatch = (st.chamber === nodeId && st.chamber !== 'None');
             const cyclerMatch = (st.cycler === nodeId && st.cycler !== 'None');
 
@@ -1441,10 +1442,10 @@
 
       const taskId = row.getAttribute('data-task-id');
       const subId = row.getAttribute('data-sub-id');
-      const assignDate = row.querySelector('.row-assign-date').value;
-      const shift = row.querySelector('.row-assign-shift').value;
-      const incharge = row.querySelector('.row-assign-inc').value;
-      const associate = row.querySelector('.row-assign-assoc').value;
+      const assignDate = row.querySelector('.row-assign-date').value.trim();
+      const shift = row.querySelector('.row-assign-shift').value.trim();
+      const incharge = row.querySelector('.row-assign-inc').value.trim();
+      const associate = row.querySelector('.row-assign-assoc').value.trim();
 
       btn.innerText = "SAVING...";
       btn.disabled = true;
@@ -1467,10 +1468,29 @@
 
         const data = await res.json();
         if (data.success) {
+          // Immediately update local store in memory so re-render NEVER resets it
+          if (labStore.tasks) {
+            const task = labStore.tasks.find(t => t.task_id === taskId);
+            if (task && task.subtasks) {
+              const st = task.subtasks.find(s => s.sub_id === subId);
+              if (st) {
+                st.assign_date = assignDate;
+                st.shift = shift;
+                st.incharge = incharge;
+                st.associate = associate;
+              }
+            }
+          }
+
           btn.innerText = "SAVED ✓";
-          setTimeout(async () => {
-            await fetchLabData();
-          }, 300);
+          btn.style.background = "#16a34a";
+          
+          setTimeout(() => {
+            btn.innerText = "ASSIGN ➔";
+            btn.style.background = "#2563eb";
+            btn.disabled = false;
+          }, 1500);
+
         } else {
           alert("❌ " + (data.message || "Failed to assign subtask"));
           btn.innerText = "ASSIGN ➔";

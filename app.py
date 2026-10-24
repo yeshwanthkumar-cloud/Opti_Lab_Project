@@ -399,7 +399,6 @@ def create_master_task():
                 "incharge": s.get("incharge", "Unassigned"),
                 "associate": s.get("associate", "Unassigned"),
                 "parts_status": "Parts Available",
-                # DEFAULT IS 'None' SO IT DOES NOT GO TO CHAMBER-1 AUTOMATICALLY
                 "chamber": "None",
                 "cycler": "None",
                 "neware_channel": "",
@@ -521,13 +520,13 @@ def update_subtask():
                 for st in t["subtasks"]:
                     if st["sub_id"] == sub_id:
                         if "associate" in data:
-                            st["associate"] = data.get("associate") or "Unassigned"
+                            st["associate"] = str(data.get("associate") or "Unassigned").strip()
                         if "incharge" in data:
-                            st["incharge"] = data.get("incharge") or "Unassigned"
+                            st["incharge"] = str(data.get("incharge") or "Unassigned").strip()
                         if "shift" in data:
-                            st["shift"] = data.get("shift") or "None"
+                            st["shift"] = str(data.get("shift") or "None").strip()
                         if "assign_date" in data:
-                            st["assign_date"] = data.get("assign_date") or datetime.now().strftime("%Y-%m-%d")
+                            st["assign_date"] = str(data.get("assign_date") or datetime.now().strftime("%Y-%m-%d")).strip()
 
                         if "chamber" in data:
                             st["chamber"] = data.get("chamber") or "None"
