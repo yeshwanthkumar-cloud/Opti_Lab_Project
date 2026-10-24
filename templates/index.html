@@ -588,6 +588,51 @@
     </div>
   </div>
 
+  <!-- MODAL: EDIT MASTER TASK -->
+  <div id="modal-edit-task" class="modal-overlay">
+    <div class="modal-card">
+      <button onclick="closeModal('modal-edit-task')" class="modal-close-icon">&times;</button>
+      <div class="card-header" id="m-edit-title">Edit Task Details</div>
+      <input type="hidden" id="edit-task-id">
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+          <div><label>BIN / PACK BARCODE</label><input type="text" id="edit-bin" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+          <div><label>DVP NAME</label><input type="text" id="edit-dvp-name" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+          <div>
+            <label>COMPONENT</label>
+            <select id="edit-component-select" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></select>
+          </div>
+          <div>
+            <label>CATEGORY</label>
+            <select id="edit-category" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;">
+              <option value="450">450</option>
+              <option value="DIESEL">DIESEL</option>
+              <option value="EL">EL</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+          <div><label>PRIORITY</label><select id="edit-prio" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"><option value="P1">P1</option><option value="P2">P2</option></select></div>
+          <div><label>LEAD ENGINEER</label><input type="text" id="edit-engineer" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+          <div><label>SPRINT NO.</label><input type="text" id="edit-sprint" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
+        </div>
+        <div style="margin-top: 8px; font-size: 11px; font-weight: 800;">
+          <label>TEST OBJECTIVE</label>
+          <textarea id="edit-objective" rows="2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px;">
+        <button onclick="closeModal('modal-edit-task')" style="padding: 8px 16px; border-radius: 6px; border: none; font-weight: 800; cursor: pointer;">Cancel</button>
+        <button onclick="submitEditTask()" class="btn-primary">Save Changes ➔</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: PROGRESS LOG -->
   <div id="modal-log-progress" class="modal-overlay">
     <div class="modal-card" style="max-width: 520px;">
@@ -668,13 +713,12 @@
     </div>
   </div>
 
-  <!-- MODAL: LAB VIEW TELEMETRY, MOUNTED PACKS & CHAMBER CHECKSHEET INSPECTOR -->
+  <!-- MODAL: INSPECTOR -->
   <div id="inspector-modal" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('inspector-modal')" class="modal-close-icon">&times;</button>
       <div class="card-header" id="modal-node-title" style="border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">Equipment Inspector</div>
       
-      <!-- PM & Calibration Form -->
       <div style="background: #fffbf7; border: 1px solid #fed7aa; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
         <div style="font-size: 11px; font-weight: 900; color: #c2410c; margin-bottom: 4px;">PM & CALIBRATION DUE DATES</div>
         <div id="modal-due-status" style="font-size: 11px; font-weight: 800; margin-bottom: 6px;"></div>
@@ -694,7 +738,6 @@
         </div>
       </div>
 
-      <!-- Chamber Daily Checklist Embedded Inside Chamber Modal -->
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <div style="font-size: 11px; font-weight: 900; color: #2563eb;">DAILY CHAMBER MAINTENANCE CHECKSHEET</div>
@@ -715,7 +758,6 @@
         </button>
       </div>
 
-      <!-- Mounted Battery Packs & Grafana Telemetry Section -->
       <div id="modal-packs-content"></div>
     </div>
   </div>
@@ -764,11 +806,6 @@
     let selectedChamberId = "";
 
     document.getElementById('stamp-date').value = new Date().toISOString().split('T')[0];
-
-    // Helper to sanitize task IDs for safe HTML element selectors
-    function sanitizeId(id) {
-      return String(id || '').replace(/[^a-zA-Z0-9_-]/g, '_');
-    }
 
     async function fetchLabData() {
       try {
@@ -882,6 +919,15 @@
       renderWorkbench();
     }
 
+    function toggleSubtasksDirect(btn) {
+      const parentRow = btn.closest('tr');
+      if (!parentRow) return;
+      const drawerRow = parentRow.nextElementSibling;
+      if (drawerRow) {
+        drawerRow.classList.toggle('hidden');
+      }
+    }
+
     function renderDashboardTable() {
       const body = document.getElementById('dash-task-table-body');
       if (!body) return;
@@ -906,9 +952,8 @@
         return;
       }
 
-      filtered.forEach(t => {
+      filtered.forEach((t, idx) => {
         const stepCount = t.subtasks ? t.subtasks.length : 0;
-        const sId = sanitizeId(t.task_id);
         
         body.innerHTML += `
           <tr>
@@ -919,7 +964,7 @@
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
                 <b>${t.dvp_name}</b>
-                <button type="button" onclick="toggleSubtasks('${sId}')" class="btn-step-toggle">+ (${stepCount} Steps)</button>
+                <button type="button" onclick="toggleSubtasksDirect(this)" class="btn-step-toggle">+ (${stepCount} Steps)</button>
               </div>
             </td>
             <td style="max-width:240px;">
@@ -932,17 +977,17 @@
             <td style="color:#2563eb; font-weight:800;">${t.shift || 'Multi-Shift'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
+                <button onclick="openEditTaskModal('${t.task_id}')" class="btn-eye-obs" style="background:#fef3c7; color:#b45309; border-color:#fde047;" title="Edit Task Details">✏️</button>
                 <button onclick="openObservationsInspector('${t.task_id}')" class="btn-eye-obs" title="View Observations">👁️</button>
                 <button onclick="deleteSingleTask('${t.task_id}')" class="btn-delete-task" title="Delete Task">🗑️</button>
               </div>
             </td>
           </tr>
-          <tr id="sub-row-${sId}" class="hidden">
+          <tr class="hidden">
             <td colspan="11" style="padding: 0 8px;">
               <div class="subtask-container">
-                ${(t.subtasks || []).map(st => {
+                ${(t.subtasks || []).map((st, subIdx) => {
                   const currentShift = st.shift || "None";
-                  const subCleanId = sanitizeId(st.sub_id);
                   return `
                   <div class="subtask-row">
                     <div style="display:flex; gap:6px; align-items:center; overflow:hidden;">
@@ -951,9 +996,9 @@
                     </div>
                     <div><span class="badge-status ${st.status==='Completed'?'green':'yellow'}">${st.status}</span></div>
                     <div><span style="background:#f3e8ff; color:#7c3aed; padding:2px 6px; border-radius:4px; font-weight:900; font-size:10px;">${st.logged}/${st.target}${st.unit}</span></div>
-                    <div style="font-size:10px; font-weight:800;">DATE: <input type="date" id="inline-date-${sId}-${subCleanId}" value="${st.assign_date || ''}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;"></div>
+                    <div style="font-size:10px; font-weight:800;">DATE: <input type="date" id="inline-date-${idx}-${subIdx}" value="${st.assign_date || ''}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;"></div>
                     <div style="font-size:10px; font-weight:800;">SHIFT: 
-                      <select id="inline-shift-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;">
+                      <select id="inline-shift-${idx}-${subIdx}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;">
                         <option value="None" ${currentShift==='None'?'selected':''}>None</option>
                         <option value="Shift A" ${currentShift==='Shift A'?'selected':''}>Shift A</option>
                         <option value="Shift B" ${currentShift==='Shift B'?'selected':''}>Shift B</option>
@@ -962,18 +1007,18 @@
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">INC: 
-                      <select id="inline-inc-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
+                      <select id="inline-inc-${idx}-${subIdx}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
                         ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name}" ${st.incharge===i.name?'selected':''}>${i.name}</option>`).join('')}
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">ASSOC: 
-                      <select id="inline-assoc-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
+                      <select id="inline-assoc-${idx}-${subIdx}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
                         ${(labStore.personnel || []).map(a=>`<option value="${a.name}" ${st.associate===a.name?'selected':''}>${a.name}</option>`).join('')}
                       </select>
                     </div>
-                    <button onclick="saveInlineStepAssignment('${t.task_id}','${st.sub_id}')" class="btn-assign-step">ASSIGN ➔</button>
+                    <button onclick="saveInlineStepAssignmentDirect('${t.task_id}', '${st.sub_id}', ${idx}, ${subIdx})" class="btn-assign-step">ASSIGN ➔</button>
                     <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${escape(st.name)}', '${st.shift || ''}')" class="btn-log-step" title="Log Progress & Telemetry">📝 Log</button>
                   </div>
                 `}).join('')}
@@ -1264,13 +1309,60 @@
       }
     }
 
-    async function saveInlineStepAssignment(taskId, subId) {
-      const sId = sanitizeId(taskId);
-      const subCleanId = sanitizeId(subId);
-      const assignDate = document.getElementById(`inline-date-${sId}-${subCleanId}`).value;
-      const shift = document.getElementById(`inline-shift-${sId}-${subCleanId}`).value;
-      const incharge = document.getElementById(`inline-inc-${sId}-${subCleanId}`).value;
-      const associate = document.getElementById(`inline-assoc-${sId}-${subCleanId}`).value;
+    function openEditTaskModal(taskId) {
+      const task = (labStore.tasks || []).find(t => t.task_id === taskId);
+      if (!task) return;
+
+      document.getElementById('edit-task-id').value = task.task_id;
+      document.getElementById('m-edit-title').innerText = `Edit ${task.task_id} (${task.bin})`;
+      document.getElementById('edit-bin').value = task.bin || '';
+      document.getElementById('edit-dvp-name').value = task.dvp_name || '';
+      document.getElementById('edit-category').value = task.category || '450';
+      document.getElementById('edit-prio').value = task.prio || 'P1';
+      document.getElementById('edit-engineer').value = task.engineer || '';
+      document.getElementById('edit-sprint').value = task.sprint_no || '';
+      document.getElementById('edit-objective').value = task.objective || '';
+
+      const compSelect = document.getElementById('edit-component-select');
+      compSelect.innerHTML = '';
+      const comps = Array.from(new Set(labStore.components || ['General Hardware']));
+      comps.forEach(c => {
+        compSelect.innerHTML += `<option value="${c}" ${task.component === c ? 'selected' : ''}>${c}</option>`;
+      });
+
+      openModal('modal-edit-task');
+    }
+
+    async function submitEditTask() {
+      const taskId = document.getElementById('edit-task-id').value;
+      const payload = {
+        dept: activeLab,
+        task_id: taskId,
+        bin: document.getElementById('edit-bin').value,
+        dvp_name: document.getElementById('edit-dvp-name').value,
+        component: document.getElementById('edit-component-select').value,
+        category: document.getElementById('edit-category').value,
+        prio: document.getElementById('edit-prio').value,
+        engineer: document.getElementById('edit-engineer').value,
+        sprint_no: document.getElementById('edit-sprint').value,
+        objective: document.getElementById('edit-objective').value
+      };
+
+      await fetch('/api/tasks/edit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      closeModal('modal-edit-task');
+      await fetchLabData();
+    }
+
+    async function saveInlineStepAssignmentDirect(taskId, subId, rowIdx, subIdx) {
+      const assignDate = document.getElementById(`inline-date-${rowIdx}-${subIdx}`).value;
+      const shift = document.getElementById(`inline-shift-${rowIdx}-${subIdx}`).value;
+      const incharge = document.getElementById(`inline-inc-${rowIdx}-${subIdx}`).value;
+      const associate = document.getElementById(`inline-assoc-${rowIdx}-${subIdx}`).value;
       
       await fetch('/api/subtasks/update', {
         method: 'POST',
@@ -1287,13 +1379,6 @@
         })
       });
       await fetchLabData();
-    }
-
-    function toggleSubtasks(sId) {
-      const drawer = document.getElementById(`sub-row-${sId}`);
-      if (drawer) {
-        drawer.classList.toggle('hidden');
-      }
     }
 
     function openObservationsInspector(taskId) {
@@ -1558,7 +1643,6 @@
             const isAssigned = (st.shift === activeShift || st.shift === "Multi-Shift");
             const isRollover = (st.status === 'Running' || st.status === 'In Progress' || st.status === 'Blocked' || st.status === 'Parts Missing') && (st.shift && st.shift !== 'None');
 
-            // Render subtask if directly assigned to this shift or rolling over from earlier shift
             if (isAssigned || isRollover) {
               const card = `
                 <div class="kanban-card">

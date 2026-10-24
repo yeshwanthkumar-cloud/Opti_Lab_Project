@@ -323,11 +323,11 @@ def index():
 @app.route("/api/lab/<dept_name>")
 def get_lab_data(dept_name):
     dept = dept_name if dept_name in LAB_DATA else "Battery Lab"
-    shift_filter = request.args.get("shift")  # e.g., 'Shift A', 'Shift B', 'Shift C'
+    shift_filter = request.args.get("shift")
     
     all_tasks = LAB_DATA[dept]["tasks"]
-    
     processed_tasks = []
+    
     for t in all_tasks:
         task_copy = dict(t)
         subtask_list = []
@@ -336,20 +336,15 @@ def get_lab_data(dept_name):
             shift_val = st_copy.get("shift", "None")
             status_val = st_copy.get("status", "To Do")
 
-            # Shift Workbench Filtering:
             if shift_filter:
-                # 1. 'None' unassigned subtasks never show on any shift board
                 if shift_val in ["None", "", None]:
                     continue
-                # 2. Directly assigned to this shift or Multi-Shift
                 if shift_val == shift_filter or shift_val == "Multi-Shift":
                     subtask_list.append(st_copy)
-                # 3. Rollover: if unfinished from an earlier shift, carry it over to current shift
-                elif status_val in ["Running", "Blocked", "Parts Missing"]:
+                elif status_val in ["Running", "Blocked", "Parts Missing", "In Progress"]:
                     st_copy["rollover_from"] = shift_val
                     subtask_list.append(st_copy)
             else:
-                # Task Planner & Flows table: show all subtasks
                 subtask_list.append(st_copy)
 
         if not shift_filter or len(subtask_list) > 0:
@@ -374,62 +369,27 @@ def get_lab_data(dept_name):
         "twin": twin_config
     })
 
-@app.route("/api/tasks/delete", methods=["POST"])
-def delete_single_task():
-    data = request.json or {}
-    dept = data.get("dept", "Battery Lab")
-    task_id = data.get("task_id")
-   
-    if dept in LAB_DATA and task_id:
-        original_count = len(LAB_DATA[dept]["tasks"])
-        LAB_DATA[dept]["tasks"] = [t for t in LAB_DATA[dept]["tasks"] if t["task_id"] != task_id]
-       
-        if len(LAB_DATA[dept]["tasks"]) < original_count:
-            log_audit_event(dept, "Task Deleted", f"Permanently removed task {task_id}.")
-            save_data_to_file()
-            return jsonify({"success": True})
-           
-    return jsonify({"success": False, "message": "Task not found"}), 400
-
-@app.route("/api/blueprints/save", methods=["POST"])
-def save_blueprint():
-    data = request.json or {}
-    dept = data.get("dept", "Battery Lab")
-    name = data.get("name")
-    steps = data.get("steps", [])
-    if dept in LAB_DATA and name and steps:
-        LAB_DATA[dept]["blueprints"][name] = steps
-        log_audit_event(dept, "Flow Blueprint Saved", f"Saved reusable test flow: {name} with {len(steps)} steps.")
-        save_data_to_file()
-        return jsonify({"success": True})
-    return jsonify({"success": False}), 400
-
-@app.route("/api/components/add", methods=["POST"])
-def add_component():
-    data = request.json or {}
-    dept = data.get("dept", "Battery Lab")
-    name = data.get("name")
-    if dept in LAB_DATA and name:
-        if name not in LAB_DATA[dept]["components"]:
-            LAB_DATA[dept]["components"].append(name)
-            log_audit_event(dept, "Component Registered", f"Added component: {name} to {dept}")
-            save_data_to_file()
-            return jsonify({"success": True})
-    return jsonify({"success": False}), 400
-
 @app.route("/api/tasks/create", methods=["POST"])
 def create_master_task():
     data = request.json or {}
     dept = data.get("dept", "Battery Lab")
    
     if dept in LAB_DATA:
-        task_id = f"TSK-{len(LAB_DATA[dept]['tasks']) + 400001}"
+        # Guaranteed non-colliding task ID generation
+        existing_ids = []
+        for t in LAB_DATA[dept]["tasks"]:
+            try:
+                existing_ids.append(int(str(t["task_id"]).replace("TSK-", "")))
+            except (ValueError, TypeError):
+                pass
+        next_id_num = max(existing_ids, default=400000) + 1
+        task_id = f"TSK-{next_id_num}"
+
         steps = data.get("steps", [])
-       
         subtasks = []
         for idx, s in enumerate(steps):
             subtasks.append({
-                "sub_id": f"SUB-{idx+700001}",
+                "sub_id": f"SUB-{int(time.time() * 1000) % 1000000 + idx}",
                 "name": s.get("name", f"Step {idx+1}"),
                 "status": "To Do",
                 "logged": 0,
@@ -472,6 +432,47 @@ def create_master_task():
         return jsonify({"success": True, "task": new_task})
     return jsonify({"success": False}), 400
 
+@app.route("/api/tasks/edit", methods=["POST"])
+def edit_master_task():
+    data = request.json or {}
+    dept = data.get("dept", "Battery Lab")
+    task_id = data.get("task_id")
+    
+    if dept in LAB_DATA and task_id:
+        for t in LAB_DATA[dept]["tasks"]:
+            if t["task_id"] == task_id:
+                t["bin"] = data.get("bin", t.get("bin", ""))
+                t["dvp_name"] = data.get("dvp_name", t.get("dvp_name", ""))
+                t["component"] = data.get("component", t.get("component", "General Hardware"))
+                t["category"] = data.get("category", t.get("category", "450"))
+                t["prio"] = data.get("prio", t.get("prio", "P1"))
+                t["objective"] = data.get("objective", t.get("objective", ""))
+                t["engineer"] = data.get("engineer", t.get("engineer", ""))
+                t["sprint_no"] = data.get("sprint_no", t.get("sprint_no", ""))
+                
+                log_audit_event(dept, "Master Task Edited", f"Task {task_id} details updated.", t.get("engineer", "System"))
+                save_data_to_file()
+                return jsonify({"success": True, "task": t})
+                
+    return jsonify({"success": False, "message": "Task not found"}), 400
+
+@app.route("/api/tasks/delete", methods=["POST"])
+def delete_single_task():
+    data = request.json or {}
+    dept = data.get("dept", "Battery Lab")
+    task_id = data.get("task_id")
+   
+    if dept in LAB_DATA and task_id:
+        original_count = len(LAB_DATA[dept]["tasks"])
+        LAB_DATA[dept]["tasks"] = [t for t in LAB_DATA[dept]["tasks"] if t["task_id"] != task_id]
+       
+        if len(LAB_DATA[dept]["tasks"]) < original_count:
+            log_audit_event(dept, "Task Deleted", f"Permanently removed task {task_id}.")
+            save_data_to_file()
+            return jsonify({"success": True})
+           
+    return jsonify({"success": False, "message": "Task not found"}), 400
+
 @app.route("/api/subtasks/update", methods=["POST"])
 def update_subtask():
     data = request.json or {}
@@ -487,7 +488,6 @@ def update_subtask():
                         st["associate"] = data.get("associate", st.get("associate", "Unassigned"))
                         st["incharge"] = data.get("incharge", st.get("incharge", "Unassigned"))
                         
-                        # Preserve existing shift safely if none sent
                         req_shift = data.get("shift")
                         if req_shift:
                             st["shift"] = req_shift
@@ -505,7 +505,6 @@ def update_subtask():
                             
                         st["logged"] = float(st.get("logged", 0)) + add_p
                        
-                        # Respect manual dropdown status
                         manual_status = data.get("status")
                         if manual_status:
                             st["status"] = manual_status
@@ -539,6 +538,32 @@ def update_subtask():
                         save_data_to_file()
                         return jsonify({"success": True, "subtask": st, "task_progress": t["progress"]})
     return jsonify({"success": False, "message": "Task or subtask not found"}), 400
+
+@app.route("/api/blueprints/save", methods=["POST"])
+def save_blueprint():
+    data = request.json or {}
+    dept = data.get("dept", "Battery Lab")
+    name = data.get("name")
+    steps = data.get("steps", [])
+    if dept in LAB_DATA and name and steps:
+        LAB_DATA[dept]["blueprints"][name] = steps
+        log_audit_event(dept, "Flow Blueprint Saved", f"Saved reusable test flow: {name} with {len(steps)} steps.")
+        save_data_to_file()
+        return jsonify({"success": True})
+    return jsonify({"success": False}), 400
+
+@app.route("/api/components/add", methods=["POST"])
+def add_component():
+    data = request.json or {}
+    dept = data.get("dept", "Battery Lab")
+    name = data.get("name")
+    if dept in LAB_DATA and name:
+        if name not in LAB_DATA[dept]["components"]:
+            LAB_DATA[dept]["components"].append(name)
+            log_audit_event(dept, "Component Registered", f"Added component: {name} to {dept}")
+            save_data_to_file()
+            return jsonify({"success": True})
+    return jsonify({"success": False}), 400
 
 @app.route("/api/personnel/add", methods=["POST"])
 def add_personnel():
