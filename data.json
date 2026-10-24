@@ -1950,6 +1950,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-24 10:08:57",
+        "title": "Subtask Progress Logged",
+        "detail": "SUB-700001 on TSK-400009 updated (+0.0 Hours). Status: To Do.",
+        "user": "Yosvaraj"
+      },
+      {
         "timestamp": "2026-10-24 10:08:27",
         "title": "Subtask Progress Logged",
         "detail": "SUB-700001 on TSK-400009 updated (+0.0 Hours). Status: To Do.",
