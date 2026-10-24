@@ -18,7 +18,7 @@ DATA_FILE = "data.json"
 
 # GitHub API Database Configuration
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO = os.environ.get("GITHUB_REPO", "")  # Format: "your-username/your-repo-name"
+GITHUB_REPO = os.environ.get("GITHUB_REPO", "")
 FILE_PATH = "data.json"
 
 DEPARTMENTS = ["Battery Lab", "Cell Lab", "Vibration Team", "E&E Lab"]
@@ -156,7 +156,6 @@ def init_db():
             print("Database initialization error:", e)
 
 def save_data_to_file():
-    # 1. Local disk write
     try:
         with open(DATA_FILE, "w") as f:
             json.dump(LAB_DATA, f, indent=4)
@@ -164,7 +163,6 @@ def save_data_to_file():
     except Exception as e:
         print("Local Save Error:", e)
 
-    # 2. Direct GitHub API Sync
     if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
         url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
         headers = {
@@ -193,7 +191,6 @@ def save_data_to_file():
         except Exception as e:
             print("GitHub Sync Exception:", e)
 
-    # 3. Supabase Dual-Sync Failsafe
     if DATABASE_URL:
         try:
             conn = get_db_connection()
@@ -378,7 +375,6 @@ def create_master_task():
     dept = data.get("dept", "Battery Lab")
    
     if dept in LAB_DATA:
-        # Non-colliding incremental Task ID generation
         existing_ids = []
         for t in LAB_DATA[dept]["tasks"]:
             try:
@@ -403,7 +399,8 @@ def create_master_task():
                 "incharge": s.get("incharge", "Unassigned"),
                 "associate": s.get("associate", "Unassigned"),
                 "parts_status": "Parts Available",
-                "chamber": "Chamber-1",
+                # DEFAULT IS 'None' SO IT DOES NOT GO TO CHAMBER-1 AUTOMATICALLY
+                "chamber": "None",
                 "cycler": "None",
                 "neware_channel": "",
                 "grafana": "",
@@ -445,7 +442,6 @@ def edit_master_task():
     if dept in LAB_DATA and task_id:
         for t in LAB_DATA[dept]["tasks"]:
             if t["task_id"] == task_id:
-                # Update Task ID if custom ID was provided and does not duplicate another task
                 if new_task_id and new_task_id != task_id:
                     if any(existing["task_id"] == new_task_id for existing in LAB_DATA[dept]["tasks"]):
                         return jsonify({"success": False, "message": "That Task ID already exists"}), 400
@@ -460,7 +456,6 @@ def edit_master_task():
                 t["engineer"] = data.get("engineer", t.get("engineer", ""))
                 t["sprint_no"] = data.get("sprint_no", t.get("sprint_no", ""))
                 
-                # Update subtask steps array if edited
                 incoming_steps = data.get("steps")
                 if incoming_steps is not None:
                     updated_subtasks = []
@@ -478,7 +473,7 @@ def edit_master_task():
                             "incharge": s.get("incharge", "Unassigned"),
                             "associate": s.get("associate", "Unassigned"),
                             "parts_status": s.get("parts_status", "Parts Available"),
-                            "chamber": s.get("chamber", "Chamber-1"),
+                            "chamber": s.get("chamber", "None"),
                             "cycler": s.get("cycler", "None"),
                             "neware_channel": s.get("neware_channel", ""),
                             "grafana": s.get("grafana", ""),
@@ -486,7 +481,6 @@ def edit_master_task():
                         })
                     t["subtasks"] = updated_subtasks
                     
-                    # Recalculate task progress
                     total_target = sum(float(sub.get("target", 1)) for sub in t["subtasks"])
                     total_logged = sum(float(sub.get("logged", 0)) for sub in t["subtasks"])
                     t["progress"] = int((total_logged / total_target) * 100) if total_target > 0 else 0
@@ -526,18 +520,23 @@ def update_subtask():
             if t["task_id"] == task_id:
                 for st in t["subtasks"]:
                     if st["sub_id"] == sub_id:
-                        st["associate"] = data.get("associate", st.get("associate", "Unassigned"))
-                        st["incharge"] = data.get("incharge", st.get("incharge", "Unassigned"))
-                        
-                        req_shift = data.get("shift")
-                        if req_shift:
-                            st["shift"] = req_shift
-                            
-                        st["assign_date"] = data.get("assign_date", st.get("assign_date", datetime.now().strftime("%Y-%m-%d")))
-                        st["chamber"] = data.get("chamber", st.get("chamber", "Chamber-1"))
-                        st["cycler"] = data.get("cycler", st.get("cycler", "None"))
-                        st["neware_channel"] = data.get("neware_channel", st.get("neware_channel", ""))
-                        st["grafana"] = data.get("grafana", st.get("grafana", ""))
+                        if "associate" in data:
+                            st["associate"] = data.get("associate") or "Unassigned"
+                        if "incharge" in data:
+                            st["incharge"] = data.get("incharge") or "Unassigned"
+                        if "shift" in data:
+                            st["shift"] = data.get("shift") or "None"
+                        if "assign_date" in data:
+                            st["assign_date"] = data.get("assign_date") or datetime.now().strftime("%Y-%m-%d")
+
+                        if "chamber" in data:
+                            st["chamber"] = data.get("chamber") or "None"
+                        if "cycler" in data:
+                            st["cycler"] = data.get("cycler") or "None"
+                        if "neware_channel" in data:
+                            st["neware_channel"] = data.get("neware_channel", "")
+                        if "grafana" in data:
+                            st["grafana"] = data.get("grafana", "")
                        
                         try:
                             add_p = float(data.get("add_progress", 0))
@@ -575,7 +574,7 @@ def update_subtask():
                         elif any(s.get("status") in ["Running", "Blocked", "Parts Missing"] for s in t["subtasks"]):
                             t["status"] = "Running"
                            
-                        log_audit_event(dept, "Subtask Progress Logged", f"{sub_id} on {t['task_id']} updated (+{add_p} {st.get('unit', 'Hours')}). Status: {st['status']}.", st.get("associate", "System"))
+                        log_audit_event(dept, "Subtask Assigned / Updated", f"{sub_id} on {t['task_id']}: Shift={st['shift']}, Inc={st['incharge']}, Assoc={st['associate']}, Chamber={st['chamber']}.", st.get("associate", "System"))
                         save_data_to_file()
                         return jsonify({"success": True, "subtask": st, "task_progress": t["progress"]})
     return jsonify({"success": False, "message": "Task or subtask not found"}), 400
