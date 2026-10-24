@@ -376,99 +376,6 @@
         ]
       },
       {
-        "task_id": "TSK-400003",
-        "prio": "P1",
-        "bin": "EL-Pre-X1-59",
-        "component": "General Hardware",
-        "trf_ref": "-",
-        "dvp_name": "Fleet rep cycle PRE-X1",
-        "category": "EL",
-        "sprint_no": "Sprint 27.2.2",
-        "objective": "Life Cycle Test to validate the 10P EL  pack ",
-        "background": "Life Cycle Test to validate the 10P EL pack ",
-        "engineer": "Yeshwanth",
-        "progress": 80,
-        "status": "Running",
-        "shift": "Multi-Shift",
-        "trf_status": "Testing Active",
-        "subtasks": [
-          {
-            "sub_id": "SUB-700001",
-            "name": "Pre-Capacity",
-            "status": "Completed",
-            "logged": 12.0,
-            "target": 12.0,
-            "unit": "Hours",
-            "assign_date": "2026-10-12",
-            "shift": "Shift A",
-            "incharge": "Raja ",
-            "associate": "sathya narayan",
-            "parts_status": "Parts Available",
-            "chamber": "None",
-            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=1780112770002&to=1780148386056&var-timeinterval_in_ms=1000&var-bike=s_6662&orgId=1",
-            "observations": [
-              {
-                "date": "2026-10-16 03:11",
-                "associate": "sathya narayan",
-                "shift": "Shift A",
-                "chamber": "None",
-                "cycler": "Neware-2",
-                "channel": "4",
-                "notes": "Pre Capacity Test is completed\nCapacity Value is 51.0377Ah"
-              }
-            ],
-            "cycler": "Neware-2",
-            "neware_channel": "4"
-          },
-          {
-            "sub_id": "SUB-700002",
-            "name": "Life Cycle Test ",
-            "status": "Running",
-            "logged": 808.0,
-            "target": 1000.0,
-            "unit": "Cycles",
-            "assign_date": "2026-10-12",
-            "shift": "Shift A",
-            "incharge": "Raja ",
-            "associate": "sathya narayan",
-            "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=1782262323481&to=1782280553809&var-timeinterval_in_ms=1000&var-bike=s_20839&orgId=1",
-            "observations": [
-              {
-                "date": "2026-10-16 03:20",
-                "associate": "sathya narayan",
-                "shift": "Shift A",
-                "chamber": "Chamber-3",
-                "cycler": "EA-Cycler-1",
-                "channel": "",
-                "notes": "Test is running Fine. 402 cycles completed"
-              }
-            ],
-            "cycler": "EA-Cycler-3",
-            "neware_channel": ""
-          },
-          {
-            "sub_id": "SUB-700003",
-            "name": "Post Capacity",
-            "status": "To Do",
-            "logged": 0.0,
-            "target": 12.0,
-            "unit": "Hours",
-            "assign_date": "2026-09-29",
-            "shift": "None",
-            "incharge": "Unassigned",
-            "associate": "Unassigned",
-            "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
-            "grafana": "",
-            "observations": [],
-            "cycler": "None",
-            "neware_channel": ""
-          }
-        ]
-      },
-      {
         "task_id": "TSK-400004",
         "prio": "P1",
         "bin": "EL-Gen-0-97",
@@ -1204,6 +1111,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 04:45:38",
+        "title": "Task Deleted",
+        "detail": "Permanently removed task TSK-400003.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-24 04:44:38",
         "title": "Task Deleted",
