@@ -5,7 +5,50 @@
       "450",
       "Diesel"
     ],
-    "blueprints": {},
+    "blueprints": {
+      "TL-1 Test": [
+        {
+          "name": "Pre-Capacity",
+          "unit": "Hours",
+          "target": 10
+        },
+        {
+          "name": "Pre-Ageing ",
+          "unit": "Hours",
+          "target": 48
+        },
+        {
+          "name": "Random Vibration X,Y and Z-axis",
+          "unit": "Hours",
+          "target": 40
+        },
+        {
+          "name": "Mechanical Shock Z,Y and X axis ",
+          "unit": "Hours",
+          "target": 3
+        },
+        {
+          "name": "Post Capacity",
+          "unit": "Hours",
+          "target": 10
+        },
+        {
+          "name": "Air leak and soap Bubble Test",
+          "unit": "Hours",
+          "target": 1
+        },
+        {
+          "name": "Dunk Test ",
+          "unit": "Hours",
+          "target": 24
+        },
+        {
+          "name": "Post Observation",
+          "unit": "Hours",
+          "target": 3
+        }
+      ]
+    },
     "personnel": [
       {
         "id": "CT10223",
@@ -1048,6 +1091,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 08:31:44",
+        "title": "Flow Blueprint Saved",
+        "detail": "Saved reusable test flow: TL-1 Test with 8 steps.",
+        "user": "System"
+      },
       {
         "timestamp": "2026-10-24 08:29:05",
         "title": "Task Deleted",
