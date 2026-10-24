@@ -590,13 +590,14 @@
 
   <!-- MODAL: EDIT MASTER TASK -->
   <div id="modal-edit-task" class="modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 820px;">
       <button onclick="closeModal('modal-edit-task')" class="modal-close-icon">&times;</button>
       <div class="card-header" id="m-edit-title">Edit Task Details</div>
       <input type="hidden" id="edit-task-id">
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+          <div><label>TASK ID</label><input type="text" id="edit-custom-task-id" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px; font-weight: 900; color: #2563eb;"></div>
           <div><label>BIN / PACK BARCODE</label><input type="text" id="edit-bin" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
           <div><label>DVP NAME</label><input type="text" id="edit-dvp-name" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
           <div>
@@ -615,14 +616,23 @@
       </div>
 
       <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 12px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; font-weight: 800; margin-bottom: 8px;">
           <div><label>PRIORITY</label><select id="edit-prio" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"><option value="P1">P1</option><option value="P2">P2</option></select></div>
           <div><label>LEAD ENGINEER</label><input type="text" id="edit-engineer" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
           <div><label>SPRINT NO.</label><input type="text" id="edit-sprint" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></div>
         </div>
-        <div style="margin-top: 8px; font-size: 11px; font-weight: 800;">
+        <div style="font-size: 11px; font-weight: 800; margin-bottom: 8px;">
           <label>TEST OBJECTIVE</label>
           <textarea id="edit-objective" rows="2" style="width: 100%; padding: 6px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 2px;"></textarea>
+        </div>
+
+        <!-- Editable Subtask Steps Deck -->
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; margin-top: 6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <span style="font-size: 11px; font-weight: 900; color: #7c3aed;">SUBTASK STEPS:</span>
+            <button type="button" onclick="addEditSubtaskRow()" style="background:#2563eb; color:#ffffff; border:none; font-weight:800; font-size:10px; padding:4px 8px; border-radius:4px; cursor:pointer;">+ Add Subtask Step</button>
+          </div>
+          <div id="edit-subtasks-deck" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto;"></div>
         </div>
       </div>
 
@@ -977,7 +987,7 @@
             <td style="color:#2563eb; font-weight:800;">${t.shift || 'Multi-Shift'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
-                <button onclick="openEditTaskModal('${t.task_id}')" class="btn-eye-obs" style="background:#fef3c7; color:#b45309; border-color:#fde047;" title="Edit Task Details">✏️</button>
+                <button onclick="openEditTaskModal('${t.task_id}')" class="btn-eye-obs" style="background:#fef3c7; color:#b45309; border-color:#fde047;" title="Edit Task Details & Steps">✏️</button>
                 <button onclick="openObservationsInspector('${t.task_id}')" class="btn-eye-obs" title="View Observations">👁️</button>
                 <button onclick="deleteSingleTask('${t.task_id}')" class="btn-delete-task" title="Delete Task">🗑️</button>
               </div>
@@ -1314,6 +1324,7 @@
       if (!task) return;
 
       document.getElementById('edit-task-id').value = task.task_id;
+      document.getElementById('edit-custom-task-id').value = task.task_id;
       document.getElementById('m-edit-title').innerText = `Edit ${task.task_id} (${task.bin})`;
       document.getElementById('edit-bin').value = task.bin || '';
       document.getElementById('edit-dvp-name').value = task.dvp_name || '';
@@ -1330,14 +1341,63 @@
         compSelect.innerHTML += `<option value="${c}" ${task.component === c ? 'selected' : ''}>${c}</option>`;
       });
 
+      const subDeck = document.getElementById('edit-subtasks-deck');
+      subDeck.innerHTML = '';
+      (task.subtasks || []).forEach((st, idx) => {
+        subDeck.insertAdjacentHTML('beforeend', createEditStepRowHTML(idx + 1, st.sub_id, st.name, st.unit, st.target, st.status, st.logged, st.shift, st.incharge, st.associate, st.assign_date));
+      });
+
       openModal('modal-edit-task');
+    }
+
+    function createEditStepRowHTML(num, subId, name, unit, target, status, logged, shift, incharge, associate, assignDate) {
+      return `
+        <div class="edit-step-item" data-sub-id="${subId || ''}" data-status="${status || 'To Do'}" data-logged="${logged || 0}" data-shift="${shift || 'None'}" data-incharge="${incharge || 'Unassigned'}" data-associate="${associate || 'Unassigned'}" data-date="${assignDate || ''}" style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0;">
+          <span style="font-weight:900; color:#2563eb; width:18px;">${num}.</span>
+          <input type="text" value="${name}" class="edit-step-name" placeholder="Subtask Name" style="flex-grow:1; min-width:130px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
+          <select class="edit-step-unit" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
+            <option value="Days" ${unit==='Days'?'selected':''}>Days ⏳</option>
+            <option value="Hours" ${unit==='Hours'?'selected':''}>Hours ⏳</option>
+            <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles ⏳</option>
+            <option value="Units" ${unit==='Units'?'selected':''}>Units ⏳</option>
+          </select>
+          <input type="number" value="${target}" class="edit-step-target" placeholder="Target" style="width:65px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
+          <button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✕</button>
+        </div>
+      `;
+    }
+
+    function addEditSubtaskRow() {
+      const subDeck = document.getElementById('edit-subtasks-deck');
+      const count = subDeck.children.length + 1;
+      subDeck.insertAdjacentHTML('beforeend', createEditStepRowHTML(count, '', 'New Subtask Step', 'Days', 10, 'To Do', 0, 'None', 'Unassigned', 'Unassigned', ''));
     }
 
     async function submitEditTask() {
       const taskId = document.getElementById('edit-task-id').value;
+      const newTaskId = document.getElementById('edit-custom-task-id').value.trim();
+
+      const stepItems = document.querySelectorAll('.edit-step-item');
+      let stepsPayload = [];
+      stepItems.forEach(item => {
+        stepsPayload.push({
+          sub_id: item.getAttribute('data-sub-id'),
+          name: item.querySelector('.edit-step-name').value,
+          unit: item.querySelector('.edit-step-unit').value,
+          target: parseFloat(item.querySelector('.edit-step-target').value) || 1,
+          status: item.getAttribute('data-status'),
+          logged: parseFloat(item.getAttribute('data-logged')) || 0,
+          shift: item.getAttribute('data-shift'),
+          incharge: item.getAttribute('data-incharge'),
+          associate: item.getAttribute('data-associate'),
+          assign_date: item.getAttribute('data-date')
+        });
+      });
+
       const payload = {
         dept: activeLab,
         task_id: taskId,
+        new_task_id: newTaskId,
         bin: document.getElementById('edit-bin').value,
         dvp_name: document.getElementById('edit-dvp-name').value,
         component: document.getElementById('edit-component-select').value,
@@ -1345,14 +1405,20 @@
         prio: document.getElementById('edit-prio').value,
         engineer: document.getElementById('edit-engineer').value,
         sprint_no: document.getElementById('edit-sprint').value,
-        objective: document.getElementById('edit-objective').value
+        objective: document.getElementById('edit-objective').value,
+        steps: stepsPayload
       };
 
-      await fetch('/api/tasks/edit', {
+      const res = await fetch('/api/tasks/edit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      const data = await res.json();
+      if (!data.success) {
+        alert("❌ " + (data.message || "Failed to update task"));
+        return;
+      }
 
       closeModal('modal-edit-task');
       await fetchLabData();
