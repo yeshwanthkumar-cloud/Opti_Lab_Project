@@ -439,59 +439,59 @@
               <tbody>
                 <tr class="pillar-1s">
                   <td rowspan="4" style="vertical-align: middle; text-align: center; font-size: 12px;">1. SORT</td>
-                  <td style="color: #0f172a;">Cleared unnecessary materials, unused tools, and inactive prototypes.[cite: 7]</td>
+                  <td style="color: #0f172a;">Cleared unnecessary materials, unused tools, and inactive prototypes.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-1" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Disposed of chemical waste, wipes, and containers.[cite: 7]</td>
+                  <td style="color: #0f172a;">Disposed of chemical waste, wipes, and containers.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-2" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Moved damaged or tested batteries to fire-safe quarantine.[cite: 7]</td>
+                  <td style="color: #0f172a;">Moved damaged or tested batteries to fire-safe quarantine.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-3" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Batteries in storage tagged and grouped.[cite: 7]</td>
+                  <td style="color: #0f172a;">Batteries in storage tagged and grouped.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-4" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-2s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">2. SET IN ORDER</td>
-                  <td style="color: #0f172a;">Hand tools returned to shadow boards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Hand tools returned to shadow boards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-5" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-2s">
-                  <td style="color: #0f172a;">Coiled and secured cables and cycler dashboards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Coiled and secured cables and cycler dashboards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-6" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-3s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">3. SHINE</td>
-                  <td style="color: #0f172a;">Inspected tables, contacts, and probes for dirt.[cite: 7]</td>
+                  <td style="color: #0f172a;">Inspected tables, contacts, and probes for dirt.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-7" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-3s">
-                  <td style="color: #0f172a;">Floor clean from spills or hazards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Floor clean from spills or hazards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-8" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-4s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">4. STANDARDIZE</td>
-                  <td style="color: #0f172a;">New battery packs clearly labeled.[cite: 7]</td>
+                  <td style="color: #0f172a;">New battery packs clearly labeled.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-9" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-4s">
-                  <td style="color: #0f172a;">Updated equipment logs and registers.[cite: 7]</td>
+                  <td style="color: #0f172a;">Updated equipment logs and registers.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-10" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-5s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">5. SUSTAIN</td>
-                  <td style="color: #0f172a;">PPE inspected and stored.[cite: 7]</td>
+                  <td style="color: #0f172a;">PPE inspected and stored.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-11" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-5s">
-                  <td style="color: #0f172a;">Emergency equipment unobstructed.[cite: 7]</td>
+                  <td style="color: #0f172a;">Emergency equipment unobstructed.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-12" checked style="width: 16px; height: 16px;"></td>
                 </tr>
               </tbody>
@@ -593,7 +593,7 @@
     <div class="modal-card" style="max-width: 520px;">
       <button onclick="closeModal('modal-log-progress')" class="modal-close-icon">&times;</button>
       <div class="card-header" id="m-log-step-title" style="margin-bottom: 12px;">Log Progress</div>
-      <input type="hidden" id="log-task-id"><input type="hidden" id="log-sub-id">
+      <input type="hidden" id="log-task-id"><input type="hidden" id="log-sub-id"><input type="hidden" id="log-step-shift">
       
       <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11px; font-weight: 800;">
         <div>
@@ -765,6 +765,11 @@
 
     document.getElementById('stamp-date').value = new Date().toISOString().split('T')[0];
 
+    // Helper to sanitize task IDs for safe HTML element selectors
+    function sanitizeId(id) {
+      return String(id || '').replace(/[^a-zA-Z0-9_-]/g, '_');
+    }
+
     async function fetchLabData() {
       try {
         const res = await fetch(`/api/lab/${encodeURIComponent(activeLab)}`);
@@ -839,7 +844,7 @@
     function toggleNewareChannelSelect() {
       const cyclerVal = document.getElementById('log-cycler-select').value;
       const channelBox = document.getElementById('neware-channel-box');
-      if (cyclerVal.startsWith('Neware')) {
+      if (cyclerVal && cyclerVal.startsWith('Neware')) {
         channelBox.style.display = 'block';
       } else {
         channelBox.style.display = 'none';
@@ -859,17 +864,22 @@
         if (b) b.classList.remove('active');
       });
 
-      document.getElementById(`tab-${tabKey}`).classList.remove('hidden');
-      document.getElementById(`btn-${tabKey}`).classList.add('active');
+      const targetTab = document.getElementById(`tab-${tabKey}`);
+      const targetBtn = document.getElementById(`btn-${tabKey}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+      if (targetBtn) targetBtn.classList.add('active');
 
       if (tabKey === 'roster') loadRoster();
       if (tabKey === 'analytics') renderAnalyticsWorkspace();
+      if (tabKey === 'workbench') renderWorkbench();
     }
 
     function switchShift(s) {
       activeShift = s;
-      document.getElementById('workbench-shift-title').innerText = `SHIFT WORKBENCH — ${s.toUpperCase()}`;
+      const titleEl = document.getElementById('workbench-shift-title');
+      if (titleEl) titleEl.innerText = `SHIFT WORKBENCH — ${s.toUpperCase()}`;
       switchTab('workbench');
+      renderWorkbench();
     }
 
     function renderDashboardTable() {
@@ -877,12 +887,14 @@
       if (!body) return;
       body.innerHTML = '';
       
-      const searchVal = document.getElementById('dash-search').value.toLowerCase();
+      const searchVal = (document.getElementById('dash-search').value || '').toLowerCase();
       const compVal = document.getElementById('filter-component').value;
       const statusVal = document.getElementById('filter-status').value;
 
       let filtered = labStore.tasks ? labStore.tasks.filter(t => {
-        let matchesSearch = t.task_id.toLowerCase().includes(searchVal) || t.bin.toLowerCase().includes(searchVal) || t.objective.toLowerCase().includes(searchVal);
+        let matchesSearch = (t.task_id || '').toLowerCase().includes(searchVal) ||
+                            (t.bin || '').toLowerCase().includes(searchVal) ||
+                            (t.objective || '').toLowerCase().includes(searchVal);
         let matchesComp = (compVal === 'All') || (t.component === compVal);
         let matchesStatus = (statusVal === 'All') || (t.status === statusVal);
         return matchesSearch && matchesComp && matchesStatus;
@@ -896,17 +908,18 @@
 
       filtered.forEach(t => {
         const stepCount = t.subtasks ? t.subtasks.length : 0;
+        const sId = sanitizeId(t.task_id);
         
         body.innerHTML += `
           <tr>
             <td style="font-weight:900; color:#2563eb;">${t.task_id}</td>
-            <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:900;">${t.prio}</span></td>
+            <td><span style="background:#f1f5f9; padding:2px 6px; border-radius:4px; font-weight:900;">${t.prio || 'P1'}</span></td>
             <td style="font-weight:900; color:#7c3aed; font-family:monospace;">${t.bin}</td>
             <td>${t.trf_ref || '-'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
                 <b>${t.dvp_name}</b>
-                <button onclick="toggleSubtasks('${t.task_id}')" class="btn-step-toggle">+ (${stepCount} Steps)</button>
+                <button type="button" onclick="toggleSubtasks('${sId}')" class="btn-step-toggle">+ (${stepCount} Steps)</button>
               </div>
             </td>
             <td style="max-width:240px;">
@@ -914,9 +927,9 @@
               ${t.component && t.component !== 'General Hardware' ? `<span style="font-size:10px; color:#7c3aed; font-weight:800;">Component: ${t.component}</span>` : ''}
             </td>
             <td style="font-weight:800;">${t.engineer || 'Unassigned'}</td>
-            <td style="font-weight:900; color:#2563eb;">${t.progress}%</td>
+            <td style="font-weight:900; color:#2563eb;">${t.progress || 0}%</td>
             <td><span class="badge-status ${t.status==='Completed'?'green':'yellow'}">${t.status}</span></td>
-            <td style="color:#2563eb; font-weight:800;">${t.shift || 'Shift A'}</td>
+            <td style="color:#2563eb; font-weight:800;">${t.shift || 'Multi-Shift'}</td>
             <td>
               <div style="display:flex; align-items:center; gap:6px;">
                 <button onclick="openObservationsInspector('${t.task_id}')" class="btn-eye-obs" title="View Observations">👁️</button>
@@ -924,11 +937,12 @@
               </div>
             </td>
           </tr>
-          <tr id="sub-row-${t.task_id}" class="hidden">
+          <tr id="sub-row-${sId}" class="hidden">
             <td colspan="11" style="padding: 0 8px;">
               <div class="subtask-container">
-                ${t.subtasks.map(st => {
+                ${(t.subtasks || []).map(st => {
                   const currentShift = st.shift || "None";
+                  const subCleanId = sanitizeId(st.sub_id);
                   return `
                   <div class="subtask-row">
                     <div style="display:flex; gap:6px; align-items:center; overflow:hidden;">
@@ -937,29 +951,30 @@
                     </div>
                     <div><span class="badge-status ${st.status==='Completed'?'green':'yellow'}">${st.status}</span></div>
                     <div><span style="background:#f3e8ff; color:#7c3aed; padding:2px 6px; border-radius:4px; font-weight:900; font-size:10px;">${st.logged}/${st.target}${st.unit}</span></div>
-                    <div style="font-size:10px; font-weight:800;">DATE: <input type="date" id="inline-date-${t.task_id}-${st.sub_id}" value="${st.assign_date}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;"></div>
+                    <div style="font-size:10px; font-weight:800;">DATE: <input type="date" id="inline-date-${sId}-${subCleanId}" value="${st.assign_date || ''}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;"></div>
                     <div style="font-size:10px; font-weight:800;">SHIFT: 
-                      <select id="inline-shift-${t.task_id}-${st.sub_id}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;">
+                      <select id="inline-shift-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;">
                         <option value="None" ${currentShift==='None'?'selected':''}>None</option>
                         <option value="Shift A" ${currentShift==='Shift A'?'selected':''}>Shift A</option>
                         <option value="Shift B" ${currentShift==='Shift B'?'selected':''}>Shift B</option>
                         <option value="Shift C" ${currentShift==='Shift C'?'selected':''}>Shift C</option>
+                        <option value="Multi-Shift" ${currentShift==='Multi-Shift'?'selected':''}>Multi-Shift</option>
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">INC: 
-                      <select id="inline-inc-${t.task_id}-${st.sub_id}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
+                      <select id="inline-inc-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${labStore.personnel.filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name}" ${st.incharge===i.name?'selected':''}>${i.name}</option>`).join('')}
+                        ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name}" ${st.incharge===i.name?'selected':''}>${i.name}</option>`).join('')}
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">ASSOC: 
-                      <select id="inline-assoc-${t.task_id}-${st.sub_id}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
+                      <select id="inline-assoc-${sId}-${subCleanId}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${labStore.personnel.map(a=>`<option value="${a.name}" ${st.associate===a.name?'selected':''}>${a.name}</option>`).join('')}
+                        ${(labStore.personnel || []).map(a=>`<option value="${a.name}" ${st.associate===a.name?'selected':''}>${a.name}</option>`).join('')}
                       </select>
                     </div>
                     <button onclick="saveInlineStepAssignment('${t.task_id}','${st.sub_id}')" class="btn-assign-step">ASSIGN ➔</button>
-                    <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${st.name}')" class="btn-log-step" title="Log Progress & Telemetry">📝 Log</button>
+                    <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${escape(st.name)}', '${st.shift || ''}')" class="btn-log-step" title="Log Progress & Telemetry">📝 Log</button>
                   </div>
                 `}).join('')}
               </div>
@@ -1013,7 +1028,7 @@
         let activeCount = 0;
         if (labStore.tasks) {
           labStore.tasks.forEach(t => {
-            t.subtasks.forEach(st => {
+            (t.subtasks || []).forEach(st => {
               if (st.chamber === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
             });
           });
@@ -1045,7 +1060,7 @@
         let activeCount = 0;
         if (labStore.tasks) {
           labStore.tasks.forEach(t => {
-            t.subtasks.forEach(st => {
+            (t.subtasks || []).forEach(st => {
               if (st.cycler === item.id && (st.status === 'Running' || st.status === 'In Progress')) activeCount++;
             });
           });
@@ -1087,7 +1102,7 @@
       let activePacks = [];
       if (labStore.tasks) {
         labStore.tasks.forEach(t => {
-          t.subtasks.forEach(st => {
+          (t.subtasks || []).forEach(st => {
             if (st.chamber === nodeId || st.cycler === nodeId) {
               activePacks.push({
                 taskId: t.task_id,
@@ -1249,18 +1264,14 @@
       }
     }
 
-    async function clearAllSystemData() {
-      if (confirm("⚠️ WARNING: Clear all data across all labs?")) {
-        await fetch('/api/lab/reset', { method: 'POST' });
-        await fetchLabData();
-      }
-    }
-
     async function saveInlineStepAssignment(taskId, subId) {
-      const assignDate = document.getElementById(`inline-date-${taskId}-${subId}`).value;
-      const shift = document.getElementById(`inline-shift-${taskId}-${subId}`).value;
-      const incharge = document.getElementById(`inline-inc-${taskId}-${subId}`).value;
-      const associate = document.getElementById(`inline-assoc-${taskId}-${subId}`).value;
+      const sId = sanitizeId(taskId);
+      const subCleanId = sanitizeId(subId);
+      const assignDate = document.getElementById(`inline-date-${sId}-${subCleanId}`).value;
+      const shift = document.getElementById(`inline-shift-${sId}-${subCleanId}`).value;
+      const incharge = document.getElementById(`inline-inc-${sId}-${subCleanId}`).value;
+      const associate = document.getElementById(`inline-assoc-${sId}-${subCleanId}`).value;
+      
       await fetch('/api/subtasks/update', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1278,8 +1289,11 @@
       await fetchLabData();
     }
 
-    function toggleSubtasks(taskId) {
-      document.getElementById(`sub-row-${taskId}`).classList.toggle('hidden');
+    function toggleSubtasks(sId) {
+      const drawer = document.getElementById(`sub-row-${sId}`);
+      if (drawer) {
+        drawer.classList.toggle('hidden');
+      }
     }
 
     function openObservationsInspector(taskId) {
@@ -1289,7 +1303,7 @@
       const deck = document.getElementById('m-obs-history-deck');
       deck.innerHTML = '';
       let foundNotes = false;
-      task.subtasks.forEach(st => {
+      (task.subtasks || []).forEach(st => {
         if (st.observations && st.observations.length > 0) {
           st.observations.forEach(o => {
             foundNotes = true;
@@ -1475,10 +1489,11 @@
       await fetchLabData();
     }
 
-    function openLogModal(taskId, subId, stepName) {
+    function openLogModal(taskId, subId, stepNameEscaped, stepShift) {
       document.getElementById('log-task-id').value = taskId;
       document.getElementById('log-sub-id').value = subId;
-      document.getElementById('m-log-step-title').innerText = `${subId} | ${stepName}`;
+      document.getElementById('log-step-shift').value = stepShift || activeShift || 'Shift A';
+      document.getElementById('m-log-step-title').innerText = `${subId} | ${unescape(stepNameEscaped)}`;
       
       toggleNewareChannelSelect();
       openModal('modal-log-progress');
@@ -1486,7 +1501,9 @@
 
     async function submitSubtaskLog() {
       const cyclerVal = document.getElementById('log-cycler-select').value;
-      const channelVal = cyclerVal.startsWith('Neware') ? document.getElementById('log-neware-channel').value : '';
+      const channelVal = (cyclerVal && cyclerVal.startsWith('Neware')) ? document.getElementById('log-neware-channel').value : '';
+      const existingShift = document.getElementById('log-step-shift').value || activeShift;
+      
       await fetch('/api/subtasks/update', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -1494,6 +1511,7 @@
           dept: activeLab,
           task_id: document.getElementById('log-task-id').value,
           sub_id: document.getElementById('log-sub-id').value,
+          shift: existingShift,
           chamber: document.getElementById('log-chamber-select').value,
           cycler: cyclerVal,
           neware_channel: channelVal,
@@ -1536,8 +1554,12 @@
       
       if (labStore.tasks) {
         labStore.tasks.forEach(t => {
-          t.subtasks.forEach(st => {
-            if (st.shift === activeShift) {
+          (t.subtasks || []).forEach(st => {
+            const isAssigned = (st.shift === activeShift || st.shift === "Multi-Shift");
+            const isRollover = (st.status === 'Running' || st.status === 'In Progress' || st.status === 'Blocked' || st.status === 'Parts Missing') && (st.shift && st.shift !== 'None');
+
+            // Render subtask if directly assigned to this shift or rolling over from earlier shift
+            if (isAssigned || isRollover) {
               const card = `
                 <div class="kanban-card">
                   <div style="display:flex; justify-content:space-between; font-weight:900; font-size:12px;">
@@ -1547,7 +1569,8 @@
                   <div style="font-size:11px; font-weight:800; color:#0f172a; margin-top:4px;">${st.name}</div>
                   <div style="font-size:10px; font-weight:700; color:#64748b; margin-top:4px;">Progress: <b>${st.logged} / ${st.target} ${st.unit}</b></div>
                   <div style="font-size:10px; font-weight:800; color:#059669; margin-top:4px;">Incharge: ${st.incharge} | Assoc: ${st.associate}</div>
-                  <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${st.name}')" style="margin-top:8px; width:100%; background:#2563eb; color:#fff; border:none; border-radius:6px; font-weight:800; font-size:10px; padding:6px; cursor:pointer;">Log Progress & Telemetry</button>
+                  ${st.shift && st.shift !== activeShift ? `<div style="font-size:9px; font-weight:900; color:#d97706; margin-top:2px;">Rollover from: ${st.shift}</div>` : ''}
+                  <button onclick="openLogModal('${t.task_id}','${st.sub_id}', '${escape(st.name)}', '${st.shift || activeShift}')" style="margin-top:8px; width:100%; background:#2563eb; color:#fff; border:none; border-radius:6px; font-weight:800; font-size:10px; padding:6px; cursor:pointer;">Log Progress & Telemetry</button>
                 </div>
               `;
               if (st.status === 'To Do') todoDeck.innerHTML += card;
@@ -1749,10 +1772,10 @@
 
     function renderAnalyticsWorkspace() {
       if (!labStore.metrics) return;
-      const shiftComp = labStore.metrics.shift_completion;
-      const stoppages = labStore.metrics.stoppage_breakdown;
-      const inchargeStats = labStore.metrics.incharge_stats;
-      const assocStats = labStore.metrics.associate_stats;
+      const shiftComp = labStore.metrics.shift_completion || {};
+      const stoppages = labStore.metrics.stoppage_breakdown || { no_parts: 0, chamber_down: 0, fixture_adjust: 0 };
+      const inchargeStats = labStore.metrics.incharge_stats || {};
+      const assocStats = labStore.metrics.associate_stats || {};
 
       const elShift = document.getElementById('chart-shift-comparison');
       if (elShift) {
@@ -1896,8 +1919,14 @@
       }
     }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex'; 
+    }
+    function closeModal(id) { 
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none'; 
+    }
     window.onload = function() { fetchLabData(); };
   </script>
 </body>
