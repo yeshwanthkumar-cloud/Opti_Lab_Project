@@ -1836,6 +1836,97 @@
             "observations": []
           }
         ]
+      },
+      {
+        "task_id": "TSK-400013",
+        "prio": "P1",
+        "bin": "450-0924",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "\"StB 15P LG M52V  Life Cycle Test\"",
+        "category": "450",
+        "sprint_no": "27.3.3 ",
+        "objective": "\"StB 15P LG M52V \nLife Cycle Test\"",
+        "background": "\"StB 15P LG M52V \nLife Cycle Test\"",
+        "engineer": "Raj Kumar",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-Capacity",
+            "status": "To Do",
+            "logged": 0,
+            "target": 10.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "Shift B",
+            "incharge": "Riyaz",
+            "associate": "Yosvaraj",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Life Cycle ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 1000.0,
+            "unit": "Cycles",
+            "assign_date": "2026-10-24",
+            "shift": "Shift B",
+            "incharge": "Riyaz",
+            "associate": "Yosvaraj",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Post Capacity",
+            "status": "To Do",
+            "logged": 0,
+            "target": 10.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700004",
+            "name": "Post Observation ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 3.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          }
+        ]
       }
     ],
     "attendance": [
@@ -1858,6 +1949,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 09:06:56",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400013 (450-0924) generated with 4 steps.",
+        "user": "Raj Kumar"
+      },
       {
         "timestamp": "2026-10-24 09:06:28",
         "title": "Master Task Created",
