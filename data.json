@@ -1563,6 +1563,97 @@
             "observations": []
           }
         ]
+      },
+      {
+        "task_id": "TSK-400010",
+        "prio": "P1",
+        "bin": "BFKTBC14000210",
+        "component": "General Hardware",
+        "trf_ref": "-",
+        "dvp_name": "EL-LOT-3 ",
+        "category": "EL",
+        "sprint_no": "27.3.3 ",
+        "objective": "\"TL1_3 (50 degC + 100 min Bouncy epoxy) +Bad dimple OVB Neg +\nCreate Electrode offset at multiple locns on Lambus",
+        "background": "\"TL1_3 (50 degC + 100 min Bouncy epoxy) +Bad dimple OVB Neg +\nCreate Electrode offset at multiple locns on Lambus",
+        "engineer": "Yeshwanth",
+        "progress": 0,
+        "status": "Running",
+        "shift": "Multi-Shift",
+        "trf_status": "Testing Active",
+        "subtasks": [
+          {
+            "sub_id": "SUB-700001",
+            "name": "Pre-ageing ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 48.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700002",
+            "name": "Observation",
+            "status": "To Do",
+            "logged": 0,
+            "target": 1.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700003",
+            "name": "Random Vibration  and observation after each axis",
+            "status": "To Do",
+            "logged": 0,
+            "target": 40.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          },
+          {
+            "sub_id": "SUB-700004",
+            "name": "Post Observation ",
+            "status": "To Do",
+            "logged": 0,
+            "target": 3.0,
+            "unit": "Hours",
+            "assign_date": "2026-10-24",
+            "shift": "None",
+            "incharge": "Unassigned",
+            "associate": "Unassigned",
+            "parts_status": "Parts Available",
+            "chamber": "Chamber-1",
+            "cycler": "None",
+            "neware_channel": "",
+            "grafana": "",
+            "observations": []
+          }
+        ]
       }
     ],
     "attendance": [
@@ -1585,6 +1676,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 09:03:29",
+        "title": "Master Task Created",
+        "detail": "Task TSK-400010 (BFKTBC14000210) generated with 4 steps.",
+        "user": "Yeshwanth"
+      },
       {
         "timestamp": "2026-10-24 09:01:36",
         "title": "Master Task Created",
