@@ -1141,7 +1141,7 @@
         "objective": "\"Cell holder \nPA6 GF30 HBF\"",
         "background": "\"Cell holder \nPA6 GF30 HBF\"",
         "engineer": "Raj Kumar",
-        "progress": 0,
+        "progress": 63,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -1167,12 +1167,12 @@
           {
             "sub_id": "SUB-700002",
             "name": "Thermal Cycling ",
-            "status": "To Do",
-            "logged": 0,
+            "status": "Running",
+            "logged": 561.0,
             "target": 836.0,
             "unit": "Cycles",
             "assign_date": "2026-10-24",
-            "shift": "None",
+            "shift": "Shift B",
             "incharge": "Unassigned",
             "associate": "Unassigned",
             "parts_status": "Parts Available",
@@ -1949,6 +1949,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 17:02:02",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700002 on TSK-400012: Shift=Shift B, Inc=Unassigned, Assoc=Unassigned, Chamber=Chamber-1.",
+        "user": "Unassigned"
+      },
       {
         "timestamp": "2026-10-24 13:44:44",
         "title": "Subtask Assigned / Updated",
