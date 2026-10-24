@@ -665,7 +665,7 @@
             "target": 10.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
-            "shift": "Shift A",
+            "shift": "Shift B",
             "incharge": "Riyaz",
             "associate": "Yosvaraj",
             "parts_status": "Parts Available",
@@ -1949,6 +1949,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-24 10:28:46",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700001 on TSK-400009: Shift=Shift B, Inc=Riyaz, Assoc=Yosvaraj, Chamber=Chamber-1.",
+        "user": "Yosvaraj"
+      },
       {
         "timestamp": "2026-10-24 10:09:47",
         "title": "Subtask Progress Logged",
