@@ -1950,6 +1950,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-24 13:44:44",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700002 on TSK-400009: Shift=Shift B, Inc=Riyaz, Assoc=Yosvaraj, Chamber=Chamber-1.",
+        "user": "Yosvaraj"
+      },
+      {
         "timestamp": "2026-10-24 13:44:28",
         "title": "Subtask Assigned / Updated",
         "detail": "SUB-700001 on TSK-400009: Shift=Shift A, Inc=Riyaz, Assoc=Yosvaraj, Chamber=Chamber-1.",
