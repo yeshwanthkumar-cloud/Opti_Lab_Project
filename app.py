@@ -156,7 +156,6 @@ def init_db():
             print("Database initialization error:", e)
 
 def save_data_to_file():
-    # 1. Write to local file cache
     try:
         with open(DATA_FILE, "w") as f:
             json.dump(LAB_DATA, f, indent=4)
@@ -164,7 +163,6 @@ def save_data_to_file():
     except Exception as e:
         print("Local Save Error:", e)
 
-    # 2. Sync directly to GitHub Repository via API
     if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
         url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
         headers = {
@@ -193,55 +191,25 @@ def save_data_to_file():
         except Exception as e:
             print("GitHub Sync Exception:", e)
 
-    # 3. Sync to Supabase PostgreSQL safely (Fallback / Secondary DB)
     if DATABASE_URL:
         try:
             conn = get_db_connection()
             if not conn:
-                print("⚠️ DB Connection failed during save.")
                 return
             cursor = conn.cursor()
-            memory_items = sum(
-                len(dept_data.get("tasks", [])) +
-                len(dept_data.get("personnel", [])) +
-                len(dept_data.get("roster_stamps", {}))
-                for dept_data in LAB_DATA.values()
-            )
-            cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
-            existing_row = cursor.fetchone()
-           
-            if existing_row and existing_row[0]:
-                db_data = existing_row[0]
-                db_items = sum(
-                    len(dept_data.get("tasks", [])) +
-                    len(dept_data.get("personnel", [])) +
-                    len(dept_data.get("roster_stamps", {}))
-                    for dept_data in db_data.values()
-                )
-                if db_items > 0 and memory_items == 0:
-                    print("🛡️ FAILSAFE BLOCKED OVERWRITE! Restoring memory from DB...")
-                    for dept in DEPARTMENTS:
-                        if dept in db_data:
-                            LAB_DATA[dept] = db_data[dept]
-                    cursor.close()
-                    conn.close()
-                    return
             cursor.execute("""
                 INSERT INTO opti_lab_store (id, data)
                 VALUES ('master', %s)
                 ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data;
             """, (json.dumps(LAB_DATA),))
-           
             conn.commit()
             cursor.close()
             conn.close()
-            print("✅ Successfully saved LAB_DATA to Supabase.")
         except Exception as e:
             print("DB Save Error:", e)
 
 def load_data_from_file():
     global LAB_DATA
-    # 1. Load directly from GitHub Repository FIRST (Primary Database)
     if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
         url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
         headers = {
@@ -262,7 +230,6 @@ def load_data_from_file():
         except Exception as e:
             print("GitHub Load Error:", e)
 
-    # 2. Fallback: Load from local disk file
     if os.path.exists(DATA_FILE):
         try:
             with open(DATA_FILE, "r") as f:
@@ -273,31 +240,6 @@ def load_data_from_file():
             print("✅ Loaded data from local storage (data.json).")
         except Exception as e:
             print("Local Load Error:", e)
-
-    # 3. Fallback: Sync and load from Supabase
-    if DATABASE_URL:
-        for attempt in range(3):
-            try:
-                conn = get_db_connection()
-                if not conn:
-                    print(f"⚠️ DB Connection attempt {attempt+1}/3 failed. Retrying...")
-                    time.sleep(2)
-                    continue
-                cursor = conn.cursor(cursor_factory=RealDictCursor)
-                cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
-                row = cursor.fetchone()
-                if row and row.get('data'):
-                    saved_data = row['data']
-                    for dept in DEPARTMENTS:
-                        if dept in saved_data and saved_data[dept]:
-                            LAB_DATA[dept] = saved_data[dept]
-                    print("✅ Successfully merged stored tasks and rosters from Supabase.")
-                cursor.close()
-                conn.close()
-                break
-            except Exception as e:
-                print(f"DB Load Error (attempt {attempt+1}):", e)
-                time.sleep(2)
 
 init_db()
 load_data_from_file()
@@ -316,15 +258,12 @@ def calculate_dashboard_metrics(tasks):
     total_awaiting_res = 0
     total_awaiting_eng = 0
    
-    cat_counts = {
-        "450": {"running": 0, "complete": 0},
-        "DIESEL": {"running": 0, "complete": 0},
-        "EL": {"running": 0, "complete": 0}
-    }
+    cat_counts = {"450": {"running": 0, "complete": 0}, "DIESEL": {"running": 0, "complete": 0}, "EL": {"running": 0, "complete": 0}}
     stoppage_breakdown = {"no_parts": 0, "chamber_down": 0, "fixture_adjust": 0}
     shift_completion = {"Shift A": {"completed": 0, "assigned": 0}, "Shift B": {"completed": 0, "assigned": 0}, "Shift C": {"completed": 0, "assigned": 0}}
     incharge_stats = {}
     associate_stats = {}
+    
     for t in tasks:
         cat = t.get("category", "450")
         if cat not in cat_counts:
@@ -340,6 +279,7 @@ def calculate_dashboard_metrics(tasks):
             total_awaiting_res += 1
         else:
             total_awaiting_eng += 1
+            
         for st in t.get("subtasks", []):
             shift = st.get("shift", "None")
             if shift in shift_completion:
@@ -348,15 +288,13 @@ def calculate_dashboard_metrics(tasks):
                     shift_completion[shift]["completed"] += 1
             inc = st.get("incharge", "Unassigned")
             if inc != "Unassigned":
-                if inc not in incharge_stats:
-                    incharge_stats[inc] = {"completed": 0, "managed": 0}
+                incharge_stats.setdefault(inc, {"completed": 0, "managed": 0})
                 incharge_stats[inc]["managed"] += 1
                 if st.get("status") == "Completed":
                     incharge_stats[inc]["completed"] += 1
             assoc = st.get("associate", "Unassigned")
             if assoc != "Unassigned":
-                if assoc not in associate_stats:
-                    associate_stats[assoc] = {"completed": 0, "assigned": 0}
+                associate_stats.setdefault(assoc, {"completed": 0, "assigned": 0})
                 associate_stats[assoc]["assigned"] += 1
                 if st.get("status") == "Completed":
                     associate_stats[assoc]["completed"] += 1
@@ -364,6 +302,7 @@ def calculate_dashboard_metrics(tasks):
                 stoppage_breakdown["no_parts"] += 1
             elif st.get("status") == "Blocked":
                 stoppage_breakdown["chamber_down"] += 1
+
     return {
         "complete": total_complete,
         "running": total_running,
@@ -384,33 +323,38 @@ def index():
 @app.route("/api/lab/<dept_name>")
 def get_lab_data(dept_name):
     dept = dept_name if dept_name in LAB_DATA else "Battery Lab"
-    shift_filter = request.args.get("shift")  # e.g., "Shift A", "Shift B", "Shift C"
+    shift_filter = request.args.get("shift")  # e.g., 'Shift A', 'Shift B', 'Shift C'
     
     all_tasks = LAB_DATA[dept]["tasks"]
     
-    # Process tasks and rollover subtasks across shifts
     processed_tasks = []
     for t in all_tasks:
         task_copy = dict(t)
         subtask_list = []
         for st in t.get("subtasks", []):
             st_copy = dict(st)
-            
-            # If subtask has no shift or shift is empty/None, default it to Multi-Shift so it shows everywhere
-            if not st_copy.get("shift") or st_copy.get("shift") in ["None", ""]:
-                st_copy["shift"] = "Multi-Shift"
-                
-            # If the subtask is not yet completed, make sure it stays active across shifts
-            if shift_filter and st_copy.get("status") in ["To Do", "Running", "Blocked", "Parts Missing"]:
-                # Rollover: mark it available in the active shift view
-                if st_copy.get("shift") not in [shift_filter, "Multi-Shift"]:
-                    st_copy["rollover_from"] = st_copy.get("shift")
-                    st_copy["shift"] = shift_filter
-            
-            subtask_list.append(st_copy)
-            
-        task_copy["subtasks"] = subtask_list
-        processed_tasks.append(task_copy)
+            shift_val = st_copy.get("shift", "None")
+            status_val = st_copy.get("status", "To Do")
+
+            # Shift Workbench Filtering:
+            if shift_filter:
+                # 1. 'None' unassigned subtasks never show on any shift board
+                if shift_val in ["None", "", None]:
+                    continue
+                # 2. Directly assigned to this shift or Multi-Shift
+                if shift_val == shift_filter or shift_val == "Multi-Shift":
+                    subtask_list.append(st_copy)
+                # 3. Rollover: if unfinished from an earlier shift, carry it over to current shift
+                elif status_val in ["Running", "Blocked", "Parts Missing"]:
+                    st_copy["rollover_from"] = shift_val
+                    subtask_list.append(st_copy)
+            else:
+                # Task Planner & Flows table: show all subtasks
+                subtask_list.append(st_copy)
+
+        if not shift_filter or len(subtask_list) > 0:
+            task_copy["subtasks"] = subtask_list
+            processed_tasks.append(task_copy)
 
     metrics = calculate_dashboard_metrics(all_tasks)
     dept_components = list(dict.fromkeys(LAB_DATA[dept]["components"]))
@@ -429,18 +373,6 @@ def get_lab_data(dept_name):
         "metrics": metrics,
         "twin": twin_config
     })
-
-@app.route('/api/download-backup', methods=['GET'])
-def download_backup():
-    buffer = io.BytesIO()
-    buffer.write(json.dumps(LAB_DATA, indent=4).encode('utf-8'))
-    buffer.seek(0)
-    return send_file(
-        buffer,
-        mimetype='application/json',
-        as_attachment=True,
-        download_name=f'OptiLab_Full_Backup_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
-    )
 
 @app.route("/api/tasks/delete", methods=["POST"])
 def delete_single_task():
@@ -504,7 +436,7 @@ def create_master_task():
                 "target": float(s.get("target", 1)),
                 "unit": s.get("unit", "Hours"),
                 "assign_date": s.get("assign_date", datetime.now().strftime("%Y-%m-%d")),
-                "shift": s.get("shift", "Multi-Shift"),
+                "shift": s.get("shift", "None"),
                 "incharge": s.get("incharge", "Unassigned"),
                 "associate": s.get("associate", "Unassigned"),
                 "parts_status": "Parts Available",
@@ -555,12 +487,10 @@ def update_subtask():
                         st["associate"] = data.get("associate", st.get("associate", "Unassigned"))
                         st["incharge"] = data.get("incharge", st.get("incharge", "Unassigned"))
                         
-                        # Preserve shift safely: only update if valid non-empty string is provided
+                        # Preserve existing shift safely if none sent
                         req_shift = data.get("shift")
-                        if req_shift and req_shift not in ["", "None", None]:
+                        if req_shift:
                             st["shift"] = req_shift
-                        elif not st.get("shift") or st.get("shift") == "None":
-                            st["shift"] = "Multi-Shift"
                             
                         st["assign_date"] = data.get("assign_date", st.get("assign_date", datetime.now().strftime("%Y-%m-%d")))
                         st["chamber"] = data.get("chamber", st.get("chamber", "Chamber-1"))
@@ -575,17 +505,12 @@ def update_subtask():
                             
                         st["logged"] = float(st.get("logged", 0)) + add_p
                        
-                        # RESPECT USER SELECTION:
-                        # Only mark 'Completed' if user explicitly picked it in dropdown OR if user didn't pick anything and target reached
+                        # Respect manual dropdown status
                         manual_status = data.get("status")
                         if manual_status:
                             st["status"] = manual_status
-                        else:
-                            target_val = float(st.get("target", 1))
-                            if target_val > 0 and st["logged"] >= target_val:
-                                st["status"] = "Completed"
-                            else:
-                                st["status"] = st.get("status", "Running")
+                        elif float(st.get("target", 1)) > 0 and st["logged"] >= float(st.get("target", 1)):
+                            st["status"] = "Completed"
                        
                         notes = data.get("notes", "").strip()
                         if notes:
@@ -605,7 +530,6 @@ def update_subtask():
                         total_logged = sum(float(s.get("logged", 0)) for s in t["subtasks"])
                         t["progress"] = int((total_logged / total_target) * 100) if total_target > 0 else 0
                         
-                        # Master task status updates based on subtask statuses
                         if all(s.get("status") == "Completed" for s in t["subtasks"]):
                             t["status"] = "Completed"
                         elif any(s.get("status") in ["Running", "Blocked", "Parts Missing"] for s in t["subtasks"]):
@@ -830,11 +754,22 @@ def update_equipment():
         save_data_to_file()
     return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {chamber_name}!"})
 
+@app.route('/api/download-backup', methods=['GET'])
+def download_backup():
+    buffer = io.BytesIO()
+    buffer.write(json.dumps(LAB_DATA, indent=4).encode('utf-8'))
+    buffer.seek(0)
+    return send_file(
+        buffer,
+        mimetype='application/json',
+        as_attachment=True,
+        download_name=f'OptiLab_Full_Backup_{datetime.now().strftime("%Y%m%d_%H%M")}.json'
+    )
+
 @app.route('/api/export-excel', methods=['GET'])
 def export_excel():
     conn = get_db_connection()
     output = io.BytesIO()
-   
     thirty_days_ago = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d %H:%M:%S")
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         if conn:
