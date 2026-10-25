@@ -1,7 +1,0 @@
-Flask
-flask-cors
-gunicorn
-psycopg2-binary
-pandas
-openpyxl
-requests>=2.28.0
