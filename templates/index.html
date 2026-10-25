@@ -125,16 +125,16 @@
   <!-- App Header -->
   <div class="app-header">
     <div style="display: flex; align-items: center; gap: 12px;">
-      <div class="brand-badge">⚡ OPTI LAB</div>
+      <div class="brand-badge">OPTI LAB</div>
       <h1 style="font-size: 16px; font-weight: 900; color: #0f172a;">E&E OPTI LAB CONSOLE</h1>
     </div>
     
     <div style="display: flex; align-items: center; gap: 12px;">
       <select id="global-lab-select" onchange="switchLabScope()" style="background: #f8fafc; border: 2px solid #2563eb; font-weight: 900; font-size: 12px; padding: 6px 14px; border-radius: 8px; color: #2563eb;">
-        <option value="Battery Lab">🔋 Battery Lab</option>
-        <option value="Cell Lab">🧪 Cell Lab</option>
-        <option value="Vibration Team">⚡ Vibration Team</option>
-        <option value="E&E Lab">💻 E&E Lab</option>
+        <option value="Battery Lab">Battery Lab</option>
+        <option value="Cell Lab">Cell Lab</option>
+        <option value="Vibration Team">Vibration Team</option>
+        <option value="E&E Lab">E&E Lab</option>
       </select>
     </div>
   </div>
@@ -143,20 +143,20 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="nav-section-title">ENGINEERS WORKSPACE</div>
-      <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active">📊 Live Dashboard</button>
-      <button onclick="switchTab('planner')" id="btn-planner" class="nav-btn">📋 Task Planner & Flows</button>
-      <button onclick="switchTab('roster')" id="btn-roster" class="nav-btn">📅 Shift Roster</button>
-      <button onclick="switchTab('analytics')" id="btn-analytics" class="nav-btn">📈 Unified Analytics</button>
-      <button onclick="switchTab('history')" id="btn-history" class="nav-btn">📜 Task Audit History</button>
+      <button onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-btn active">Live Dashboard</button>
+      <button onclick="switchTab('planner')" id="btn-planner" class="nav-btn">Task Planner & Flows</button>
+      <button onclick="switchTab('roster')" id="btn-roster" class="nav-btn">Shift Roster</button>
+      <button onclick="switchTab('analytics')" id="btn-analytics" class="nav-btn">Unified Analytics</button>
+      <button onclick="switchTab('history')" id="btn-history" class="nav-btn">Task Audit History</button>
       
       <div class="nav-section-title">SHIFT EXECUTION</div>
-      <button onclick="switchShift('Shift A')" id="btn-shift-a" class="nav-btn">☀️ Shift A (6 AM–2 PM)</button>
-      <button onclick="switchShift('Shift B')" id="btn-shift-b" class="nav-btn">🌤️ Shift B (2 PM–10 PM)</button>
-      <button onclick="switchShift('Shift C')" id="btn-shift-c" class="nav-btn">🌙 Shift C (10 PM–6 AM)</button>
-      <button onclick="switchTab('checksheet')" id="btn-checksheet" class="nav-btn">📝 5S Checksheet</button>
+      <button onclick="switchShift('Shift A')" id="btn-shift-a" class="nav-btn">Shift A (6 AM–2 PM)</button>
+      <button onclick="switchShift('Shift B')" id="btn-shift-b" class="nav-btn">Shift B (2 PM–10 PM)</button>
+      <button onclick="switchShift('Shift C')" id="btn-shift-c" class="nav-btn">Shift C (10 PM–6 AM)</button>
+      <button onclick="switchTab('checksheet')" id="btn-checksheet" class="nav-btn">5S Checksheet</button>
       
       <div class="nav-section-title">FLOOR & TELEMETRY</div>
-      <button onclick="switchTab('twin')" id="btn-twin" class="nav-btn">🏢 Lab View</button>
+      <button onclick="switchTab('twin')" id="btn-twin" class="nav-btn">Lab View</button>
     </div>
 
     <!-- Main Workspace Content -->
@@ -165,7 +165,7 @@
       <!-- 1. LIVE DASHBOARD -->
       <div id="tab-dashboard">
         <div class="card" style="display: flex; gap: 12px; align-items: center;">
-          <input type="text" id="dash-search" oninput="renderDashboardTable()" placeholder="🔍 Search TRF, BIN, or Objective..." style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; width: 250px; font-size: 12px;">
+          <input type="text" id="dash-search" oninput="renderDashboardTable()" placeholder="Search TRF, BIN, or Objective..." style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; width: 250px; font-size: 12px;">
           
           <select id="filter-component" onchange="renderDashboardTable()" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 800; font-size: 12px;">
             <option value="All">All Components</option>
@@ -238,7 +238,7 @@
             <button onclick="addBlueprintBuilderStep()" style="background: #7c3aed; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 800; cursor: pointer;">+ Add Step</button>
           </div>
           <div id="flow-bp-step-deck" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;"></div>
-          <button onclick="saveTestFlowBlueprint()" style="background: #16a34a; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 900; cursor: pointer;">💾 Save Blueprint</button>
+          <button onclick="saveTestFlowBlueprint()" style="background: #16a34a; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-weight: 900; cursor: pointer;">Save Blueprint</button>
         </div>
 
         <div class="card" style="background: #f8fafc;">
@@ -376,7 +376,7 @@
           <h2 id="workbench-shift-title" style="font-size: 16px; font-weight: 900; color: #0f172a;">SHIFT WORKBENCH — SHIFT A</h2>
           <div style="display: flex; gap: 8px;">
             <button onclick="openModal('modal-extra-task')" class="btn-primary">+ Log Extra Task</button>
-            <button onclick="switchTab('checksheet')" style="background: #d97706; color: #ffffff; font-weight: 900; font-size: 11px; padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer;">📋 5S Panel</button>
+            <button onclick="switchTab('checksheet')" style="background: #d97706; color: #ffffff; font-weight: 900; font-size: 11px; padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer;">5S Panel</button>
           </div>
         </div>
 
@@ -400,9 +400,9 @@
       <div id="tab-checksheet" class="hidden">
         <div class="card" style="border: 2px solid #2563eb;">
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
-            <h2 style="font-size: 16px; font-weight: 900; color: #2563eb;">🧹 LAB 5S AUDIT SHEET</h2>
+            <h2 style="font-size: 16px; font-weight: 900; color: #2563eb;">LAB 5S AUDIT SHEET</h2>
             <button onclick="window.open('/api/export-excel', '_blank')" style="padding: 8px 14px; background: #16a34a; color: #fff; border: none; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer;">
-              📥 Export Excel
+              Export Excel
             </button>
           </div>
 
@@ -439,59 +439,59 @@
               <tbody>
                 <tr class="pillar-1s">
                   <td rowspan="4" style="vertical-align: middle; text-align: center; font-size: 12px;">1. SORT</td>
-                  <td style="color: #0f172a;">Cleared unnecessary materials, unused tools, and inactive prototypes.[cite: 7]</td>
+                  <td style="color: #0f172a;">Cleared unnecessary materials, unused tools, and inactive prototypes.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-1" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Disposed of chemical waste, wipes, and containers.[cite: 7]</td>
+                  <td style="color: #0f172a;">Disposed of chemical waste, wipes, and containers.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-2" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Moved damaged or tested batteries to fire-safe quarantine.[cite: 7]</td>
+                  <td style="color: #0f172a;">Moved damaged or tested batteries to fire-safe quarantine.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-3" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-1s">
-                  <td style="color: #0f172a;">Batteries in storage tagged and grouped.[cite: 7]</td>
+                  <td style="color: #0f172a;">Batteries in storage tagged and grouped.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-4" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-2s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">2. SET IN ORDER</td>
-                  <td style="color: #0f172a;">Hand tools returned to shadow boards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Hand tools returned to shadow boards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-5" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-2s">
-                  <td style="color: #0f172a;">Coiled and secured cables and cycler dashboards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Coiled and secured cables and cycler dashboards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-6" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-3s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">3. SHINE</td>
-                  <td style="color: #0f172a;">Inspected tables, contacts, and probes for dirt.[cite: 7]</td>
+                  <td style="color: #0f172a;">Inspected tables, contacts, and probes for dirt.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-7" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-3s">
-                  <td style="color: #0f172a;">Floor clean from spills or hazards.[cite: 7]</td>
+                  <td style="color: #0f172a;">Floor clean from spills or hazards.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-8" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-4s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">4. STANDARDIZE</td>
-                  <td style="color: #0f172a;">New battery packs clearly labeled.[cite: 7]</td>
+                  <td style="color: #0f172a;">New battery packs clearly labeled.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-9" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-4s">
-                  <td style="color: #0f172a;">Updated equipment logs and registers.[cite: 7]</td>
+                  <td style="color: #0f172a;">Updated equipment logs and registers.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-10" checked style="width: 16px; height: 16px;"></td>
                 </tr>
 
                 <tr class="pillar-5s" style="border-top: 2px solid #cbd5e1;">
                   <td rowspan="2" style="vertical-align: middle; text-align: center; font-size: 12px;">5. SUSTAIN</td>
-                  <td style="color: #0f172a;">PPE inspected and stored.[cite: 7]</td>
+                  <td style="color: #0f172a;">PPE inspected and stored.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-11" checked style="width: 16px; height: 16px;"></td>
                 </tr>
                 <tr class="pillar-5s">
-                  <td style="color: #0f172a;">Emergency equipment unobstructed.[cite: 7]</td>
+                  <td style="color: #0f172a;">Emergency equipment unobstructed.</td>
                   <td style="text-align: center;"><input type="checkbox" id="cs-5s-12" checked style="width: 16px; height: 16px;"></td>
                 </tr>
               </tbody>
@@ -702,10 +702,10 @@
         <div>
           <label>EXECUTION STATUS *</label>
           <select id="log-status" style="width: 100%; padding: 6px; border: 1px solid #2563eb; border-radius: 6px; font-weight: 800; margin-top: 2px;">
-            <option value="Running">Running 🟢</option>
-            <option value="Completed">Completed ✅</option>
-            <option value="Parts Missing">Parts Missing 🧩 (Blocked)</option>
-            <option value="Blocked">Paused / Blocked 🔴</option>
+            <option value="Running">Running</option>
+            <option value="Completed">Completed</option>
+            <option value="Parts Missing">Parts Missing (Blocked)</option>
+            <option value="Blocked">Paused / Blocked</option>
           </select>
         </div>
         <div>
@@ -723,12 +723,13 @@
     </div>
   </div>
 
-  <!-- MODAL: INSPECTOR -->
+  <!-- MODAL: LAB VIEW TELEMETRY, MOUNTED PACKS & CHAMBER CHECKSHEET INSPECTOR -->
   <div id="inspector-modal" class="modal-overlay">
     <div class="modal-card">
       <button onclick="closeModal('inspector-modal')" class="modal-close-icon">&times;</button>
       <div class="card-header" id="modal-node-title" style="border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 12px;">Equipment Inspector</div>
       
+      <!-- PM & Calibration Form -->
       <div style="background: #fffbf7; border: 1px solid #fed7aa; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
         <div style="font-size: 11px; font-weight: 900; color: #c2410c; margin-bottom: 4px;">PM & CALIBRATION DUE DATES</div>
         <div id="modal-due-status" style="font-size: 11px; font-weight: 800; margin-bottom: 6px;"></div>
@@ -748,6 +749,7 @@
         </div>
       </div>
 
+      <!-- Chamber Daily Checklist Embedded Inside Chamber Modal -->
       <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
           <div style="font-size: 11px; font-weight: 900; color: #2563eb;">DAILY CHAMBER MAINTENANCE CHECKSHEET</div>
@@ -768,6 +770,7 @@
         </button>
       </div>
 
+      <!-- Mounted Battery Packs & Grafana Telemetry Section -->
       <div id="modal-packs-content"></div>
     </div>
   </div>
@@ -832,9 +835,10 @@
 
         if (labStore.personnel) {
           labStore.personnel.forEach(p => {
-            if (stampSelect) stampSelect.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
-            if (extSelect) extSelect.innerHTML += `<option value="${p.name}">${p.name}</option>`;
-            if (punchEmp) punchEmp.innerHTML += `<option value="${p.name}">${p.name} (${p.role})</option>`;
+            const cleanName = (p.name || '').trim();
+            if (stampSelect) stampSelect.innerHTML += `<option value="${cleanName}">${cleanName} (${p.role})</option>`;
+            if (extSelect) extSelect.innerHTML += `<option value="${cleanName}">${cleanName}</option>`;
+            if (punchEmp) punchEmp.innerHTML += `<option value="${cleanName}">${cleanName} (${p.role})</option>`;
           });
         }
 
@@ -997,9 +1001,9 @@
             <td colspan="11" style="padding: 0 8px;">
               <div class="subtask-container">
                 ${(t.subtasks || []).map((st) => {
-                  const currentShift = (st.shift || "None").trim();
-                  const currentInc = (st.incharge || "Unassigned").trim();
-                  const currentAssoc = (st.associate || "Unassigned").trim();
+                  const currentShift = (st.shift || "None").trim().toLowerCase();
+                  const currentInc = (st.incharge || "Unassigned").trim().toLowerCase();
+                  const currentAssoc = (st.associate || "Unassigned").trim().toLowerCase();
 
                   return `
                   <div class="subtask-row" data-task-id="${t.task_id}" data-sub-id="${st.sub_id}">
@@ -1012,23 +1016,23 @@
                     <div style="font-size:10px; font-weight:800;">DATE: <input type="date" class="row-assign-date" value="${st.assign_date || ''}" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;"></div>
                     <div style="font-size:10px; font-weight:800;">SHIFT: 
                       <select class="row-assign-shift" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px;">
-                        <option value="None" ${currentShift==='None'?'selected':''}>None</option>
-                        <option value="Shift A" ${currentShift==='Shift A'?'selected':''}>Shift A</option>
-                        <option value="Shift B" ${currentShift==='Shift B'?'selected':''}>Shift B</option>
-                        <option value="Shift C" ${currentShift==='Shift C'?'selected':''}>Shift C</option>
-                        <option value="Multi-Shift" ${currentShift==='Multi-Shift'?'selected':''}>Multi-Shift</option>
+                        <option value="None" ${currentShift==='none'?'selected':''}>None</option>
+                        <option value="Shift A" ${currentShift==='shift a'?'selected':''}>Shift A</option>
+                        <option value="Shift B" ${currentShift==='shift b'?'selected':''}>Shift B</option>
+                        <option value="Shift C" ${currentShift==='shift c'?'selected':''}>Shift C</option>
+                        <option value="Multi-Shift" ${currentShift==='multi-shift'?'selected':''}>Multi-Shift</option>
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">INC: 
                       <select class="row-assign-inc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name.trim()}" ${currentInc===i.name.trim()?'selected':''}>${i.name}</option>`).join('')}
+                        ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name.trim()}" ${currentInc===i.name.trim().toLowerCase()?'selected':''}>${i.name}</option>`).join('')}
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">ASSOC: 
                       <select class="row-assign-assoc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
-                        ${(labStore.personnel || []).map(a=>`<option value="${a.name.trim()}" ${currentAssoc===a.name.trim()?'selected':''}>${a.name}</option>`).join('')}
+                        ${(labStore.personnel || []).map(a=>`<option value="${a.name.trim()}" ${currentAssoc===a.name.trim().toLowerCase()?'selected':''}>${a.name}</option>`).join('')}
                       </select>
                     </div>
                     <button type="button" onclick="saveInlineStepAssignmentDirect(this)" class="btn-assign-step">ASSIGN ➔</button>
@@ -1075,8 +1079,8 @@
             {"id": "Chamber-4", "name": "Chamber 4", "type": "chamber", "img": "/static/images/chamber.png"}
           ];
 
-      const bottomRowData = (labStore.twin.bottom_row && labStore.twin.bottom_row.length > 0)
-        ? labStore.twin.bottom_row
+      const bottomRowData = (labStore.twin.bottom_row && labStore.twin.bottom_row.length > 0) 
+        ? labStore.twin.bottom_row 
         : [
             {"id": "EA-Cycler-1", "name": "EA Cycler 1", "type": "cycler", "img": "/static/images/ea_cycler.png"},
             {"id": "EA-Cycler-2", "name": "EA Cycler 2", "type": "cycler", "img": "/static/images/ea_cycler.png"}
@@ -1103,7 +1107,7 @@
 
         topDeck.innerHTML += `
           <div class="node-box ${isShaker ? 'shaker-large' : 'type-chamber'}" onclick='openChamberInspector("${item.id}", "${item.name}")'>
-            ${isDueSoon ? `<span class="due-badge">⚠️ PM/CAL DUE</span>` : ''}
+            ${isDueSoon ? `<span class="due-badge">PM/CAL DUE</span>` : ''}
             ${renderImageTag(item)}
             <div>${item.name}</div>
             <div style="font-size:10px; font-weight:900; margin-top:4px; color:${activeCount > 0 ? '#16a34a' : '#64748b'};">
@@ -1152,9 +1156,9 @@
       const calibDays = checkDueDays(maint.calibration_due_date);
 
       let statusHTML = '';
-      if (pmDays !== null && pmDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ PM Due in ${pmDays} Days! </span>`;
-      if (calibDays !== null && calibDays <= 15) statusHTML += `<span style="color:#dc2626;">⚠️ Calibration Due in ${calibDays} Days!</span>`;
-      if (!statusHTML) statusHTML = `<span style="color:#16a34a;">✅ PM & Calibration Valid.</span>`;
+      if (pmDays !== null && pmDays <= 15) statusHTML += `<span style="color:#dc2626;">PM Due in ${pmDays} Days! </span>`;
+      if (calibDays !== null && calibDays <= 15) statusHTML += `<span style="color:#dc2626;">Calibration Due in ${calibDays} Days!</span>`;
+      if (!statusHTML) statusHTML = `<span style="color:#16a34a;">PM & Calibration Valid.</span>`;
       
       document.getElementById('modal-due-status').innerHTML = statusHTML;
 
@@ -1223,7 +1227,7 @@
               </div>
 
               <div style="margin-top: 6px; padding-top: 4px; border-top: 1px dashed #cbd5e1;">
-                <a href="${p.grafana}" target="_blank" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 10px; padding: 4px 10px; border-radius: 4px; text-decoration: none; display: inline-block;">📊 Open Telemetry in Grafana ➔</a>
+                <a href="${p.grafana}" target="_blank" style="background: #2563eb; color: #ffffff; font-weight: 900; font-size: 10px; padding: 4px 10px; border-radius: 4px; text-decoration: none; display: inline-block;">Open Telemetry in Grafana ➔</a>
               </div>
             </div>
           `;
@@ -1248,7 +1252,7 @@
         })
       });
 
-      alert(`✅ Dates updated for ${selectedChamberId}!`);
+      alert(`Dates updated for ${selectedChamberId}!`);
       closeModal('inspector-modal');
       await fetchLabData();
     }
@@ -1278,7 +1282,7 @@
         body: JSON.stringify(payload)
       });
 
-      alert(`✅ Daily Check Logged for ${selectedChamberId}!`);
+      alert(`Daily Check Logged for ${selectedChamberId}!`);
       closeModal('inspector-modal');
       await fetchLabData();
     }
@@ -1314,7 +1318,7 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      alert('✅ ' + data.message);
+      alert(data.message);
       await fetchLabData();
     }
 
@@ -1366,10 +1370,10 @@
           <span style="font-weight:900; color:#2563eb; width:18px;">${num}.</span>
           <input type="text" value="${name}" class="edit-step-name" placeholder="Subtask Name" style="flex-grow:1; min-width:130px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           <select class="edit-step-unit" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
-            <option value="Days" ${unit==='Days'?'selected':''}>Days ⏳</option>
-            <option value="Hours" ${unit==='Hours'?'selected':''}>Hours ⏳</option>
-            <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles ⏳</option>
-            <option value="Units" ${unit==='Units'?'selected':''}>Units ⏳</option>
+            <option value="Days" ${unit==='Days'?'selected':''}>Days</option>
+            <option value="Hours" ${unit==='Hours'?'selected':''}>Hours</option>
+            <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles</option>
+            <option value="Units" ${unit==='Units'?'selected':''}>Units</option>
           </select>
           <input type="number" value="${target}" class="edit-step-target" placeholder="Target" style="width:65px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           <button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✕</button>
@@ -1428,7 +1432,7 @@
       });
       const data = await res.json();
       if (!data.success) {
-        alert("❌ " + (data.message || "Failed to update task"));
+        alert("Failed to update task: " + (data.message || "Unknown error"));
         return;
       }
 
@@ -1468,7 +1472,7 @@
 
         const data = await res.json();
         if (data.success) {
-          // Immediately update local store in memory so re-render NEVER resets it
+          // Immediately update local store in memory so values never reset
           if (labStore.tasks) {
             const task = labStore.tasks.find(t => t.task_id === taskId);
             if (task && task.subtasks) {
@@ -1492,7 +1496,7 @@
           }, 1500);
 
         } else {
-          alert("❌ " + (data.message || "Failed to assign subtask"));
+          alert("Failed to assign subtask: " + (data.message || "Unknown error"));
           btn.innerText = "ASSIGN ➔";
           btn.disabled = false;
         }
@@ -1542,10 +1546,10 @@
           <span style="font-weight:900; color:#2563eb; width:18px;">${num}.</span>
           <input type="text" value="${name}" class="step-input-name" placeholder="Subtask Name" style="flex-grow:1; min-width:130px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           <select class="step-input-unit" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
-            <option value="Days" ${unit==='Days'?'selected':''}>Days ⏳</option>
-            <option value="Hours" ${unit==='Hours'?'selected':''}>Hours ⏳</option>
-            <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles ⏳</option>
-            <option value="Units" ${unit==='Units'?'selected':''}>Units ⏳</option>
+            <option value="Days" ${unit==='Days'?'selected':''}>Days</option>
+            <option value="Hours" ${unit==='Hours'?'selected':''}>Hours</option>
+            <option value="Cycles" ${unit==='Cycles'?'selected':''}>Cycles</option>
+            <option value="Units" ${unit==='Units'?'selected':''}>Units</option>
           </select>
           <input type="number" value="${target}" class="step-input-target" placeholder="Target" style="width:55px; padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           
@@ -1557,11 +1561,11 @@
           </select>
           <select class="step-input-incharge" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="Unassigned">Unassigned</option>
-            ${incharges.length > 0 ? incharges.map(i=>`<option value="${i.name}">${i.name}</option>`).join('') : ''}
+            ${incharges.length > 0 ? incharges.map(i=>`<option value="${i.name.trim()}">${i.name}</option>`).join('') : ''}
           </select>
           <select class="step-input-assoc" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
             <option value="Unassigned">Unassigned</option>
-            ${associates.length > 0 ? associates.map(a=>`<option value="${a.name}">${a.name}</option>`).join('') : ''}
+            ${associates.length > 0 ? associates.map(a=>`<option value="${a.name.trim()}">${a.name}</option>`).join('') : ''}
           </select>
           <input type="date" value="${today}" class="step-input-date" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:11px; font-weight:800;">
           <button onclick="this.parentElement.remove()" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; font-size:11px; padding:2px 6px; border-radius:4px; cursor:pointer;">✕</button>
@@ -1590,10 +1594,10 @@
             <span style="font-weight:900; font-size:11px; color:#2563eb;">Step ${idx+1}.</span>
             <input type="text" value="${s.name}" oninput="bpBuilderSteps[${idx}].name=this.value" placeholder="Subtask Name" style="flex-grow:1; padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
             <select onchange="bpBuilderSteps[${idx}].unit=this.value" style="padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
-              <option value="Days" ${s.unit==='Days'?'selected':''}>Days ⏳</option>
-              <option value="Hours" ${s.unit==='Hours'?'selected':''}>Hours ⏳</option>
-              <option value="Cycles" ${s.unit==='Cycles'?'selected':''}>Cycles ⏳</option>
-              <option value="Units" ${s.unit==='Units'?'selected':''}>Units ⏳</option>
+              <option value="Days" ${s.unit==='Days'?'selected':''}>Days</option>
+              <option value="Hours" ${s.unit==='Hours'?'selected':''}>Hours</option>
+              <option value="Cycles" ${s.unit==='Cycles'?'selected':''}>Cycles</option>
+              <option value="Units" ${s.unit==='Units'?'selected':''}>Units</option>
             </select>
             <input type="number" value="${s.target}" oninput="bpBuilderSteps[${idx}].target=parseFloat(this.value)||1" style="width:65px; padding:6px; font-weight:800; border:1px solid #cbd5e1; border-radius:4px; font-size:11px;">
             <button onclick="bpBuilderSteps.splice(${idx},1); renderBlueprintBuilderSteps();" style="background:#fee2e2; color:#b91c1c; border:none; font-weight:900; padding:4px 8px; cursor:pointer;">✕</button>
@@ -1607,12 +1611,12 @@
       const name = nameInput ? nameInput.value.trim() : '';
 
       if (!name) {
-        alert("⚠️ Please enter a Blueprint Flow Name.");
+        alert("Please enter a Blueprint Flow Name.");
         return;
       }
 
       if (!bpBuilderSteps || bpBuilderSteps.length === 0) {
-        alert("⚠️ Please click '+ Add Step' to add at least one step.");
+        alert("Please click '+ Add Step' to add at least one step.");
         return;
       }
 
@@ -1630,13 +1634,13 @@
         const data = await res.json();
 
         if (data.success) {
-          alert(`✅ Flow Blueprint '${name}' saved!`);
+          alert(`Flow Blueprint '${name}' saved!`);
           document.getElementById('flow-bp-name').value = '';
           bpBuilderSteps = [];
           renderBlueprintBuilderSteps();
           await fetchLabData();
         } else {
-          alert("❌ Failed to save blueprint.");
+          alert("Failed to save blueprint.");
         }
       } catch (err) {
         console.error("Blueprint save error:", err);
