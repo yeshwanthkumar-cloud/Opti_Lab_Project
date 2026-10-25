@@ -664,10 +664,10 @@
             "logged": 0.0,
             "target": 10.0,
             "unit": "Hours",
-            "assign_date": "2026-10-24",
-            "shift": "Shift B",
-            "incharge": "Riyaz",
-            "associate": "Yosvaraj",
+            "assign_date": "2026-10-25",
+            "shift": "Shift A",
+            "incharge": "Raja",
+            "associate": "Sanjay",
             "parts_status": "Parts Available",
             "chamber": "Chamber-1",
             "cycler": "None",
@@ -1441,6 +1441,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-25 06:44:08",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700001 on TSK-400009: Shift=Shift A, Inc=Raja, Assoc=Sanjay, Chamber=Chamber-1.",
+        "user": "Sanjay"
+      },
       {
         "timestamp": "2026-10-25 06:07:47",
         "title": "Task Deleted",
