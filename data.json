@@ -1133,7 +1133,7 @@
         "task_id": "TSK-400012",
         "prio": "P1",
         "bin": "DSL-6692",
-        "component": "General Hardware",
+        "component": "EL",
         "trf_ref": "-",
         "dvp_name": "\"Cell holder  PA6 GF30 HBF\"",
         "category": "DIESEL",
@@ -1179,24 +1179,14 @@
             "chamber": "Chamber-3",
             "cycler": "ITECH-2",
             "neware_channel": "",
-            "grafana": "https://monitor-staging.ather.io/d/As47DcFSz/diesel-battery-ch?from=now-12h&to=now&var-timeinterval_in_ms=1000&var-bike=s_4510&orgId=1&timezone=browser",
-            "observations": [
-              {
-                "date": "2026-10-24 17:05",
-                "associate": "Unassigned",
-                "shift": "Shift B",
-                "chamber": "Chamber-3",
-                "cycler": "ITECH-2",
-                "channel": "",
-                "notes": "Test is running Fine"
-              }
-            ]
+            "grafana": "",
+            "observations": []
           },
           {
             "sub_id": "SUB-700003",
             "name": "Random Vibration  Z-axis",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 4.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1214,7 +1204,7 @@
             "sub_id": "SUB-700004",
             "name": "Post Capacity",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 10.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1232,7 +1222,7 @@
             "sub_id": "SUB-700005",
             "name": "Air leak and soap Bubble Test",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 1.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1250,7 +1240,7 @@
             "sub_id": "SUB-700006",
             "name": "Dunk Test ",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 24.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1268,7 +1258,7 @@
             "sub_id": "SUB-700007",
             "name": "Post Observation",
             "status": "To Do",
-            "logged": 0,
+            "logged": 0.0,
             "target": 3.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -1969,6 +1959,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-25 06:07:03",
+        "title": "Master Task Edited",
+        "detail": "Task TSK-400012 details/subtasks updated.",
+        "user": "Raj Kumar"
+      },
       {
         "timestamp": "2026-10-25 06:01:29",
         "title": "Subtask Assigned / Updated",
