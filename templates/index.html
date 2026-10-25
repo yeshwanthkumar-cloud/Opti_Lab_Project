@@ -809,6 +809,13 @@
     let activeLab = "Battery Lab";
     let activeShift = "Shift A";
 
+    // Helper for non-repeating subtask IDs
+    function generateUniqueSubId() {
+      const ts = Date.now().toString().slice(-6);
+      const rand = Math.floor(100 + Math.random() * 900);
+      return `SUB-${ts}${rand}`;
+    }
+
     const DEFAULT_PERSONNEL = [
       { id: "EMP-101", name: "Raja", role: "Shift Incharge", shift: "Shift A", schedule: Array(30).fill("Shift A") },
       { id: "EMP-102", name: "Riyaz", role: "Shift Incharge", shift: "Shift B", schedule: Array(30).fill("Shift B") },
@@ -835,7 +842,7 @@
         component: "EL",
         subtasks: [
           {
-            sub_id: "SUB-700001",
+            sub_id: "SUB-800101",
             name: "Pre-Capacity",
             status: "Completed",
             logged: 24,
@@ -850,7 +857,7 @@
             observations: []
           },
           {
-            sub_id: "SUB-700002",
+            sub_id: "SUB-800102",
             name: "Thermal Cycling",
             status: "Running",
             logged: 129,
@@ -1023,13 +1030,13 @@
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">INC: 
-                      <select class="row-assign-inc" style="border:1px solid #cbd5e1; border-radius:4px; padding:3px; font-size:10px; max-width:90px;">
+                      <select class="row-assign-inc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
                         ${(labStore.personnel || []).filter(p=>p.role==='Shift Incharge').map(i=>`<option value="${i.name.trim()}" ${currentInc===i.name.trim().toLowerCase()?'selected':''}>${i.name}</option>`).join('')}
                       </select>
                     </div>
                     <div style="font-size:10px; font-weight:800;">ASSOC: 
-                      <select class="row-assign-assoc" style="border:1px solid #cbd5e1; border-radius:4px; padding:3px; font-size:10px; max-width:90px;">
+                      <select class="row-assign-assoc" style="border:1px solid #cbd5e1; border-radius:4px; padding:2px; font-size:10px; max-width:90px;">
                         <option value="Unassigned">Unassigned</option>
                         ${(labStore.personnel || []).map(a=>`<option value="${a.name.trim()}" ${currentAssoc===a.name.trim().toLowerCase()?'selected':''}>${a.name}</option>`).join('')}
                       </select>
@@ -1045,7 +1052,7 @@
       });
     }
 
-    // 100% Guaranteed Permanent Assignment Handler
+    // Exact non-colliding assignment persistence
     function saveInlineStepAssignmentDirect(btn) {
       const row = btn.closest('.subtask-row');
       if (!row) return;
@@ -1073,7 +1080,6 @@
             user: associate
           });
 
-          // Save synchronously in browser memory
           persistAndRender();
 
           btn.innerText = "SAVED ✓";
@@ -1322,7 +1328,7 @@
 
         const items = document.querySelectorAll('.edit-step-item');
         task.subtasks = Array.from(items).map((el, i) => ({
-          sub_id: task.subtasks[i]?.sub_id || `SUB-${Date.now() % 100000 + i}`,
+          sub_id: task.subtasks[i]?.sub_id || generateUniqueSubId(),
           name: el.querySelector('.edit-step-name').value,
           target: parseFloat(el.querySelector('.edit-step-target').value) || 1,
           unit: el.querySelector('.edit-step-unit').value,
@@ -1417,8 +1423,8 @@
       const bin = document.getElementById('m-bin').value.trim();
       if (!bin) return alert("Please enter BIN / Pack barcode.");
 
-      const steps = Array.from(document.querySelectorAll('.create-step-row')).map((el, i) => ({
-        sub_id: `SUB-${Date.now() % 100000 + i}`,
+      const steps = Array.from(document.querySelectorAll('.create-step-row')).map((el) => ({
+        sub_id: generateUniqueSubId(),
         name: el.querySelector('.c-step-name').value,
         target: parseFloat(el.querySelector('.c-step-target').value) || 1,
         unit: el.querySelector('.c-step-unit').value,
@@ -1433,8 +1439,15 @@
         observations: []
       }));
 
+      // Calculate strictly monotonic, non-colliding Task ID
+      const allIds = (labStore.tasks || []).map(t => {
+        const num = parseInt(String(t.task_id).replace("TSK-", ""), 10);
+        return isNaN(num) ? 400000 : num;
+      });
+      const nextTaskId = `TSK-${Math.max(400000, ...allIds) + 1}`;
+
       const newTask = {
-        task_id: `TSK-${400000 + (labStore.tasks.length + 1)}`,
+        task_id: nextTaskId,
         prio: "P1",
         bin: bin,
         drive_link: document.getElementById('m-drive-link').value.trim(),
@@ -1446,7 +1459,7 @@
         status: "Running",
         shift: "Multi-Shift",
         subtasks: steps.length > 0 ? steps : [{
-          sub_id: `SUB-${Date.now() % 100000}`,
+          sub_id: generateUniqueSubId(),
           name: "Initial Phase",
           target: 10,
           unit: "Hours",

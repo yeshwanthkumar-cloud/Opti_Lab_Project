@@ -1,6 +1,7 @@
 import os
 import io
 import time
+import random
 import json
 import base64
 import requests
@@ -16,7 +17,7 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATA_FILE = "data.json"
 
-# GitHub API Database Configuration
+# GitHub API Database Backup Configuration (Optional fallback)
 GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 GITHUB_REPO = os.environ.get("GITHUB_REPO", "")
 FILE_PATH = "data.json"
@@ -104,11 +105,9 @@ def get_db_connection():
     return None
 
 def init_db():
-    if DATABASE_URL:
+    conn = get_db_connection()
+    if conn:
         try:
-            conn = get_db_connection()
-            if not conn:
-                return
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS opti_lab_store (
@@ -152,50 +151,15 @@ def init_db():
             conn.commit()
             cursor.close()
             conn.close()
+            print("Database initialized successfully.")
         except Exception as e:
             print("Database initialization error:", e)
 
-def save_data_to_file():
-    try:
-        with open(DATA_FILE, "w") as f:
-            json.dump(LAB_DATA, f, indent=4)
-        print("✅ Saved state to local storage (data.json).")
-    except Exception as e:
-        print("Local Save Error:", e)
-
-    if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
-        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
-        headers = {
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
-        }
+def save_data_permanently():
+    """Permanent storage: Writes synchronously to Postgres first."""
+    conn = get_db_connection()
+    if conn:
         try:
-            get_res = requests.get(url, headers=headers)
-            sha = get_res.json().get("sha") if get_res.status_code == 200 else None
-
-            content_bytes = json.dumps(LAB_DATA, indent=2).encode('utf-8')
-            encoded_content = base64.b64encode(content_bytes).decode('utf-8')
-
-            payload = {
-                "message": "Automated DB Update from Web App",
-                "content": encoded_content
-            }
-            if sha:
-                payload["sha"] = sha
-
-            put_res = requests.put(url, json=payload, headers=headers)
-            if put_res.status_code in [200, 201]:
-                print("✅ Successfully saved LAB_DATA to GitHub DB.")
-            else:
-                print("GitHub Save Error:", put_res.json())
-        except Exception as e:
-            print("GitHub Sync Exception:", e)
-
-    if DATABASE_URL:
-        try:
-            conn = get_db_connection()
-            if not conn:
-                return
             cursor = conn.cursor()
             cursor.execute("""
                 INSERT INTO opti_lab_store (id, data)
@@ -205,30 +169,58 @@ def save_data_to_file():
             conn.commit()
             cursor.close()
             conn.close()
+            print("Data saved permanently to PostgreSQL DB.")
         except Exception as e:
-            print("DB Save Error:", e)
+            print("PostgreSQL Save Error:", e)
 
-def load_data_from_file():
-    global LAB_DATA
+    try:
+        with open(DATA_FILE, "w") as f:
+            json.dump(LAB_DATA, f, indent=4)
+    except Exception as e:
+        print("Local disk save error:", e)
+
     if GITHUB_TOKEN and "ghp_" in GITHUB_TOKEN and GITHUB_REPO:
-        url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
-        headers = {
-            "Authorization": f"token {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github.v3+json"
-        }
         try:
-            res = requests.get(url, headers=headers)
-            if res.status_code == 200:
-                file_json = res.json()
-                decoded_bytes = base64.b64decode(file_json["content"])
-                saved_data = json.loads(decoded_bytes.decode('utf-8'))
+            url = f"https://api.github.com/repos/{GITHUB_REPO}/contents/{FILE_PATH}"
+            headers = {
+                "Authorization": f"token {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            get_res = requests.get(url, headers=headers)
+            sha = get_res.json().get("sha") if get_res.status_code == 200 else None
+
+            content_bytes = json.dumps(LAB_DATA, indent=2).encode('utf-8')
+            encoded_content = base64.b64encode(content_bytes).decode('utf-8')
+
+            payload = {"message": "Automated DB Update", "content": encoded_content}
+            if sha:
+                payload["sha"] = sha
+
+            requests.put(url, json=payload, headers=headers)
+        except Exception as e:
+            print("GitHub backup error (non-fatal):", e)
+
+def load_data_permanently():
+    global LAB_DATA
+    conn = get_db_connection()
+    if conn:
+        try:
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
+            cursor.execute("SELECT data FROM opti_lab_store WHERE id = 'master';")
+            row = cursor.fetchone()
+            cursor.close()
+            conn.close()
+            if row and row['data']:
+                saved_data = row['data']
+                if isinstance(saved_data, str):
+                    saved_data = json.loads(saved_data)
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
                         LAB_DATA[dept] = saved_data[dept]
-                print("✅ Successfully restored data from GitHub DB.")
+                print("Restored permanent state from PostgreSQL.")
                 return
         except Exception as e:
-            print("GitHub Load Error:", e)
+            print("PostgreSQL Load Error:", e)
 
     if os.path.exists(DATA_FILE):
         try:
@@ -237,12 +229,12 @@ def load_data_from_file():
                 for dept in DEPARTMENTS:
                     if dept in saved_data:
                         LAB_DATA[dept] = saved_data[dept]
-            print("✅ Loaded data from local storage (data.json).")
+            print("Restored state from data.json.")
         except Exception as e:
             print("Local Load Error:", e)
 
 init_db()
-load_data_from_file()
+load_data_permanently()
 
 def log_audit_event(dept, title, detail, user="System"):
     LAB_DATA[dept]["audit_history"].insert(0, {
@@ -375,20 +367,30 @@ def create_master_task():
     dept = data.get("dept", "Battery Lab")
    
     if dept in LAB_DATA:
-        existing_ids = []
-        for t in LAB_DATA[dept]["tasks"]:
-            try:
-                existing_ids.append(int(str(t["task_id"]).replace("TSK-", "")))
-            except (ValueError, TypeError):
-                pass
-        next_id_num = max(existing_ids, default=400000) + 1
-        task_id = f"TSK-{next_id_num}"
+        # Strictly non-repeating Task ID across all departments
+        all_existing_task_nums = []
+        for d in DEPARTMENTS:
+            for t in LAB_DATA.get(d, {}).get("tasks", []):
+                try:
+                    num = int(str(t.get("task_id", "")).replace("TSK-", ""))
+                    all_existing_task_nums.append(num)
+                except (ValueError, TypeError):
+                    pass
+        
+        next_task_num = max(all_existing_task_nums, default=400000) + 1
+        task_id = f"TSK-{next_task_num}"
 
+        # Globally unique Subtask IDs using microsecond timestamp + random salt
         steps = data.get("steps", [])
         subtasks = []
+        base_ts = int(time.time() * 1000000)
+        
         for idx, s in enumerate(steps):
+            unique_salt = random.randint(100, 999)
+            sub_id = f"SUB-{(base_ts % 1000000) + idx:06d}{unique_salt}"
+            
             subtasks.append({
-                "sub_id": f"SUB-{int(time.time() * 1000) % 1000000 + idx}",
+                "sub_id": sub_id,
                 "name": s.get("name", f"Step {idx+1}"),
                 "status": "To Do",
                 "logged": 0,
@@ -410,6 +412,7 @@ def create_master_task():
             "task_id": task_id,
             "prio": data.get("prio", "P1"),
             "bin": data.get("bin", ""),
+            "drive_link": data.get("drive_link", "").strip(),
             "component": data.get("component", "General Hardware"),
             "trf_ref": data.get("trf_id", "-"),
             "dvp_name": data.get("dvp_name", "Custom Flow"),
@@ -426,8 +429,8 @@ def create_master_task():
         }
        
         LAB_DATA[dept]["tasks"].append(new_task)
-        log_audit_event(dept, "Master Task Created", f"Task {task_id} ({data.get('bin')}) generated with {len(subtasks)} steps.", data.get('engineer', 'Lead Engineer'))
-        save_data_to_file()
+        log_audit_event(dept, "Master Task Created", f"Task {task_id} ({data.get('bin')}) generated with {len(subtasks)} unique subtasks.", data.get('engineer', 'Lead Engineer'))
+        save_data_permanently()
         return jsonify({"success": True, "task": new_task})
     return jsonify({"success": False}), 400
 
@@ -436,7 +439,7 @@ def edit_master_task():
     data = request.json or {}
     dept = data.get("dept", "Battery Lab")
     task_id = data.get("task_id")
-    new_task_id = data.get("new_task_id", "").strip()
+    new_task_id = str(data.get("new_task_id", "")).strip()
     
     if dept in LAB_DATA and task_id:
         for t in LAB_DATA[dept]["tasks"]:
@@ -447,6 +450,7 @@ def edit_master_task():
                     t["task_id"] = new_task_id
 
                 t["bin"] = data.get("bin", t.get("bin", ""))
+                t["drive_link"] = data.get("drive_link", t.get("drive_link", "")).strip()
                 t["dvp_name"] = data.get("dvp_name", t.get("dvp_name", ""))
                 t["component"] = data.get("component", t.get("component", "General Hardware"))
                 t["category"] = data.get("category", t.get("category", "450"))
@@ -458,8 +462,9 @@ def edit_master_task():
                 incoming_steps = data.get("steps")
                 if incoming_steps is not None:
                     updated_subtasks = []
+                    base_ts = int(time.time() * 1000000)
                     for idx, s in enumerate(incoming_steps):
-                        sub_id = s.get("sub_id") or f"SUB-{int(time.time() * 1000) % 1000000 + idx}"
+                        sub_id = s.get("sub_id") or f"SUB-{(base_ts % 1000000) + idx:06d}{random.randint(100, 999)}"
                         updated_subtasks.append({
                             "sub_id": sub_id,
                             "name": s.get("name", f"Step {idx+1}"),
@@ -484,8 +489,8 @@ def edit_master_task():
                     total_logged = sum(float(sub.get("logged", 0)) for sub in t["subtasks"])
                     t["progress"] = int((total_logged / total_target) * 100) if total_target > 0 else 0
 
-                log_audit_event(dept, "Master Task Edited", f"Task {task_id} details/subtasks updated.", t.get("engineer", "System"))
-                save_data_to_file()
+                log_audit_event(dept, "Master Task Edited", f"Task {task_id} details updated.", t.get("engineer", "System"))
+                save_data_permanently()
                 return jsonify({"success": True, "task": t})
                 
     return jsonify({"success": False, "message": "Task not found"}), 400
@@ -502,7 +507,7 @@ def delete_single_task():
        
         if len(LAB_DATA[dept]["tasks"]) < original_count:
             log_audit_event(dept, "Task Deleted", f"Permanently removed task {task_id}.")
-            save_data_to_file()
+            save_data_permanently()
             return jsonify({"success": True})
            
     return jsonify({"success": False, "message": "Task not found"}), 400
@@ -514,10 +519,10 @@ def update_subtask():
     task_id = data.get("task_id")
     sub_id = data.get("sub_id")
    
-    if dept in LAB_DATA:
+    if dept in LAB_DATA and task_id and sub_id:
         for t in LAB_DATA[dept]["tasks"]:
             if t["task_id"] == task_id:
-                for st in t["subtasks"]:
+                for st in t.get("subtasks", []):
                     if st["sub_id"] == sub_id:
                         if "associate" in data:
                             st["associate"] = str(data.get("associate") or "Unassigned").strip()
@@ -528,10 +533,10 @@ def update_subtask():
                         if "assign_date" in data:
                             st["assign_date"] = str(data.get("assign_date") or datetime.now().strftime("%Y-%m-%d")).strip()
 
-                        if "chamber" in data:
-                            st["chamber"] = data.get("chamber") or "None"
-                        if "cycler" in data:
-                            st["cycler"] = data.get("cycler") or "None"
+                        if "chamber" in data and data.get("chamber"):
+                            st["chamber"] = data.get("chamber")
+                        if "cycler" in data and data.get("cycler"):
+                            st["cycler"] = data.get("cycler")
                         if "neware_channel" in data:
                             st["neware_channel"] = data.get("neware_channel", "")
                         if "grafana" in data:
@@ -542,12 +547,13 @@ def update_subtask():
                         except (ValueError, TypeError):
                             add_p = 0.0
                             
-                        st["logged"] = float(st.get("logged", 0)) + add_p
+                        if add_p > 0:
+                            st["logged"] = float(st.get("logged", 0)) + add_p
                        
                         manual_status = data.get("status")
                         if manual_status:
                             st["status"] = manual_status
-                        elif float(st.get("target", 1)) > 0 and st["logged"] >= float(st.get("target", 1)):
+                        elif float(st.get("target", 1)) > 0 and float(st.get("logged", 0)) >= float(st.get("target", 1)):
                             st["status"] = "Completed"
                        
                         notes = data.get("notes", "").strip()
@@ -573,9 +579,10 @@ def update_subtask():
                         elif any(s.get("status") in ["Running", "Blocked", "Parts Missing"] for s in t["subtasks"]):
                             t["status"] = "Running"
                            
-                        log_audit_event(dept, "Subtask Assigned / Updated", f"{sub_id} on {t['task_id']}: Shift={st['shift']}, Inc={st['incharge']}, Assoc={st['associate']}, Chamber={st['chamber']}.", st.get("associate", "System"))
-                        save_data_to_file()
+                        log_audit_event(dept, "Subtask Assigned / Updated", f"{sub_id} on {t['task_id']}: Shift={st['shift']}, Inc={st['incharge']}, Assoc={st['associate']}.", st.get("associate", "System"))
+                        save_data_permanently()
                         return jsonify({"success": True, "subtask": st, "task_progress": t["progress"]})
+                        
     return jsonify({"success": False, "message": "Task or subtask not found"}), 400
 
 @app.route("/api/blueprints/save", methods=["POST"])
@@ -587,7 +594,7 @@ def save_blueprint():
     if dept in LAB_DATA and name and steps:
         LAB_DATA[dept]["blueprints"][name] = steps
         log_audit_event(dept, "Flow Blueprint Saved", f"Saved reusable test flow: {name} with {len(steps)} steps.")
-        save_data_to_file()
+        save_data_permanently()
         return jsonify({"success": True})
     return jsonify({"success": False}), 400
 
@@ -600,7 +607,7 @@ def add_component():
         if name not in LAB_DATA[dept]["components"]:
             LAB_DATA[dept]["components"].append(name)
             log_audit_event(dept, "Component Registered", f"Added component: {name} to {dept}")
-            save_data_to_file()
+            save_data_permanently()
             return jsonify({"success": True})
     return jsonify({"success": False}), 400
 
@@ -612,14 +619,14 @@ def add_personnel():
         schedule = [data.get("shift", "Shift A")] * 30
         new_member = {
             "id": data.get("emp_id", f"EMP-{len(LAB_DATA[dept]['personnel']) + 101}"),
-            "name": data.get("name"),
+            "name": str(data.get("name")).strip(),
             "role": data.get("role", "Associate"),
             "shift": data.get("shift", "Shift A"),
             "schedule": schedule
         }
         LAB_DATA[dept]["personnel"].append(new_member)
-        log_audit_event(dept, "Personnel Added", f"Registered {data.get('name')} ({data.get('role')}) to {data.get('shift')}.")
-        save_data_to_file()
+        log_audit_event(dept, "Personnel Added", f"Registered {new_member['name']} ({new_member['role']}) to {new_member['shift']}.")
+        save_data_permanently()
         return jsonify({"success": True, "personnel": new_member})
     return jsonify({"success": False}), 400
 
@@ -638,7 +645,7 @@ def mark_attendance():
         }
         LAB_DATA[dept]["attendance"].append(entry)
         log_audit_event(dept, "Attendance Punch", f"{data.get('emp_name')} logged {data.get('action')} on {data.get('shift')} ({data.get('status')}).", data.get('emp_name'))
-        save_data_to_file()
+        save_data_permanently()
         return jsonify({"success": True, "entry": entry})
     return jsonify({"success": False}), 400
 
@@ -672,7 +679,7 @@ def update_roster_cell():
                     p["schedule"][day_idx] = new_shift
                 if "default_shift" in data:
                     p["shift"] = data["default_shift"]
-                save_data_to_file()
+                save_data_permanently()
                 return jsonify({"success": True, "schedule": p["schedule"]})
     return jsonify({"success": False}), 400
 
@@ -688,7 +695,7 @@ def stamp_roster():
         key = f"{name}_{date_str}"
         LAB_DATA[dept]["roster_stamps"][key] = shift
         log_audit_event(dept, "Roster Stamped", f"Stamped {shift} for {name} on {date_str}.")
-        save_data_to_file()
+        save_data_permanently()
         return jsonify({"success": True})
     return jsonify({"success": False}), 400
 
@@ -706,7 +713,7 @@ def add_extra_task():
         }
         LAB_DATA[dept]["extra_tasks"].append(extra)
         log_audit_event(dept, "Unplanned Task Logged", f"Ad-hoc task '{data.get('title')}' logged by {data.get('logged_by')}.", data.get('logged_by'))
-        save_data_to_file()
+        save_data_permanently()
         return jsonify({"success": True, "extra": extra})
     return jsonify({"success": False}), 400
 
@@ -736,8 +743,8 @@ def submit_5s():
     dept = data.get('lab_name', 'Battery Lab')
     if dept in LAB_DATA:
         log_audit_event(dept, "5S Checksheet Submitted", f"5S log recorded for {data.get('shift')} by {data.get('submitted_by')}.")
-        save_data_to_file()
-    return jsonify({"status": "success", "message": f"5S Check Sheet for {data.get('lab_name')} ({data.get('shift')}) recorded!"})
+        save_data_permanently()
+    return jsonify({"status": "success", "message": f"5S Check Sheet recorded!"})
 
 @app.route('/api/chamber-check-submit', methods=['POST'])
 def submit_chamber_check():
@@ -775,7 +782,7 @@ def submit_chamber_check():
             "checks": data.get('checks_data', {})
         }
         log_audit_event(dept, "Chamber Check Logged", f"Daily maintenance check completed for {chamber_name}.", data.get('submitted_by'))
-        save_data_to_file()
+        save_data_permanently()
     return jsonify({"status": "success", "message": f"Daily Check Sheet for {chamber_name} recorded!"})
 
 @app.route('/api/equipment', methods=['POST'])
@@ -815,7 +822,7 @@ def update_equipment():
             LAB_DATA[dept]["equipment_maintenance"][chamber_name]["calibration_due_date"] = calib_date
        
         log_audit_event(dept, "Equipment PM/Calib Updated", f"Updated PM ({pm_date}) & Calibration ({calib_date}) dates for {chamber_name}.")
-        save_data_to_file()
+        save_data_permanently()
     return jsonify({"status": "success", "message": f"PM & Calibration dates updated for {chamber_name}!"})
 
 @app.route('/api/download-backup', methods=['GET'])
