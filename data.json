@@ -512,7 +512,7 @@
           {
             "sub_id": "SUB-700004",
             "name": "Post Observation",
-            "status": "To Do",
+            "status": "Running",
             "logged": 0.0,
             "target": 1.0,
             "unit": "Hours",
@@ -521,7 +521,7 @@
             "incharge": "Riyaz",
             "associate": "Yosvaraj",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "None",
             "cycler": "None",
             "neware_channel": "",
             "grafana": "",
@@ -1441,6 +1441,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-25 07:06:14",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700004 on TSK-400005: Shift=Shift B, Inc=Riyaz, Assoc=Yosvaraj, Chamber=None.",
+        "user": "Yosvaraj"
+      },
       {
         "timestamp": "2026-10-25 07:04:37",
         "title": "Subtask Assigned / Updated",
