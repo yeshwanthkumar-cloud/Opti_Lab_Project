@@ -430,7 +430,7 @@
         "objective": "EL Pre X1 Lot 3 (modified cells to address weld bug)",
         "background": "",
         "engineer": "Yeshwanth",
-        "progress": 95,
+        "progress": 96,
         "status": "Running",
         "shift": "Multi-Shift",
         "trf_status": "Testing Active",
@@ -494,8 +494,8 @@
           {
             "sub_id": "SUB-700003",
             "name": "Mechanical Shock ",
-            "status": "To Do",
-            "logged": 0.0,
+            "status": "Running",
+            "logged": 1.0,
             "target": 3.0,
             "unit": "Hours",
             "assign_date": "2026-10-24",
@@ -503,7 +503,7 @@
             "incharge": "Riyaz",
             "associate": "Yosvaraj",
             "parts_status": "Parts Available",
-            "chamber": "Chamber-1",
+            "chamber": "Shaker-SDYN",
             "cycler": "None",
             "neware_channel": "",
             "grafana": "",
@@ -1441,6 +1441,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-25 06:44:53",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700003 on TSK-400005: Shift=Shift B, Inc=Riyaz, Assoc=Yosvaraj, Chamber=Shaker-SDYN.",
+        "user": "Yosvaraj"
+      },
       {
         "timestamp": "2026-10-25 06:44:08",
         "title": "Subtask Assigned / Updated",
