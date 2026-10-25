@@ -665,7 +665,7 @@
             "target": 10.0,
             "unit": "Hours",
             "assign_date": "2026-10-25",
-            "shift": "Shift A",
+            "shift": "Shift B",
             "incharge": "Raja",
             "associate": "Sanjay",
             "parts_status": "Parts Available",
@@ -1441,6 +1441,12 @@
     ],
     "extra_tasks": [],
     "audit_history": [
+      {
+        "timestamp": "2026-10-25 07:04:37",
+        "title": "Subtask Assigned / Updated",
+        "detail": "SUB-700001 on TSK-400009: Shift=Shift B, Inc=Raja, Assoc=Sanjay, Chamber=Chamber-1.",
+        "user": "Sanjay"
+      },
       {
         "timestamp": "2026-10-25 06:45:08",
         "title": "Subtask Assigned / Updated",
