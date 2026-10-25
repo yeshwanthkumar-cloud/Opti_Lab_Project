@@ -1960,6 +1960,12 @@
     "extra_tasks": [],
     "audit_history": [
       {
+        "timestamp": "2026-10-25 06:07:05",
+        "title": "Master Task Edited",
+        "detail": "Task TSK-400012 details/subtasks updated.",
+        "user": "Raj Kumar"
+      },
+      {
         "timestamp": "2026-10-25 06:07:03",
         "title": "Master Task Edited",
         "detail": "Task TSK-400012 details/subtasks updated.",
