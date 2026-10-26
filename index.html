@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Opti Lab Operating Console - Ather Validation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Opti Lab Console - Ather Energy</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -11,759 +11,946 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-    .custom-scroll::-webkit-scrollbar { height: 7px; width: 6px; }
-    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
-    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #0f172a; -webkit-tap-highlight-color: transparent; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    .custom-scroll::-webkit-scrollbar { height: 5px; width: 5px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    
     .dvp-grid {
       display: grid;
-      grid-template-columns: 110px 55px 120px 85px 1.4fr 1.6fr 100px 70px 95px 85px 95px;
-      gap: 8px;
+      grid-template-columns: 95px 50px 115px 70px 1.4fr 1.6fr 95px 65px 90px 75px 85px;
+      gap: 10px;
       align-items: center;
     }
   </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col select-none">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- Top App Navigation / Lab Header -->
-  <header class="bg-white border-b border-slate-200 px-6 py-3 sticky top-0 z-30 shadow-sm flex items-center justify-between">
-    <div class="flex items-center space-x-4">
-      <div class="flex items-center space-x-2">
-        <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold shadow-md shadow-blue-500/20">
-          <i data-lucide="activity" class="w-5 h-5"></i>
+  <!-- ======================================================== -->
+  <!-- 1. DARWINBOX EXECUTIVE APP BAR                           -->
+  <!-- ======================================================== -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="px-4 sm:px-6 py-2.5 flex items-center justify-between gap-3 max-w-[1680px] mx-auto">
+      
+      <!-- Left: Logo & Brand -->
+      <div class="flex items-center space-x-3">
+        <button onclick="toggleMobileNav()" class="lg:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none" aria-label="Toggle navigation">
+          <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <div class="w-9 h-9 rounded-xl bg-blue-700 flex items-center justify-center text-white shadow-sm font-black">
+          <i data-lucide="zap" class="w-4 h-4"></i>
         </div>
         <div>
-          <span class="font-bold text-base tracking-tight text-slate-900 block leading-tight">Opti Lab Console</span>
-          <span class="text-[11px] text-slate-500 font-medium">Battery & Vibration Validation Hub</span>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-sm sm:text-base text-slate-900 tracking-tight leading-none">Opti Lab Console</h1>
+            <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200">Ather Validation</span>
+          </div>
+          <p class="text-[10px] sm:text-[11px] text-slate-500 font-medium">Battery & Vibration Floor Operations</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="hidden md:flex items-center space-x-1 pl-4">
-        <button onclick="setActiveNav('tasks')" id="tab-nav-tasks" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 transition">DVP Master Tasks</button>
-        <button onclick="setActiveNav('workbench')" id="tab-nav-workbench" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Shift Workbench</button>
-        <button onclick="setActiveNav('labview')" id="tab-nav-labview" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Chambers & Equipment</button>
-        <button onclick="setActiveNav('roster')" id="tab-nav-roster" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">30-Day Roster</button>
-        <button onclick="setActiveNav('fives')" id="tab-nav-fives" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">5S Audits</button>
-        <button onclick="setActiveNav('analytics')" id="tab-nav-analytics" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Dashboard & Analytics</button>
-      </nav>
-    </div>
+      <!-- Center: Shift & Department Controls -->
+      <div class="hidden md:flex items-center space-x-2.5">
+        <!-- Active Shift Fast-Toggle -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/90 text-xs font-semibold">
+          <span class="text-[10px] font-bold text-slate-400 px-2 uppercase">Shift</span>
+          <button onclick="setActiveShift('Shift A')" id="btn-shift-A" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">A</button>
+          <button onclick="setActiveShift('Shift B')" id="btn-shift-B" class="px-2.5 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition">B</button>
+          <button onclick="setActiveShift('Shift C')" id="btn-shift-C" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">C</button>
+        </div>
 
-    <!-- Right Controls -->
-    <div class="flex items-center space-x-3">
-      <!-- Active Department / Lab Switcher -->
-      <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-        <button id="btn-lab-battery" onclick="switchLab('Battery Lab')" class="px-3 py-1 text-xs font-semibold rounded-lg bg-white text-blue-700 shadow-sm transition">
-          Battery Lab
-        </button>
-        <button id="btn-lab-vib" onclick="switchLab('Vibration Team')" class="px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition">
-          Vibration Team
+        <!-- Department Switcher -->
+        <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/90 text-xs font-semibold">
+          <button id="dept-btn-battery" onclick="switchDepartment('Battery Lab')" class="px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition">
+            Battery Lab
+          </button>
+          <button id="dept-btn-vib" onclick="switchDepartment('Vibration Team')" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">
+            Vibration Team
+          </button>
+        </div>
+
+        <!-- Cloud Sync Badge -->
+        <button onclick="syncWithCloudNow()" class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition" title="Click to sync cloud">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="cloud-status-text">Cloud Synced</span>
         </button>
       </div>
 
-      <!-- DVP Test Planner Button -->
-      <button onclick="openDvpPlannerModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-sm transition flex items-center space-x-1.5">
-        <i data-lucide="calendar-plus" class="w-4 h-4"></i>
-        <span>DVP Test Planner</span>
-      </button>
+      <!-- Right CTAs -->
+      <div class="flex items-center space-x-2">
+        <button onclick="openTaskPlannerModal('testflow')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 sm:px-4 py-2 rounded-xl shadow-xs transition flex items-center space-x-1.5">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Task Planner</span>
+          <span class="sm:hidden">Plan</span>
+        </button>
+        <button onclick="openModal('modal-handover')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-3 py-2 rounded-xl shadow-xs transition flex items-center space-x-1">
+          <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Handover</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Darwinbox Navigation Tabs -->
+    <div class="px-4 sm:px-6 bg-white border-t border-slate-100 flex items-center justify-between overflow-x-auto custom-scroll max-w-[1680px] mx-auto">
+      <nav class="flex space-x-1 py-1.5 min-w-max text-xs" id="desktop-nav-tabs">
+        <button onclick="setActiveNav('tasks')" id="tab-nav-tasks" class="px-3.5 py-1.5 font-bold rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 transition">
+          DVP Master Lines
+        </button>
+        <button onclick="setActiveNav('subtasks')" id="tab-nav-subtasks" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          Subtasks Matrix
+        </button>
+        <button onclick="setActiveNav('workbench')" id="tab-nav-workbench" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          Shift Workbench
+        </button>
+        <button onclick="setActiveNav('equipment')" id="tab-nav-equipment" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          Chambers & Cyclers (15 Floor Rigs)
+        </button>
+        <button onclick="setActiveNav('components')" id="tab-nav-components" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          Components
+        </button>
+        <button onclick="setActiveNav('roster')" id="tab-nav-roster" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          30-Day Attendance (P/A)
+        </button>
+        <button onclick="setActiveNav('fives')" id="tab-nav-fives" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          5S Checksheet
+        </button>
+        <button onclick="setActiveNav('analytics')" id="tab-nav-analytics" class="px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition">
+          Analytics & KPIs
+        </button>
+      </nav>
+
+      <!-- Active Shift Lead & Ather Demo Loader -->
+      <div class="hidden lg:flex items-center space-x-3 text-xs text-slate-500 font-medium pl-4">
+        <span>Lead Incharge: <strong class="text-slate-800" id="header-lead-display">Riyaz</strong></span>
+        <span>•</span>
+        <button onclick="loadSampleAtherPack()" class="text-blue-600 hover:underline font-semibold flex items-center space-x-1">
+          <i data-lucide="download" class="w-3 h-3"></i>
+          <span>Load Ather Demo Data</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-nav-drawer" class="lg:hidden hidden px-4 py-3 bg-slate-50 border-t border-slate-200 space-y-2 text-xs font-semibold">
+      <div class="grid grid-cols-2 gap-2 pb-2 border-b border-slate-200">
+        <div>
+          <label class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Shift</label>
+          <div class="flex bg-white rounded-lg p-0.5 border border-slate-200">
+            <button onclick="setActiveShift('Shift A')" class="flex-1 py-1 text-center font-bold">A</button>
+            <button onclick="setActiveShift('Shift B')" class="flex-1 py-1 text-center font-bold bg-blue-50 text-blue-700 rounded">B</button>
+            <button onclick="setActiveShift('Shift C')" class="flex-1 py-1 text-center font-bold">C</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Department</label>
+          <select onchange="switchDepartment(this.value)" class="w-full bg-white border border-slate-200 rounded-lg py-1 px-2 font-bold text-slate-800">
+            <option value="Battery Lab">Battery Lab</option>
+            <option value="Vibration Team">Vibration Team</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-1.5 pt-1">
+        <button onclick="setActiveNav('tasks'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">DVP Master</button>
+        <button onclick="setActiveNav('subtasks'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Subtasks</button>
+        <button onclick="setActiveNav('workbench'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Workbench</button>
+        <button onclick="setActiveNav('equipment'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Chambers & Cyclers</button>
+        <button onclick="setActiveNav('components'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Components</button>
+        <button onclick="setActiveNav('roster'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Attendance (P/A)</button>
+        <button onclick="setActiveNav('fives'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">5S Audits</button>
+        <button onclick="setActiveNav('analytics'); toggleMobileNav();" class="p-2 text-left bg-white rounded-lg border border-slate-200 text-slate-800 font-bold">Analytics</button>
+      </div>
     </div>
   </header>
 
-  <!-- Notification Banner / Shift Status & Live Cloud Bar -->
-  <section class="bg-white border-b border-slate-200 px-6 py-2 flex flex-wrap items-center justify-between text-xs gap-2">
-    <div class="flex items-center space-x-2 text-slate-700">
-      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-      <span class="font-bold text-slate-900" id="current-shift-indicator">Active Shift: Shift B (2:00 PM - 10:00 PM)</span>
-      <span class="text-slate-300">|</span>
-      <span class="text-slate-600">Lead Incharge: <strong class="text-slate-800" id="current-shift-lead">Riyaz</strong></span>
-      <span class="text-slate-300">|</span>
-      <span id="active-lab-banner" class="font-semibold text-blue-600">Battery Lab</span>
-      <span class="text-slate-300">|</span>
-      <span id="cloud-sync-status" class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded font-bold flex items-center space-x-1">
-        <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
-        <span>Ather Cloud Database Connected</span>
-      </span>
-    </div>
-    <div class="flex items-center space-x-2">
-      <button onclick="syncWithCloud()" class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg border border-slate-300 text-xs transition" title="Force Sync with Ather Google Sheet">
-        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-        <span>Sync Cloud</span>
-      </button>
-      <button onclick="openModal('modal-handover-submission')" class="flex items-center space-x-1 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-2.5 py-1 rounded-lg shadow-sm transition text-xs">
-        <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i>
-        <span>Submit Shift Handover</span>
-      </button>
-      <button onclick="loadAtherSampleDataset()" class="flex items-center space-x-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200 text-xs transition" title="Load Ather Screenshot Flow (TSK-400004)">
-        <i data-lucide="folder-down" class="w-3 h-3"></i>
-        <span>Load Ather Test Flow</span>
-      </button>
-      <button onclick="resetToBlankState()" class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold px-2.5 py-1 rounded-lg border border-slate-300 text-xs transition" title="Clear all data">
-        <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
-        <span>Reset App</span>
-      </button>
-    </div>
-  </section>
+  <!-- ======================================================== -->
+  <!-- 2. MAIN APPLICATION SURFACE                              -->
+  <!-- ======================================================== -->
+  <main class="flex-1 p-3 sm:p-5 max-w-[1680px] w-full mx-auto space-y-4">
 
-  <!-- Page Main Surface -->
-  <main class="flex-1 p-5 max-w-[1540px] w-full mx-auto space-y-5">
-
-    <!-- VIEW 1: DVP MASTER TASKS & FILTER -->
+    <!-- VIEW 1: DVP MASTER TASKS -->
     <div id="view-tasks" class="space-y-4">
-      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-3">
-        <div class="flex flex-wrap items-center gap-3 flex-1">
-          <div class="relative min-w-[280px] max-w-sm flex-1">
-            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-400"></i>
+      <div class="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2 flex-1 w-full sm:w-auto">
+          <div class="relative min-w-[220px] max-w-sm flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
             <input 
               type="text" 
-              id="search-input" 
-              oninput="filterTasks()"
-              placeholder="Search TRF, BIN, or Objective..." 
-              class="w-full text-xs pl-9 pr-4 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-800"
+              id="dvp-search-input" 
+              oninput="renderDvpMasterTasks()" 
+              placeholder="Search Task ID, BIN, or Objective..." 
+              class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition"
             />
           </div>
 
-          <select id="filter-component" onchange="filterTasks()" class="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white font-medium text-slate-700">
+          <select id="dvp-comp-filter" onchange="renderDvpMasterTasks()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-none">
             <option value="All">All Components</option>
-            <option value="Gen-0 8P Pack">Gen-0 8P Pack</option>
-            <option value="450 Gen 3">450 Gen 3</option>
-            <option value="DIESEL Module">DIESEL Module</option>
-            <option value="BMS Top Enclosure">BMS Top Enclosure</option>
           </select>
 
-          <select id="filter-state" onchange="filterTasks()" class="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white font-medium text-slate-700">
-            <option value="All">All States</option>
+          <select id="dvp-status-filter" onchange="renderDvpMasterTasks()" class="text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-semibold text-slate-700 focus:outline-none">
+            <option value="All">All Statuses</option>
             <option value="Running">Running</option>
             <option value="Completed">Completed</option>
             <option value="Blocked">Blocked / Waiting</option>
           </select>
         </div>
 
-        <div class="flex items-center space-x-3">
-          <div class="text-xs font-semibold text-slate-500" id="displaying-results-count">Displaying 0 Results</div>
-          <button onclick="openDvpPlannerModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-1.5 rounded-xl shadow-sm transition flex items-center space-x-1">
+        <div class="flex items-center space-x-2">
+          <button onclick="openTaskPlannerModal('testflow')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold text-xs px-3 py-2 rounded-xl flex items-center space-x-1 transition">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add DVP Task + Subtasks</span>
+            <span>+ Create Test Flow</span>
+          </button>
+          <button onclick="openTaskPlannerModal('dvp')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1 transition">
+            <i data-lucide="file-plus" class="w-3.5 h-3.5"></i>
+            <span>+ Create DVP</span>
           </button>
         </div>
       </div>
 
-      <!-- 4 KPI Summary Cards -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between h-24">
-          <span class="text-[11px] font-bold tracking-wider text-slate-600 uppercase">COMPLETED TASKS</span>
-          <span class="text-3xl font-extrabold text-emerald-600 leading-none" id="kpi-completed">0</span>
+      <!-- 4 Clean Darwinbox Metrics -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Running Tests</span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-blue-600 leading-tight" id="kpi-running">0</span>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <i data-lucide="play" class="w-4 h-4"></i>
+          </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between h-24 border-l-4 border-l-blue-600">
-          <span class="text-[11px] font-bold tracking-wider text-blue-600 uppercase">ACTIVE RUNNING</span>
-          <span class="text-3xl font-extrabold text-blue-600 leading-none" id="kpi-running">0</span>
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Completed</span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-emerald-600 leading-tight" id="kpi-completed">0</span>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+          </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between h-24">
-          <span class="text-[11px] font-bold tracking-wider text-slate-600 uppercase">BLOCKED / WAITING</span>
-          <span class="text-3xl font-extrabold text-rose-600 leading-none" id="kpi-blocked">0</span>
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Blocked / Waiting</span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-rose-600 leading-tight" id="kpi-blocked">0</span>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+            <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+          </div>
         </div>
 
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between h-24">
-          <span class="text-[11px] font-bold tracking-wider text-slate-600 uppercase">TOTAL REGISTERED</span>
-          <span class="text-3xl font-extrabold text-slate-800 leading-none" id="kpi-total">0</span>
+        <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total DVP Lines</span>
+            <span class="text-2xl sm:text-3xl font-extrabold text-slate-800 leading-tight" id="kpi-total">0</span>
+          </div>
+          <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+          </div>
         </div>
       </div>
 
-      <!-- Main Tasks & Nested Subtasks Table Container -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div class="bg-slate-50 border-b border-slate-200 px-6 py-3.5 dvp-grid text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+      <!-- Main DVP Table / Mobile Cards -->
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <!-- Desktop Header Row -->
+        <div class="bg-slate-50/80 border-b border-slate-200 px-5 py-3 dvp-grid text-[11px] font-bold text-slate-600 uppercase tracking-wider hidden lg:grid">
           <div>TASK ID</div>
           <div class="text-center">PRIO</div>
           <div>BIN / PACK</div>
-          <div class="text-center">DRIVE DATA</div>
+          <div class="text-center">DRIVE</div>
           <div>DVP TEST NAME</div>
-          <div>TEST OBJECTIVE</div>
-          <div>LEAD ENG</div>
+          <div>OBJECTIVE</div>
+          <div>LEAD</div>
           <div class="text-center">PROGRESS</div>
           <div class="text-center">STATUS</div>
           <div class="text-center">SHIFT</div>
           <div class="text-right">ACTIONS</div>
         </div>
 
-        <div id="tasks-table-body" class="divide-y divide-slate-200"></div>
+        <!-- Render Container -->
+        <div id="dvp-tasks-container" class="divide-y divide-slate-100"></div>
       </div>
     </div>
 
-    <!-- VIEW 2: SHIFT WORKBENCH -->
-    <div id="view-workbench" class="space-y-4 hidden">
-      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <h2 class="text-base font-extrabold text-slate-900 tracking-tight" id="workbench-header-title">SHIFT WORKBENCH — SHIFT B</h2>
-          <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl text-xs">
-            <button onclick="setWorkbenchShift('Shift A')" id="wb-shift-btn-A" class="px-3 py-1 font-medium rounded-lg text-slate-600 hover:text-slate-900">Shift A</button>
-            <button onclick="setWorkbenchShift('Shift B')" id="wb-shift-btn-B" class="px-3 py-1 font-bold rounded-lg bg-white text-blue-700 shadow-sm">Shift B</button>
-            <button onclick="setWorkbenchShift('Shift C')" id="wb-shift-btn-C" class="px-3 py-1 font-medium rounded-lg text-slate-600 hover:text-slate-900">Shift C</button>
-          </div>
+    <!-- VIEW 2: SUBTASKS COMPLETE MATRIX -->
+    <div id="view-subtasks" class="space-y-4 hidden">
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-extrabold text-slate-900">Subtasks Master Matrix</h2>
+          <p class="text-xs text-slate-500">Live operational overview of steps, chamber mounts, and logged units across all shifts.</p>
         </div>
-        <button onclick="openModal('modal-handover-submission')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition flex items-center space-x-1">
-          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-          <span>Live Handover View</span>
+        <button onclick="openTaskPlannerModal('dvp')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl">
+          + Add New Step
         </button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 min-h-[480px] flex flex-col space-y-3">
-          <div class="border-b border-slate-200 pb-3">
-            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">TO DO</h3>
+      <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-x-auto custom-scroll">
+        <table class="w-full text-left text-xs min-w-[1100px]">
+          <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
+            <tr>
+              <th class="p-3">Subtask ID</th>
+              <th class="p-3">Master Test Line</th>
+              <th class="p-3">Step Description</th>
+              <th class="p-3">Progress</th>
+              <th class="p-3">Shift</th>
+              <th class="p-3">Date</th>
+              <th class="p-3">Incharge</th>
+              <th class="p-3">Associate</th>
+              <th class="p-3">Chamber & Cycler</th>
+              <th class="p-3 text-center">Status</th>
+              <th class="p-3 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="all-subtasks-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VIEW 3: SHIFT WORKBENCH (KANBAN) -->
+    <div id="view-workbench" class="space-y-4 hidden">
+      <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center space-x-3">
+          <h2 class="text-sm sm:text-base font-extrabold text-slate-900" id="workbench-shift-heading">SHIFT WORKBENCH — SHIFT B</h2>
+          <div class="flex items-center space-x-1 bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+            <button onclick="setActiveShift('Shift A')" class="px-2.5 py-1 rounded text-slate-600 hover:text-slate-900">Shift A</button>
+            <button onclick="setActiveShift('Shift B')" class="px-2.5 py-1 rounded bg-white text-blue-700 shadow-xs font-bold">Shift B</button>
+            <button onclick="setActiveShift('Shift C')" class="px-2.5 py-1 rounded text-slate-600 hover:text-slate-900">Shift C</button>
           </div>
-          <div id="kanban-todo-list" class="space-y-3 flex-1"></div>
+        </div>
+        <button onclick="openModal('modal-handover')" class="text-xs font-bold text-blue-600 hover:text-blue-800 transition flex items-center space-x-1">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+          <span>Live Handover Sign-Off</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- TO DO -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-3.5 min-h-[460px] flex flex-col space-y-3 shadow-xs">
+          <div class="border-b border-slate-100 pb-2.5 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">TO DO</span>
+            <span id="badge-todo" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">0</span>
+          </div>
+          <div id="kanban-todo" class="space-y-2.5 flex-1"></div>
         </div>
 
-        <div class="bg-emerald-50/20 rounded-2xl border-2 border-emerald-400 shadow-sm p-4 min-h-[480px] flex flex-col space-y-3">
-          <div class="border-b-2 border-emerald-400 pb-3">
-            <h3 class="text-xs font-bold text-emerald-800 uppercase tracking-wider">IN PROGRESS</h3>
+        <!-- IN PROGRESS -->
+        <div class="bg-emerald-50/20 rounded-2xl border-2 border-emerald-300 p-3.5 min-h-[460px] flex flex-col space-y-3 shadow-xs">
+          <div class="border-b border-emerald-200 pb-2.5 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-emerald-800 uppercase tracking-wider">IN PROGRESS (ACTIVE)</span>
+            <span id="badge-inprog" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">0</span>
           </div>
-          <div id="kanban-inprogress-list" class="space-y-3 flex-1"></div>
+          <div id="kanban-inprog" class="space-y-2.5 flex-1"></div>
         </div>
 
-        <div class="bg-rose-50/20 rounded-2xl border-2 border-rose-300 shadow-sm p-4 min-h-[480px] flex flex-col space-y-3">
-          <div class="border-b-2 border-rose-400 pb-3">
-            <h3 class="text-xs font-bold text-rose-800 uppercase tracking-wider">BLOCKED / ROLLOVER</h3>
+        <!-- BLOCKED / ROLLOVER -->
+        <div class="bg-rose-50/20 rounded-2xl border-2 border-rose-300 p-3.5 min-h-[460px] flex flex-col space-y-3 shadow-xs">
+          <div class="border-b border-rose-200 pb-2.5 flex items-center justify-between">
+            <span class="text-xs font-extrabold text-rose-800 uppercase tracking-wider">BLOCKED / ROLLOVER</span>
+            <span id="badge-blocked" class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-800">0</span>
           </div>
-          <div id="kanban-blocked-list" class="space-y-3 flex-1"></div>
+          <div id="kanban-blocked" class="space-y-2.5 flex-1"></div>
         </div>
       </div>
     </div>
 
-    <!-- VIEW 3: EQUIPMENT -->
-    <div id="view-labview" class="space-y-4 hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center justify-between">
+    <!-- VIEW 4: CHAMBERS & EQUIPMENT (6 THERMAL CHAMBERS, 5 EA, 2 ITECH, 2 NEWARE) -->
+    <div id="view-equipment" class="space-y-4 hidden">
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 class="text-base font-extrabold text-slate-900 tracking-tight" id="labview-title">Battery Lab Environmental Floor</h2>
-          <p class="text-xs text-slate-500">Live Grafana telemetry & Google Drive links for all stations</p>
+          <h2 class="text-base font-extrabold text-slate-900" id="equipment-heading">Battery Lab Thermal Chambers & Cyclers Floor</h2>
+          <p class="text-xs text-slate-500">6 Thermal Chambers • 5 EA Cyclers • 2 ITECH Cyclers • 2 NEWARE Cyclers</p>
         </div>
-        <div class="flex items-center space-x-3 text-xs">
-          <span class="inline-flex items-center text-emerald-600 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Running</span>
-          <span class="inline-flex items-center text-slate-400 font-semibold"><span class="w-2.5 h-2.5 rounded-full bg-slate-300 mr-1.5"></span>Idle</span>
+        <div class="flex items-center space-x-3 text-xs font-semibold">
+          <span class="inline-flex items-center text-emerald-700">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>Running
+          </span>
+          <span class="inline-flex items-center text-slate-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-300 mr-1.5"></span>Idle
+          </span>
         </div>
       </div>
-      <div id="equipment-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+      <!-- Equipment Cards Grid -->
+      <div id="equipment-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5"></div>
     </div>
 
-    <!-- VIEW 4: 30-DAY ROSTER WITH INTERACTIVE SHIFT CHANGING -->
+    <!-- VIEW 5: COMPONENT REGISTRY -->
+    <div id="view-components" class="space-y-4 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- Register Form -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-3 shadow-xs">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+              <i data-lucide="package" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slate-900">Register Lab Component</h3>
+              <p class="text-[11px] text-slate-500">Available across all department dropdowns</p>
+            </div>
+          </div>
+          
+          <div class="space-y-2.5 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Component Name</label>
+              <input type="text" id="new-comp-name" placeholder="e.g. 450 Gen 4 Pack, BMS Rev 3" class="w-full border border-slate-200 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Department</label>
+              <select id="new-comp-dept" class="w-full border border-slate-200 rounded-xl p-2.5 bg-white font-semibold">
+                <option>Battery Lab</option>
+                <option>Vibration Team</option>
+                <option>BMS Hardware</option>
+                <option>Powertrain</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Category Type</label>
+              <select id="new-comp-cat" class="w-full border border-slate-200 rounded-xl p-2.5 bg-white font-bold text-blue-700">
+                <option>450</option>
+                <option>DIESEL</option>
+                <option>EL</option>
+                <option>OTHER</option>
+              </select>
+            </div>
+            <button onclick="registerNewComponent()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-xs transition">
+              + Save Component to Registry
+            </button>
+          </div>
+        </div>
+
+        <!-- Registry Table -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-4 space-y-3 shadow-xs">
+          <h3 class="text-sm font-bold text-slate-900">Active Component Inventory</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5">Component</th>
+                  <th class="p-2.5">Department</th>
+                  <th class="p-2.5">Category</th>
+                  <th class="p-2.5">Active Tests</th>
+                  <th class="p-2.5 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="component-list-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 6: 30-DAY ATTENDANCE ROSTER -->
     <div id="view-roster" class="space-y-4 hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-4 shadow-xs">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">30-Day Shift Roster Matrix</h2>
-            <p class="text-xs text-slate-500">Click any day badge (D1–D30) to toggle shift: <strong>A ➔ B ➔ C ➔ OFF</strong>.</p>
+            <h2 class="text-base font-extrabold text-slate-900">30-Day Personnel Attendance & Shift Roster</h2>
+            <p class="text-xs text-slate-500">Click any day cell (D1–D30) to toggle: <strong>P (Present) ➔ A (Absent) ➔ Shift A ➔ Shift B ➔ Shift C ➔ OFF</strong>.</p>
           </div>
 
           <div class="flex items-center space-x-2">
-            <select id="roster-dept-filter" onchange="renderRoster()" class="text-xs px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold text-slate-700">
+            <select id="roster-dept-filter" onchange="renderRosterMatrix()" class="text-xs border border-slate-200 rounded-xl px-3 py-1.5 font-bold text-slate-700 bg-white">
               <option value="All">All Departments</option>
               <option value="Battery Lab">Battery Lab</option>
               <option value="Vibration Team">Vibration Team</option>
-              <option value="BMS Team">BMS Team</option>
+              <option value="BMS Hardware">BMS Hardware</option>
             </select>
-
-            <button onclick="openModal('modal-add-member')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-xl shadow-sm transition flex items-center space-x-1.5">
-              <i data-lucide="plus" class="w-4 h-4"></i>
+            <button onclick="openModal('modal-add-personnel')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center space-x-1 shadow-xs">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
               <span>Add Personnel</span>
             </button>
           </div>
         </div>
 
-        <div class="flex items-center space-x-4 text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-          <span class="text-slate-500 font-bold uppercase text-[10px]">Click Legend:</span>
-          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-amber-100 text-amber-800 text-center font-bold text-[10px] leading-5">A</span><span>Shift A</span></span>
-          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-sky-100 text-sky-800 text-center font-bold text-[10px] leading-5">B</span><span>Shift B</span></span>
-          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-purple-100 text-purple-800 text-center font-bold text-[10px] leading-5">C</span><span>Shift C</span></span>
-          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-slate-200 text-slate-600 text-center font-bold text-[10px] leading-5">O</span><span>Weekly OFF</span></span>
+        <!-- Legend -->
+        <div class="flex flex-wrap items-center gap-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200/80 text-xs font-semibold">
+          <span class="text-[10px] font-bold text-slate-400 uppercase">Click Codes:</span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-emerald-100 text-emerald-800 font-bold text-center leading-5 text-[10px]">P</span><span>Present</span></span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-rose-100 text-rose-800 font-bold text-center leading-5 text-[10px]">A</span><span>Absent</span></span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-amber-100 text-amber-800 font-bold text-center leading-5 text-[10px]">SA</span><span>Shift A</span></span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-sky-100 text-sky-800 font-bold text-center leading-5 text-[10px]">SB</span><span>Shift B</span></span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-purple-100 text-purple-800 font-bold text-center leading-5 text-[10px]">SC</span><span>Shift C</span></span>
+          <span class="inline-flex items-center space-x-1"><span class="w-5 h-5 rounded bg-slate-200 text-slate-600 font-bold text-center leading-5 text-[10px]">O</span><span>Off</span></span>
         </div>
 
+        <!-- Table -->
         <div class="overflow-x-auto custom-scroll border border-slate-200 rounded-xl">
-          <table class="w-full text-left border-collapse min-w-[1360px]">
-            <thead>
-              <tr class="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                <th class="py-3 px-3 w-20">ID</th>
-                <th class="py-3 px-3 w-40">PERSONNEL</th>
-                <th class="py-3 px-3 w-32">DEPARTMENT</th>
-                <th class="py-3 px-3 w-32">ROLE</th>
-                <th class="py-3 px-3 w-24">DEFAULT</th>
+          <table class="w-full text-left text-xs min-w-[1360px]">
+            <thead class="bg-slate-50 text-[10px] font-bold text-slate-600 uppercase border-b border-slate-200">
+              <tr>
+                <th class="p-3 w-20">ID</th>
+                <th class="p-3 w-40">PERSONNEL</th>
+                <th class="p-3 w-32">ROLE</th>
+                <th class="p-3 w-32">DEPARTMENT</th>
                 <script>
                   for (let i = 1; i <= 30; i++) {
-                    document.write(`<th class="py-3 px-1 text-center w-8 text-[10px]">D${i}</th>`);
+                    document.write(`<th class="p-2 text-center w-8 text-[10px]">D${i}</th>`);
                   }
                 </script>
               </tr>
             </thead>
-            <tbody id="roster-table-body" class="divide-y divide-slate-100 text-xs font-medium"></tbody>
+            <tbody id="roster-matrix-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- VIEW 5: 5S AUDITS -->
+    <!-- VIEW 7: 5S AUDITS -->
     <div id="view-fives" class="space-y-4 hidden">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200/80 p-5 space-y-4 shadow-xs">
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-base font-extrabold text-slate-900 tracking-tight">Daily 5S Compliance Checksheet</h2>
-            <p class="text-xs text-slate-500">Mandatory verification for Shift A, B, and C prior to handover sign-off</p>
+            <h2 class="text-base font-extrabold text-slate-900">Daily 5S Compliance Audit Gate</h2>
+            <p class="text-xs text-slate-500">Mandatory floor sign-off for Shift A, B, and C prior to handover completion.</p>
           </div>
-          <span class="text-xs px-3 py-1 font-bold rounded-full bg-emerald-100 text-emerald-800" id="fives-overall-badge">All Standards Passing</span>
+          <span class="text-xs px-3 py-1 font-bold rounded-full bg-emerald-100 text-emerald-800">5S Compliant ✓</span>
         </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <button onclick="toggle5S(1)" id="btn-5s-1" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold transition flex flex-col items-center">
+          <button onclick="toggle5SAudit(1)" id="btn-5s-1" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center">
             <span class="text-sm font-extrabold">1S • SORT</span>
-            <span class="text-[11px] font-medium text-emerald-600 mt-1">Pass ✓</span>
+            <span class="text-[10px] text-emerald-600 mt-1">Verified ✓</span>
           </button>
-          <button onclick="toggle5S(2)" id="btn-5s-2" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold transition flex flex-col items-center">
+          <button onclick="toggle5SAudit(2)" id="btn-5s-2" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center">
             <span class="text-sm font-extrabold">2S • SET IN ORDER</span>
-            <span class="text-[11px] font-medium text-emerald-600 mt-1">Pass ✓</span>
+            <span class="text-[10px] text-emerald-600 mt-1">Verified ✓</span>
           </button>
-          <button onclick="toggle5S(3)" id="btn-5s-3" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold transition flex flex-col items-center">
+          <button onclick="toggle5SAudit(3)" id="btn-5s-3" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center">
             <span class="text-sm font-extrabold">3S • SHINE</span>
-            <span class="text-[11px] font-medium text-emerald-600 mt-1">Pass ✓</span>
+            <span class="text-[10px] text-emerald-600 mt-1">Verified ✓</span>
           </button>
-          <button onclick="toggle5S(4)" id="btn-5s-4" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold transition flex flex-col items-center">
+          <button onclick="toggle5SAudit(4)" id="btn-5s-4" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center">
             <span class="text-sm font-extrabold">4S • STANDARDIZE</span>
-            <span class="text-[11px] font-medium text-emerald-600 mt-1">Pass ✓</span>
+            <span class="text-[10px] text-emerald-600 mt-1">Verified ✓</span>
           </button>
-          <button onclick="toggle5S(5)" id="btn-5s-5" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold transition flex flex-col items-center">
+          <button onclick="toggle5SAudit(5)" id="btn-5s-5" class="p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center">
             <span class="text-sm font-extrabold">5S • SUSTAIN</span>
-            <span class="text-[11px] font-medium text-emerald-600 mt-1">Pass ✓</span>
+            <span class="text-[10px] text-emerald-600 mt-1">Verified ✓</span>
           </button>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2">
-          <div class="flex items-center justify-between text-slate-700 font-bold">
-            <span>5S Floor Observation & Safety Log</span>
-            <button onclick="update5SNotes()" class="text-blue-600 hover:underline">Edit Observation</button>
-          </div>
-          <p id="fives-notes-display" class="text-slate-600 italic">"Floors unobstructed, cycler high-voltage conduits locked in cable trays, eye-wash station certified."</p>
         </div>
       </div>
     </div>
 
-    <!-- VIEW 6: DASHBOARD & ANALYTICS -->
+    <!-- VIEW 8: EXECUTIVE ANALYTICS & 3 GUARANTEED CHARTS -->
     <div id="view-analytics" class="space-y-4 hidden">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Category Ratio (450 vs DIESEL vs EL)</h3>
-          <p class="text-[11px] text-slate-500">Distribution of active DVP test lines</p>
-          <div class="h-48 flex items-center justify-center">
-            <canvas id="categoryDonutChart"></canvas>
+        <!-- 1. Category Ratio -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-2 shadow-xs">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Category Ratio</h3>
+            <span class="text-[10px] font-bold text-blue-600">450 / DIESEL / EL</span>
+          </div>
+          <div class="h-48 relative flex items-center justify-center">
+            <canvas id="canvas-category-chart"></canvas>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Test Execution Breakdown</h3>
-          <p class="text-[11px] text-slate-500">Running vs Completed vs Blocked</p>
-          <div class="h-48 flex items-center justify-center">
-            <canvas id="statusDonutChart"></canvas>
+        <!-- 2. Execution Status -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-2 shadow-xs">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Execution Status</h3>
+            <span class="text-[10px] font-bold text-emerald-600">Live Breakdown</span>
+          </div>
+          <div class="h-48 relative flex items-center justify-center">
+            <canvas id="canvas-status-chart"></canvas>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
-          <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Shift Output & Logs</h3>
-          <p class="text-[11px] text-slate-500">Steps completed per shift</p>
-          <div class="h-48 flex items-center justify-center">
-            <canvas id="shiftThroughputChart"></canvas>
+        <!-- 3. Component Allocation -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-2 shadow-xs">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Components Tested</h3>
+            <span class="text-[10px] font-bold text-purple-600">Active Packs</span>
+          </div>
+          <div class="h-48 relative flex items-center justify-center">
+            <canvas id="canvas-comp-chart"></canvas>
           </div>
         </div>
       </div>
 
-      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-        <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-          <i data-lucide="history" class="w-4 h-4 text-blue-600"></i>
-          <span>Official Handover & Ad-Hoc Extra Tasks History</span>
-        </h3>
-        <div id="handover-history-feed" class="space-y-2"></div>
+      <!-- Performance Leaderboards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Incharges -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-3 shadow-xs">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+            <i data-lucide="award" class="w-4 h-4 text-amber-500"></i>
+            <span>Shift Incharge Performance & Supervision</span>
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                <tr>
+                  <th class="p-2.5">Incharge</th>
+                  <th class="p-2.5">Shift</th>
+                  <th class="p-2.5">Supervised</th>
+                  <th class="p-2.5">Attendance</th>
+                  <th class="p-2.5">Rating</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-inc-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Associates -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-4 space-y-3 shadow-xs">
+          <h3 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+            <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
+            <span>Floor Associates Output & Execution</span>
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
+                <tr>
+                  <th class="p-2.5">Associate</th>
+                  <th class="p-2.5">Department</th>
+                  <th class="p-2.5">Steps Logged</th>
+                  <th class="p-2.5">Units Executed</th>
+                  <th class="p-2.5">Efficiency</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-assoc-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
+
   </main>
 
-  <!-- MODAL: DVP TEST PLANNER -->
-  <div id="modal-dvp-planner" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-4xl w-full p-6 space-y-5 shadow-2xl max-h-[90vh] flex flex-col">
-      <div class="flex items-center justify-between border-b pb-3">
-        <div>
-          <h3 class="text-base font-extrabold text-slate-900 flex items-center space-x-2">
-            <i data-lucide="calendar-plus" class="w-5 h-5 text-blue-600"></i>
-            <span>DVP Test Planner — Create Test Line & Subtasks</span>
-          </h3>
-          <p class="text-xs text-slate-500">Configure master test flow and define nested subtasks with targets and assignments.</p>
+  <!-- =================================================================== -->
+  <!-- MODAL: TASK PLANNER (TWO TABS: 1. CREATE TEST FLOW, 2. CREATE DVP)  -->
+  <!-- =================================================================== -->
+  <div id="modal-task-planner" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-4xl w-full p-5 sm:p-6 space-y-4 shadow-2xl flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Header & Tab Switcher -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <i data-lucide="layers" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-slate-900">Ather DVP Task Planner</h3>
+            <p class="text-xs text-slate-500">Configure master validation flow lines or attach detailed DVP test steps.</p>
+          </div>
         </div>
-        <button onclick="closeModal('modal-dvp-planner')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+
+        <!-- 2 Mode Tabs -->
+        <div class="flex bg-slate-100 p-1 rounded-xl">
+          <button onclick="setPlannerTab('testflow')" id="tab-btn-flow" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-700 shadow-xs transition">
+            1. Create Test Flow
+          </button>
+          <button onclick="setPlannerTab('dvp')" id="tab-btn-dvp" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+            2. Create DVP & Subtasks
+          </button>
+        </div>
+
+        <button onclick="closeModal('modal-task-planner')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-4 text-xs overflow-y-auto pr-1 flex-1 custom-scroll">
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
-          <span class="font-bold text-slate-900 text-xs block uppercase tracking-wider">1. Master DVP Line Header</span>
+      <!-- Tab 1: Create Test Flow -->
+      <div id="planner-tab-testflow" class="space-y-4 overflow-y-auto pr-1 flex-1 custom-scroll text-xs">
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+          <span class="font-bold text-blue-700 text-xs block uppercase tracking-wider">Test Flow Line Header (TL-1 to TL-10)</span>
+          
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Test Line</label>
-              <select id="plan-task-tl" class="w-full border rounded-xl p-2 bg-white font-bold text-blue-700">
+              <label class="block text-slate-700 mb-1 font-bold">Test Line</label>
+              <select id="tf-tl" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-bold text-blue-700">
                 <option>TL-1</option><option>TL-2</option><option>TL-3</option><option>TL-4</option><option>TL-5</option>
                 <option>TL-6</option><option>TL-7</option><option>TL-8</option><option>TL-9</option><option>TL-10</option>
               </select>
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Category</label>
-              <select id="plan-task-cat" class="w-full border rounded-xl p-2 bg-white font-bold text-purple-700">
+              <label class="block text-slate-700 mb-1 font-bold">Category</label>
+              <select id="tf-category" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-bold text-purple-700">
                 <option>450</option><option>DIESEL</option><option selected>EL</option>
               </select>
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Priority</label>
-              <select id="plan-task-prio" class="w-full border rounded-xl p-2 bg-white font-bold">
+              <label class="block text-slate-700 mb-1 font-bold">Priority</label>
+              <select id="tf-prio" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-bold">
                 <option>P1</option><option>P2</option><option>P3</option>
               </select>
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">BIN / Pack Serial</label>
-              <input type="text" id="plan-task-bin" placeholder="e.g. EL-Gen-0-97" class="w-full border rounded-xl p-2 font-bold" />
+              <label class="block text-slate-700 mb-1 font-bold">Pack BIN / Serial</label>
+              <input type="text" id="tf-bin" placeholder="e.g. EL-Gen-0-97" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-bold text-slate-800" />
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label class="block font-bold text-slate-700 mb-1">DVP Test Name</label>
-              <input type="text" id="plan-task-name" placeholder="e.g. Aggressive Thermal Profile" class="w-full border rounded-xl p-2" />
+              <label class="block text-slate-700 mb-1 font-bold">Component</label>
+              <select id="tf-comp-select" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-semibold text-slate-800"></select>
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Component Name</label>
-              <input type="text" id="plan-task-comp" placeholder="e.g. Gen-0 8P Pack" class="w-full border rounded-xl p-2" />
+              <label class="block text-slate-700 mb-1 font-bold">Test Name</label>
+              <input type="text" id="tf-name" placeholder="e.g. Aggressive Thermal Profile" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-slate-800" />
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Lead Engineer</label>
-              <input type="text" id="plan-task-lead" placeholder="e.g. Yeshwanth" class="w-full border rounded-xl p-2" />
+              <label class="block text-slate-700 mb-1 font-bold">Lead Engineer</label>
+              <input type="text" id="tf-lead" placeholder="e.g. Yeshwanth" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-slate-800" />
             </div>
           </div>
 
           <div>
-            <label class="block font-bold text-slate-700 mb-1">Test Objective</label>
-            <input type="text" id="plan-task-obj" placeholder="Life Cycle Test to validate Pack..." class="w-full border rounded-xl p-2" />
+            <label class="block text-slate-700 mb-1 font-bold">Objective / Test Purpose</label>
+            <input type="text" id="tf-objective" placeholder="e.g. Life Cycle Test to validate Gen-0 8P Pack under high C-rates" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-slate-800" />
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Google Drive URL</label>
-              <input type="url" id="plan-task-drive" value="https://drive.google.com" class="w-full border rounded-xl p-2" />
+              <label class="block text-slate-700 mb-1 font-bold">Drive Folder Link</label>
+              <input type="url" id="tf-drive" value="https://drive.google.com" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-slate-800" />
             </div>
             <div>
-              <label class="block font-bold text-slate-700 mb-1">Grafana Live Link</label>
-              <input type="url" id="plan-task-grafana" value="https://grafana.internal/d/chamber-1" class="w-full border rounded-xl p-2" />
+              <label class="block text-slate-700 mb-1 font-bold">Grafana Live Telemetry</label>
+              <input type="url" id="tf-grafana" value="https://grafana.internal/d/chamber-1" class="w-full bg-white border border-slate-200 rounded-xl p-2 text-slate-800" />
             </div>
           </div>
         </div>
 
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-900 text-xs uppercase tracking-wider">2. Subtask Steps</span>
-            <button type="button" onclick="addPlannerSubtaskRow()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-3 py-1 rounded-xl text-xs flex items-center space-x-1">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i><span>+ Add Subtask Step</span>
-            </button>
-          </div>
-          <div id="planner-subtasks-container" class="space-y-2"></div>
+        <div class="flex justify-end pt-2">
+          <button onclick="saveTestFlowMasterLine()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-xs">
+            Save Test Flow Line ➔
+          </button>
         </div>
       </div>
 
-      <div class="flex justify-end space-x-3 pt-3 border-t">
-        <button onclick="closeModal('modal-dvp-planner')" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 font-semibold text-xs">Cancel</button>
-        <button onclick="saveDvpPlanner()" class="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 font-bold text-xs shadow-md">Save DVP Flow & Deploy</button>
+      <!-- Tab 2: Create DVP with Steps -->
+      <div id="planner-tab-dvp" class="space-y-4 overflow-y-auto pr-1 flex-1 custom-scroll text-xs hidden">
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/80 space-y-3">
+          <span class="font-bold text-indigo-700 text-xs block uppercase tracking-wider">Select Master Line to Attach DVP Steps</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-slate-700 mb-1 font-bold">Master Test Flow Line</label>
+              <select id="dvp-parent-task-select" class="w-full bg-white border border-slate-200 rounded-xl p-2 font-bold text-slate-800"></select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="addDvpStepRow()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-3.5 py-2 rounded-xl flex items-center space-x-1.5 transition">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>+ Add Subtask Step</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <span class="text-xs font-bold text-slate-700 uppercase">Subtask Steps Sequence</span>
+          <div id="dvp-steps-wrapper" class="space-y-2"></div>
+        </div>
+
+        <div class="flex justify-end pt-2 border-t border-slate-100">
+          <button onclick="saveDvpSubtasksToLine()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-xs">
+            Save DVP Steps to Line ➔
+          </button>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- MODAL: ADD SUBTASK STEP -->
-  <div id="modal-new-subtask" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+  <!-- MODAL: ADD PERSONNEL -->
+  <div id="modal-add-personnel" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-sm font-bold text-slate-900">Add Subtask Step</h3>
-        <button onclick="closeModal('modal-new-subtask')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-slate-900 text-sm">Add Team Personnel</h3>
+        <button onclick="closeModal('modal-add-personnel')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <input type="hidden" id="m-sub-parentid" />
-      <div class="space-y-3 text-xs">
+      <div class="space-y-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Step Description</label>
-          <input type="text" id="m-sub-name" placeholder="e.g. Thermal Cycling 1C" class="w-full border rounded-xl p-2.5 outline-none" />
+          <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+          <input type="text" id="p-name" placeholder="Engineer or Associate name" class="w-full border rounded-xl p-2.5" />
         </div>
-        <div class="grid grid-cols-3 gap-2">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Unit</label>
-            <select id="m-sub-unit" class="w-full border rounded-xl p-2.5 bg-white">
-              <option selected>Cycles</option><option>Hours</option><option>Days</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Target</label>
-            <input type="number" id="m-sub-target" value="1000" class="w-full border rounded-xl p-2.5 outline-none" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Logged</label>
-            <input type="number" id="m-sub-logged" value="0" class="w-full border rounded-xl p-2.5 outline-none" />
-          </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Department</label>
+          <select id="p-dept" class="w-full border rounded-xl p-2.5 bg-white font-semibold">
+            <option>Battery Lab</option>
+            <option>Vibration Team</option>
+            <option>BMS Hardware</option>
+          </select>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Execution Date</label>
-            <input type="date" id="m-sub-date" value="2026-10-25" class="w-full border rounded-xl p-2.5 bg-white" />
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Shift</label>
-            <select id="m-sub-shift" class="w-full border rounded-xl p-2.5 bg-white">
-              <option>Shift A</option><option selected>Shift B</option><option>Shift C</option>
-            </select>
-          </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Role</label>
+          <select id="p-role" class="w-full border rounded-xl p-2.5 bg-white font-semibold">
+            <option>Shift Incharge</option>
+            <option>Associate</option>
+            <option>Test Engineer</option>
+          </select>
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Incharge (INC)</label>
-            <select id="m-sub-inc" class="w-full border rounded-xl p-2.5 bg-white">
-              <option>Raja</option><option selected>Riyaz</option><option>Praveen Kumar</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 mb-1">Associate (ASSOC)</label>
-            <select id="m-sub-assoc" class="w-full border rounded-xl p-2.5 bg-white">
-              <option>sathya naraya</option><option selected>Yosvaraj</option><option>Sanjay</option>
-            </select>
-          </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Default Base Shift</label>
+          <select id="p-shift" class="w-full border rounded-xl p-2.5 bg-white font-semibold">
+            <option>Shift A</option>
+            <option>Shift B</option>
+            <option>Shift C</option>
+          </select>
         </div>
       </div>
       <div class="flex justify-end space-x-2 pt-2 border-t">
-        <button onclick="closeModal('modal-new-subtask')" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 font-semibold text-xs">Cancel</button>
-        <button onclick="saveSubtaskModal()" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 font-semibold text-xs shadow-md">Add Step</button>
+        <button onclick="closeModal('modal-add-personnel')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveNewTeamMember()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Add to Roster</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PROGRESS & CHAMBER LOGGING -->
-  <div id="modal-log-progress" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl">
+  <!-- MODAL: LOG PROGRESS & RIG (EXACT 6 THERMAL CHAMBERS, 5 EA, 2 ITECH, 2 NEWARE) -->
+  <div id="modal-log-progress" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-sm font-bold text-slate-900" id="mlp-title">Log Progress & Chamber</h3>
+        <h3 class="font-bold text-slate-900 text-sm" id="mlp-title">Log Step Progress & Rig</h3>
         <button onclick="closeModal('modal-log-progress')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <input type="hidden" id="mlp-task-id" />
       <input type="hidden" id="mlp-sub-id" />
-      <div class="space-y-3 text-xs">
+      <div class="space-y-3">
         <div>
-          <label class="block font-bold text-amber-900 mb-1">ENVIRONMENTAL CHAMBER</label>
-          <select id="mlp-chamber" class="w-full border rounded-xl p-2.5 bg-white outline-none">
+          <label class="block font-bold text-amber-900 mb-1">Mount Thermal Chamber (6 Total)</label>
+          <select id="mlp-chamber" class="w-full border rounded-xl p-2.5 bg-white">
             <option>None (Unmounted)</option>
-            <option>Chamber 1 (Thermal)</option>
-            <option>Chamber 2 (Thermal Shock)</option>
-            <option>Chamber 3 (-40°C Low Temp)</option>
-            <option>Chamber 4 (Humidity/Env)</option>
+            <option>Chamber 1 (Thermal Chamber)</option>
+            <option>Chamber 2 (Thermal Chamber)</option>
+            <option>Chamber 3 (Thermal Chamber)</option>
+            <option>Chamber 4 (Thermal Chamber)</option>
+            <option>Chamber 5 (Thermal Chamber)</option>
+            <option>Chamber 6 (Thermal Chamber)</option>
             <option>1.5-Ton Shaker</option>
             <option>3.0-Ton Shaker</option>
           </select>
         </div>
         <div>
-          <label class="block font-bold text-amber-900 mb-1">CYCLER</label>
-          <select id="mlp-cycler" class="w-full border rounded-xl p-2.5 bg-white outline-none">
+          <label class="block font-bold text-amber-900 mb-1">Mount Cycler Station (5 EA, 2 ITECH, 2 NEWARE)</label>
+          <select id="mlp-cycler" class="w-full border rounded-xl p-2.5 bg-white">
             <option>None (Unmounted)</option>
-            <option>EA Cycler Station 1 (500V/300A)</option>
-            <option>Neware High Power Rig 2</option>
-            <option>Bitrode Multi-Channel 3</option>
+            <option>EA Cycler Station 1</option>
+            <option>EA Cycler Station 2</option>
+            <option>EA Cycler Station 3</option>
+            <option>EA Cycler Station 4</option>
+            <option>EA Cycler Station 5</option>
+            <option>ITECH Cycler 1</option>
+            <option>ITECH Cycler 2</option>
+            <option>Neware Cycler 1</option>
+            <option>Neware Cycler 2</option>
           </select>
         </div>
         <div>
-          <label class="block font-bold text-slate-600 mb-1">GRAFANA TELEMETRY LINK</label>
-          <input type="url" id="mlp-grafana" value="https://grafana.internal/d/chamber-1" class="w-full border rounded-xl p-2.5 outline-none" />
-        </div>
-        <div>
-          <label class="block font-bold text-slate-600 mb-1">EXECUTION STATUS</label>
-          <select id="mlp-status" class="w-full border rounded-xl p-2.5 bg-white outline-none font-semibold">
+          <label class="block font-bold text-slate-700 mb-1">Execution Status</label>
+          <select id="mlp-status" class="w-full border rounded-xl p-2.5 bg-white font-bold">
             <option value="Running">Running 🟢</option>
             <option value="Completed">Completed ✅</option>
             <option value="Blocked">Blocked / Waiting 🔴</option>
           </select>
         </div>
         <div>
-          <label class="block font-bold text-slate-600 mb-1">ADD PROGRESS UNITS</label>
-          <input type="number" id="mlp-increment" value="1" min="1" class="w-full border rounded-xl p-2.5 outline-none" />
+          <label class="block font-bold text-slate-700 mb-1">Add Units Executed This Shift</label>
+          <input type="number" id="mlp-inc" value="10" min="1" class="w-full border rounded-xl p-2.5 font-bold" />
         </div>
         <div>
-          <label class="block font-bold text-slate-600 mb-1">HANDOVER NOTES</label>
-          <textarea id="mlp-notes" rows="3" placeholder="Shift observations..." class="w-full border rounded-xl p-2.5 outline-none"></textarea>
+          <label class="block font-bold text-slate-700 mb-1">Handover Notes</label>
+          <textarea id="mlp-notes" rows="2" placeholder="Voltage drops, temperatures, anomaly observations..." class="w-full border rounded-xl p-2.5"></textarea>
         </div>
       </div>
       <div class="flex justify-end space-x-2 pt-2 border-t">
-        <button onclick="closeModal('modal-log-progress')" class="px-4 py-2 rounded-xl text-slate-700 bg-slate-100 font-semibold text-xs">Cancel</button>
-        <button onclick="saveLogProgressModal()" class="px-5 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 font-semibold text-xs shadow-md">Save Progress ➔</button>
+        <button onclick="closeModal('modal-log-progress')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveLogProgressModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Save Progress ➔</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: SUBMIT SHIFT HANDOVER -->
-  <div id="modal-handover-submission" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-lg w-full p-5 space-y-4 shadow-xl">
+  <!-- MODAL: HANDOVER -->
+  <div id="modal-handover" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-sm font-bold text-slate-900">Shift Handover & Ad-Hoc Tasks</h3>
-        <button onclick="closeModal('modal-handover-submission')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-1.5">
+          <i data-lucide="arrow-right-left" class="w-4 h-4 text-amber-500"></i>
+          <span>Official Shift Handover Sign-Off</span>
+        </h3>
+        <button onclick="closeModal('modal-handover')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="space-y-3 text-xs">
+      <div class="space-y-3">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block font-bold text-slate-700 mb-1">Outgoing Shift</label>
-            <select id="ho-from-shift" class="w-full border rounded-xl p-2.5 bg-white"><option>Shift A</option><option selected>Shift B</option><option>Shift C</option></select>
+            <select id="ho-from" class="w-full border rounded-xl p-2.5 bg-white font-bold">
+              <option>Shift A</option><option selected>Shift B</option><option>Shift C</option>
+            </select>
           </div>
           <div>
             <label class="block font-bold text-slate-700 mb-1">Incoming Shift</label>
-            <select id="ho-to-shift" class="w-full border rounded-xl p-2.5 bg-white"><option>Shift A</option><option>Shift B</option><option selected>Shift C</option></select>
+            <select id="ho-to" class="w-full border rounded-xl p-2.5 bg-white font-bold">
+              <option>Shift A</option><option>Shift B</option><option selected>Shift C</option>
+            </select>
           </div>
         </div>
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Signed By</label>
-          <input type="text" id="ho-incharge" value="Riyaz" class="w-full border rounded-xl p-2.5 outline-none" />
+          <label class="block font-bold text-slate-700 mb-1">Signed By Incharge</label>
+          <input type="text" id="ho-lead" value="Riyaz" class="w-full border rounded-xl p-2.5 font-bold" />
         </div>
         <div>
-          <label class="block font-bold text-blue-700 mb-1">EXTRA TASKS EXECUTED</label>
-          <textarea id="ho-extra-tasks" rows="2" placeholder="Ad-hoc floor tasks completed..." class="w-full border rounded-xl p-2.5 outline-none"></textarea>
+          <label class="block font-bold text-blue-700 mb-1">Extra Tasks Executed During Shift</label>
+          <textarea id="ho-extra" rows="2" placeholder="e.g. Recalibrated thermocouple 3, prepped pack EL-Gen-0-98..." class="w-full border rounded-xl p-2.5"></textarea>
         </div>
         <div>
-          <label class="block font-bold text-amber-900 mb-1">MESSAGE TO NEXT SHIFT</label>
-          <textarea id="ho-next-message" rows="2" placeholder="Pass-down instructions..." class="w-full border rounded-xl p-2.5 outline-none"></textarea>
-        </div>
-        <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
-          <label class="flex items-start space-x-2 text-slate-800">
-            <input type="checkbox" id="ho-5s-gate" checked class="mt-0.5 rounded text-blue-600" />
-            <span class="font-semibold text-[11px]">I certify that 5S check is 100% completed and no hazards are open.</span>
-          </label>
+          <label class="block font-bold text-amber-900 mb-1">Pass-Down Alert to Incoming Shift</label>
+          <textarea id="ho-msg" rows="2" placeholder="e.g. Chamber 2 will reach 400 cycles around 23:30..." class="w-full border rounded-xl p-2.5"></textarea>
         </div>
       </div>
       <div class="flex justify-end space-x-2 pt-2 border-t">
-        <button onclick="closeModal('modal-handover-submission')" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 font-semibold text-xs">Cancel</button>
-        <button onclick="submitShiftHandover()" class="px-5 py-2 rounded-xl text-white bg-amber-500 hover:bg-amber-600 font-semibold text-xs shadow-md">Complete Handover ➔</button>
+        <button onclick="closeModal('modal-handover')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="submitShiftHandoverForm()" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Complete Rollover ➔</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: ADD ROSTER MEMBER -->
-  <div id="modal-add-member" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 space-y-4 shadow-xl">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="text-sm font-bold text-slate-900">Add Personnel</h3>
-        <button onclick="closeModal('modal-add-member')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Name</label>
-          <input type="text" id="m-mem-name" placeholder="Full name" class="w-full border rounded-xl p-2.5 outline-none" />
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Department</label>
-          <select id="m-mem-dept" class="w-full border rounded-xl p-2.5 bg-white font-semibold">
-            <option>Battery Lab</option><option>Vibration Team</option><option>BMS Team</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Role</label>
-          <select id="m-mem-role" class="w-full border rounded-xl p-2.5 bg-white">
-            <option>Shift Incharge</option><option>Associate</option><option>Test Engineer</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Default Base Shift</label>
-          <select id="m-mem-shift" class="w-full border rounded-xl p-2.5 bg-white">
-            <option>Shift A</option><option>Shift B</option><option>Shift C</option>
-          </select>
-        </div>
-      </div>
-      <div class="flex justify-end space-x-2 pt-2 border-t">
-        <button onclick="closeModal('modal-add-member')" class="px-4 py-2 rounded-xl text-slate-600 bg-slate-100 font-semibold text-xs">Cancel</button>
-        <button onclick="saveMemberModal()" class="px-4 py-2 rounded-xl text-white bg-blue-600 hover:bg-blue-700 font-semibold text-xs shadow-md">Add</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- SCRIPT CONTROLLER -->
   <script>
-    // Ather Apps Script Backend Integration
-    const ATHER_APPS_SCRIPT_URL = "https://script.google.com/a/macros/atherenergy.com/s/AKfycbyH5SHTjGPQPKWGayfboy1iXetE-iwr9mSxHxTxRLVb0FhDjh0r5ZeLqZmgWTehCkd8_Q/exec";
+    const ATHER_CLOUD_URL = "https://script.google.com/a/macros/atherenergy.com/s/AKfycbyH5SHTjGPQPKWGayfboy1iXetE-iwr9mSxHxTxRLVb0FhDjh0r5ZeLqZmgWTehCkd8_Q/exec";
 
-    const blankState = {
-      activeLab: "Battery Lab",
-      workbenchShift: "Shift B",
+    // Clean Darwinbox State with EXACT 6 Thermal Chambers, 5 EA, 2 ITECH, 2 NEWARE
+    const initialCleanState = {
+      activeShift: "Shift B",
+      activeDept: "Battery Lab",
       fiveS: { 1: true, 2: true, 3: true, 4: true, 5: true },
-      handovers: [],
-      equipment: [
-        { id: "CH-01", name: "Chamber 1 (Thermal)", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/chamber-1", drive: "https://drive.google.com" },
-        { id: "CH-02", name: "Chamber 2 (Thermal Shock)", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/chamber-2", drive: "https://drive.google.com" },
-        { id: "CH-03", name: "Chamber 3 (-40°C Low Temp)", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/chamber-3", drive: "https://drive.google.com" },
-        { id: "CH-04", name: "Chamber 4 (Humidity/Env)", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/chamber-4", drive: "https://drive.google.com" },
-        { id: "CY-01", name: "EA Cycler Station 1", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/cycler-1", drive: "https://drive.google.com" },
-        { id: "CY-02", name: "Neware High Power 2", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/cycler-2", drive: "https://drive.google.com" },
-        { id: "SH-01", name: "1.5-Ton Shaker", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/shaker-1", drive: "https://drive.google.com" },
-        { id: "SH-02", name: "3.0-Ton Shaker (Multi-Axis)", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/shaker-2", drive: "https://drive.google.com" }
+      components: [
+        { name: "Gen-0 8P Pack", dept: "Battery Lab", category: "EL" },
+        { name: "450 Gen 3 Pack", dept: "Battery Lab", category: "450" },
+        { name: "DIESEL Module", dept: "Battery Lab", category: "DIESEL" },
+        { name: "BMS Top Enclosure", dept: "BMS Hardware", category: "EL" },
+        { name: "Vibration Rig J", dept: "Vibration Team", category: "OTHER" }
       ],
-      tasks: [],
-      roster: [
-        { id: "EMP-101", name: "Raja", dept: "Battery Lab", role: "Shift Incharge", shift: "Shift A", schedule: {} },
-        { id: "EMP-102", name: "Riyaz", dept: "Battery Lab", role: "Shift Incharge", shift: "Shift B", schedule: {} },
-        { id: "EMP-103", name: "Praveen Kumar", dept: "Battery Lab", role: "Shift Incharge", shift: "Shift C", schedule: {} },
-        { id: "EMP-201", name: "sathya naraya", dept: "Battery Lab", role: "Associate", shift: "Shift A", schedule: {} },
-        { id: "EMP-202", name: "Yosvaraj", dept: "Battery Lab", role: "Associate", shift: "Shift B", schedule: {} },
-        { id: "EMP-203", name: "Sanjay", dept: "Vibration Team", role: "Associate", shift: "Shift A", schedule: {} }
-      ]
-    };
+      equipment: [
+        // 6 Thermal Chambers
+        { id: "TC-01", name: "Chamber 1 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ch-1", drive: "https://drive.google.com" },
+        { id: "TC-02", name: "Chamber 2 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Running", pack: "EL-Gen-0-97", test: "Aggressive Thermal Profile", grafana: "https://grafana.internal/d/ch-2", drive: "https://drive.google.com" },
+        { id: "TC-03", name: "Chamber 3 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ch-3", drive: "https://drive.google.com" },
+        { id: "TC-04", name: "Chamber 4 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ch-4", drive: "https://drive.google.com" },
+        { id: "TC-05", name: "Chamber 5 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ch-5", drive: "https://drive.google.com" },
+        { id: "TC-06", name: "Chamber 6 (Thermal Chamber)", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ch-6", drive: "https://drive.google.com" },
 
-    let state = JSON.parse(localStorage.getItem('opti_lab_clean_blank_app_state_v4')) || blankState;
+        // 5 EA Cyclers
+        { id: "CY-EA-01", name: "EA Cycler Station 1", type: "Cycler", lab: "Battery Lab", status: "Running", pack: "EL-Gen-0-97", test: "Pre-Capacity Baseline Check", grafana: "https://grafana.internal/d/ea-1", drive: "https://drive.google.com" },
+        { id: "CY-EA-02", name: "EA Cycler Station 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ea-2", drive: "https://drive.google.com" },
+        { id: "CY-EA-03", name: "EA Cycler Station 3", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ea-3", drive: "https://drive.google.com" },
+        { id: "CY-EA-04", name: "EA Cycler Station 4", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ea-4", drive: "https://drive.google.com" },
+        { id: "CY-EA-05", name: "EA Cycler Station 5", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/ea-5", drive: "https://drive.google.com" },
 
-    async function syncWithCloud() {
-      const statusBadge = document.getElementById('cloud-sync-status');
-      if (statusBadge) statusBadge.innerHTML = `<span class="animate-spin mr-1">⏳</span> Syncing Ather Cloud...`;
-      try {
-        const response = await fetch(ATHER_APPS_SCRIPT_URL, { method: "GET" });
-        if (response.ok) {
-          const cloudData = await response.json();
-          if (cloudData && Array.isArray(cloudData.tasks)) {
-            state = cloudData;
-            localStorage.setItem('opti_lab_clean_blank_app_state_v4', JSON.stringify(state));
-            render();
-            if (statusBadge) statusBadge.innerHTML = `✓ Synced with Ather Cloud`;
-            return;
-          }
-        }
-      } catch (err) {
-        console.warn("Cloud read fallback to local cache:", err);
-      }
-      if (statusBadge) statusBadge.innerHTML = `✓ Cloud Connected`;
-    }
+        // 2 ITECH Cyclers
+        { id: "CY-IT-01", name: "ITECH Cycler 1", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/itech-1", drive: "https://drive.google.com" },
+        { id: "CY-IT-02", name: "ITECH Cycler 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/itech-2", drive: "https://drive.google.com" },
 
-    async function saveState() {
-      localStorage.setItem('opti_lab_clean_blank_app_state_v4', JSON.stringify(state));
-      render();
+        // 2 NEWARE Cyclers
+        { id: "CY-NW-01", name: "Neware Cycler 1", type: "Cycler", lab: "Battery Lab", status: "Running", pack: "EL-Gen-0-97", test: "Thermal Cycling 1C Profile", grafana: "https://grafana.internal/d/neware-1", drive: "https://drive.google.com" },
+        { id: "CY-NW-02", name: "Neware Cycler 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/neware-2", drive: "https://drive.google.com" },
 
-      const statusBadge = document.getElementById('cloud-sync-status');
-      if (statusBadge) statusBadge.innerHTML = `<span class="animate-spin mr-1">⏳</span> Saving to Ather Cloud...`;
-
-      try {
-        await fetch(ATHER_APPS_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(state)
-        });
-        if (statusBadge) statusBadge.innerHTML = `✓ Saved to Ather Cloud`;
-      } catch (err) {
-        console.error("Cloud write error:", err);
-        if (statusBadge) statusBadge.innerHTML = `⚠️ Saved Locally`;
-      }
-    }
-
-    function resetToBlankState() {
-      if (confirm("Reset to clean blank slate? All custom entered tasks will be cleared.")) {
-        state = JSON.parse(JSON.stringify(blankState));
-        saveState();
-      }
-    }
-
-    function loadAtherSampleDataset() {
-      state.tasks = [
+        // Vibration Equipment
+        { id: "SH-01", name: "1.5-Ton Shaker", type: "Shaker", lab: "Vibration Team", status: "Running", pack: "450-G3-112", test: "Sinusoidal Sweep X-Axis", grafana: "https://grafana.internal/d/shaker-1", drive: "https://drive.google.com" },
+        { id: "SH-02", name: "3.0-Ton Shaker (Multi-Axis)", type: "Shaker", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", grafana: "https://grafana.internal/d/shaker-2", drive: "https://drive.google.com" }
+      ],
+      tasks: [
         {
           id: "TSK-400004",
           tl: "TL-1",
@@ -774,7 +961,6 @@
           objective: "Life Cycle Test to validate Gen-0 8P Pack",
           lead: "Yeshwanth",
           component: "Gen-0 8P Pack",
-          sprint: "Sprint 22",
           progress: 14,
           status: "Running",
           shift: "Multi-Shift",
@@ -783,7 +969,7 @@
           subtasks: [
             {
               id: "SUB-700001",
-              name: "Pre-Capa...",
+              name: "Pre-Capacity Baseline Check",
               status: "Completed",
               unit: "Hours",
               target: 12,
@@ -792,202 +978,288 @@
               shift: "Shift A",
               inc: "Raja",
               assoc: "sathya naraya",
-              chamber: "Chamber 2 (Thermal Shock)",
+              chamber: "Chamber 2 (Thermal Chamber)",
               cycler: "EA Cycler Station 1",
-              grafana: "https://grafana.internal/d/chamber-1",
               notes: "Initial baseline capacity established."
             },
             {
               id: "SUB-700002",
-              name: "Thermal Cycling",
+              name: "Thermal Cycling 1C Profile",
               status: "Running",
               unit: "Cycles",
               target: 1000,
-              logged: 129,
-              date: "2026-10-24",
+              logged: 140,
+              date: "2026-10-25",
               shift: "Shift B",
               inc: "Riyaz",
               assoc: "Yosvaraj",
-              chamber: "None (Unmounted)",
+              chamber: "Chamber 1 (Thermal Chamber)",
+              cycler: "Neware Cycler 1",
+              notes: "Steady charging current maintained."
+            }
+          ]
+        },
+        {
+          id: "TSK-400005",
+          tl: "TL-2",
+          prio: "P2",
+          bin: "450-G3-112",
+          category: "450",
+          name: "Vibration Sweep 50Hz",
+          objective: "Endurance vibration baseline",
+          lead: "Yeshwanth",
+          component: "450 Gen 3 Pack",
+          progress: 44,
+          status: "Running",
+          shift: "Shift B",
+          drive: "https://drive.google.com",
+          grafana: "https://grafana.internal/d/shaker-1",
+          subtasks: [
+            {
+              id: "SUB-700003",
+              name: "Sinusoidal Sweep X-Axis",
+              status: "Running",
+              unit: "Hours",
+              target: 50,
+              logged: 22,
+              date: "2026-10-25",
+              shift: "Shift B",
+              inc: "Riyaz",
+              assoc: "Sanjay",
+              chamber: "1.5-Ton Shaker",
               cycler: "None (Unmounted)",
-              grafana: "https://grafana.internal/d/chamber-1",
-              notes: "Cycler running steady. Handover to Shift C at 200 cycles."
+              notes: "No resonance anomalies observed."
             }
           ]
         }
-      ];
+      ],
+      roster: [
+        { id: "EMP-101", name: "Raja", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift A", schedule: { d1: "P", d2: "P", d3: "SA" } },
+        { id: "EMP-102", name: "Riyaz", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift B", schedule: { d1: "P", d2: "P", d3: "SB" } },
+        { id: "EMP-103", name: "Praveen Kumar", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift C", schedule: { d1: "P", d2: "P", d3: "SC" } },
+        { id: "EMP-201", name: "sathya naraya", role: "Associate", dept: "Battery Lab", shift: "Shift A", schedule: { d1: "P", d2: "A", d3: "P" } },
+        { id: "EMP-202", name: "Yosvaraj", role: "Associate", dept: "Battery Lab", shift: "Shift B", schedule: { d1: "P", d2: "P", d3: "P" } },
+        { id: "EMP-203", name: "Sanjay", role: "Associate", dept: "Vibration Team", shift: "Shift A", schedule: { d1: "P", d2: "P", d3: "O" } }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem('opti_lab_clean_darwinbox_v7')) || initialCleanState;
+
+    function saveState() {
+      localStorage.setItem('opti_lab_clean_darwinbox_v7', JSON.stringify(state));
+      renderAllViews();
+      try {
+        fetch(ATHER_CLOUD_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(state)
+        });
+      } catch (e) {
+        console.warn("Cloud push error:", e);
+      }
+    }
+
+    async function syncWithCloudNow() {
+      const pill = document.getElementById('cloud-status-text');
+      if (pill) pill.innerText = "Syncing Cloud...";
+      try {
+        const res = await fetch(ATHER_CLOUD_URL);
+        if (res.ok) {
+          const cloudData = await res.json();
+          if (cloudData && Array.isArray(cloudData.tasks)) {
+            state = cloudData;
+            localStorage.setItem('opti_lab_clean_darwinbox_v7', JSON.stringify(state));
+            renderAllViews();
+            if (pill) pill.innerText = "Cloud Synced ✓";
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("Cloud fallback to local:", err);
+      }
+      if (pill) pill.innerText = "Cloud Synced";
+    }
+
+    function toggleMobileNav() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function setActiveShift(shift) {
+      state.activeShift = shift;
+      ['A', 'B', 'C'].forEach(s => {
+        const btn = document.getElementById(`btn-shift-${s}`);
+        if (`Shift ${s}` === shift) {
+          btn.className = "px-2.5 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition";
+        } else {
+          btn.className = "px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
+        }
+      });
+      const leads = { 'Shift A': 'Raja', 'Shift B': 'Riyaz', 'Shift C': 'Praveen Kumar' };
+      document.getElementById('header-lead-display').innerText = leads[shift] || 'Riyaz';
+      document.getElementById('workbench-shift-heading').innerText = `SHIFT WORKBENCH — ${shift.toUpperCase()}`;
+      saveState();
+    }
+
+    function switchDepartment(dept) {
+      state.activeDept = dept;
+      document.getElementById('dept-btn-battery').className = (dept === 'Battery Lab')
+        ? "px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition"
+        : "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
+      document.getElementById('dept-btn-vib').className = (dept === 'Vibration Team')
+        ? "px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition"
+        : "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
+      
+      document.getElementById('equipment-heading').innerText = `${dept} Validation Floor`;
+      renderEquipmentFloor();
       saveState();
     }
 
     function setActiveNav(navId) {
-      ['tasks', 'workbench', 'labview', 'roster', 'fives', 'analytics'].forEach(n => {
-        document.getElementById(`view-${n}`).classList.add('hidden');
+      ['tasks', 'subtasks', 'workbench', 'equipment', 'components', 'roster', 'fives', 'analytics'].forEach(n => {
+        const el = document.getElementById(`view-${n}`);
+        if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-nav-${n}`);
         if (btn) {
           btn.className = (n === navId)
-            ? "px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 transition"
-            : "px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition";
+            ? "px-3.5 py-1.5 font-bold rounded-lg bg-blue-50 text-blue-700 border border-blue-200/80 transition"
+            : "px-3.5 py-1.5 font-semibold text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-50 transition";
         }
       });
-      document.getElementById(`view-${navId}`).classList.remove('hidden');
-      if (navId === 'workbench') renderWorkbench();
-      if (navId === 'labview') renderLabView();
-      if (navId === 'roster') renderRoster();
-      if (navId === 'analytics') renderAnalyticsCharts();
+      const activeEl = document.getElementById(`view-${navId}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+
+      if (navId === 'tasks') renderDvpMasterTasks();
+      if (navId === 'subtasks') renderAllSubtasksMatrix();
+      if (navId === 'workbench') renderShiftWorkbench();
+      if (navId === 'equipment') renderEquipmentFloor();
+      if (navId === 'components') renderComponentsRegistry();
+      if (navId === 'roster') renderRosterMatrix();
+      if (navId === 'analytics') renderExecutiveAnalytics();
       lucide.createIcons();
     }
 
-    function switchLab(labName) {
-      state.activeLab = labName;
-      document.getElementById('btn-lab-battery').className = (labName === 'Battery Lab') ? "px-3 py-1 text-xs font-semibold rounded-lg bg-white text-blue-700 shadow-sm transition" : "px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition";
-      document.getElementById('btn-lab-vib').className = (labName === 'Vibration Team') ? "px-3 py-1 text-xs font-semibold rounded-lg bg-white text-blue-700 shadow-sm transition" : "px-3 py-1 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition";
-      document.getElementById('active-lab-banner').innerText = labName;
-      saveState();
-    }
+    function renderDvpMasterTasks() {
+      const container = document.getElementById('dvp-tasks-container');
+      const search = (document.getElementById('dvp-search-input')?.value || '').toLowerCase();
+      const compFilter = document.getElementById('dvp-comp-filter')?.value || 'All';
+      const statusFilter = document.getElementById('dvp-status-filter')?.value || 'All';
 
-    function setWorkbenchShift(shift) {
-      state.workbenchShift = shift;
-      document.getElementById('workbench-header-title').innerText = `SHIFT WORKBENCH — ${shift.toUpperCase()}`;
-      ['A', 'B', 'C'].forEach(s => {
-        const btn = document.getElementById(`wb-shift-btn-${s}`);
-        btn.className = (`Shift ${s}` === shift) ? "px-3 py-1 font-bold rounded-lg bg-white text-blue-700 shadow-sm" : "px-3 py-1 font-medium rounded-lg text-slate-600 hover:text-slate-900";
-      });
-      renderWorkbench();
-    }
-
-    function filterTasks() { renderTasks(); }
-
-    function renderTasks() {
-      const container = document.getElementById('tasks-table-body');
-      const search = (document.getElementById('search-input')?.value || '').toLowerCase();
-      const comp = document.getElementById('filter-component')?.value || 'All';
-      const statusFilter = document.getElementById('filter-state')?.value || 'All';
-
-      let runningCount = 0, completedCount = 0, blockedCount = 0, totalCount = state.tasks.length;
+      let runCount = 0, compCount = 0, blockCount = 0;
       state.tasks.forEach(t => {
-        if (t.status === 'Running') runningCount++;
-        if (t.status === 'Completed') completedCount++;
-        if (t.status === 'Blocked') blockedCount++;
+        if (t.status === 'Running') runCount++;
+        if (t.status === 'Completed') compCount++;
+        if (t.status === 'Blocked') blockCount++;
       });
-
-      document.getElementById('kpi-completed').innerText = completedCount;
-      document.getElementById('kpi-running').innerText = runningCount;
-      document.getElementById('kpi-blocked').innerText = blockedCount;
-      document.getElementById('kpi-total').innerText = totalCount;
+      document.getElementById('kpi-running').innerText = runCount;
+      document.getElementById('kpi-completed').innerText = compCount;
+      document.getElementById('kpi-blocked').innerText = blockCount;
+      document.getElementById('kpi-total').innerText = state.tasks.length;
 
       const filtered = state.tasks.filter(t => {
-        if (comp !== 'All' && t.component !== comp) return false;
+        if (compFilter !== 'All' && t.component !== compFilter) return false;
         if (statusFilter !== 'All' && t.status !== statusFilter) return false;
         if (search) {
-          const matchBin = (t.bin || '').toLowerCase().includes(search);
-          const matchName = (t.name || '').toLowerCase().includes(search);
-          const matchObj = (t.objective || '').toLowerCase().includes(search);
-          const matchId = (t.id || '').toLowerCase().includes(search);
-          if (!matchBin && !matchName && !matchObj && !matchId) return false;
+          const match = (t.bin + t.name + t.objective + t.id).toLowerCase();
+          if (!match.includes(search)) return false;
         }
         return true;
       });
 
-      document.getElementById('displaying-results-count').innerText = `Displaying ${filtered.length} Results`;
-
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="p-12 text-center text-slate-400 text-xs font-medium space-y-2">
-            <p>No DVP test lines created yet.</p>
-            <div class="flex items-center justify-center space-x-2 pt-2">
-              <button onclick="openDvpPlannerModal()" class="bg-blue-600 text-white px-3 py-1.5 rounded-xl font-bold shadow-sm hover:bg-blue-700 transition">+ Launch DVP Test Planner</button>
-              <button onclick="loadAtherSampleDataset()" class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl font-bold border border-slate-300 hover:bg-slate-200 transition">Load Ather Example Flow</button>
-            </div>
+          <div class="p-10 text-center text-slate-400 text-xs font-medium space-y-2">
+            <p>No active DVP lines found.</p>
+            <button onclick="openTaskPlannerModal('testflow')" class="text-blue-600 font-bold hover:underline">+ Create Test Flow</button>
           </div>
         `;
         return;
       }
 
       container.innerHTML = filtered.map(t => {
-        const statusPills = {
-          'Running': 'bg-amber-100 text-amber-800 border border-amber-200',
-          'Completed': 'bg-emerald-100 text-emerald-800 border border-emerald-200',
-          'Blocked': 'bg-rose-100 text-rose-800 border border-rose-200'
-        }[t.status] || 'bg-slate-100 text-slate-800';
+        const statusBadge = t.status === 'Completed'
+          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+          : (t.status === 'Running' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-rose-50 text-rose-700 border border-rose-200');
 
-        const subtasksHtml = t.subtasks && t.subtasks.length > 0 ? `
-          <div class="bg-indigo-50/30 px-6 py-3 border-t border-slate-100 space-y-2 border-l-4 border-l-indigo-600">
-            ${t.subtasks.map((sub) => {
-              const subStatusPill = sub.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : (sub.status === 'Running' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800');
-              return `
-                <div class="flex flex-wrap items-center justify-between text-xs py-1 gap-2 border-b border-indigo-100/40 last:border-0">
-                  <div class="flex items-center space-x-2">
-                    <span class="text-indigo-400 font-mono">├─</span>
-                    <span class="font-bold text-indigo-700">${sub.id}</span>
-                    <span class="font-semibold text-slate-800">${sub.name}</span>
-                    <span class="text-[11px] px-2.5 py-0.5 rounded-full font-bold ${subStatusPill}">${sub.status}</span>
-                    <span class="text-[11px] px-2 py-0.5 rounded-md font-bold bg-purple-100 text-purple-700">${sub.logged}/${sub.target} ${sub.unit}</span>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <div class="flex items-center space-x-1 text-[11px] text-slate-500 font-semibold">
-                      <span>DATE:</span>
-                      <input type="date" value="${sub.date}" onchange="updateSubtask('${t.id}', '${sub.id}', 'date', this.value)" class="border border-slate-300 rounded px-1 py-0.5 bg-white text-slate-800 text-[11px]" />
-                    </div>
-                    <div class="flex items-center space-x-1 text-[11px] text-slate-500 font-semibold">
-                      <span>SHIFT:</span>
-                      <select onchange="updateSubtask('${t.id}', '${sub.id}', 'shift', this.value)" class="border border-slate-300 rounded px-1 py-0.5 bg-white text-slate-800 text-[11px]">
-                        <option ${sub.shift === 'Shift A' ? 'selected' : ''}>Shift A</option>
-                        <option ${sub.shift === 'Shift B' ? 'selected' : ''}>Shift B</option>
-                        <option ${sub.shift === 'Shift C' ? 'selected' : ''}>Shift C</option>
-                      </select>
-                    </div>
-                    <div class="flex items-center space-x-1 text-[11px] text-slate-500 font-semibold">
-                      <span>INC:</span>
-                      <select onchange="updateSubtask('${t.id}', '${sub.id}', 'inc', this.value)" class="border border-slate-300 rounded px-1 py-0.5 bg-white text-slate-800 text-[11px]">
-                        <option ${sub.inc === 'Raja' ? 'selected' : ''}>Raja</option>
-                        <option ${sub.inc === 'Riyaz' ? 'selected' : ''}>Riyaz</option>
-                        <option ${sub.inc === 'Praveen Kumar' ? 'selected' : ''}>Praveen Kumar</option>
-                      </select>
-                    </div>
-                    <div class="flex items-center space-x-1 text-[11px] text-slate-500 font-semibold">
-                      <span>ASSOC:</span>
-                      <select onchange="updateSubtask('${t.id}', '${sub.id}', 'assoc', this.value)" class="border border-slate-300 rounded px-1 py-0.5 bg-white text-slate-800 text-[11px]">
-                        <option ${sub.assoc === 'sathya naraya' ? 'selected' : ''}>sathya naraya</option>
-                        <option ${sub.assoc === 'Yosvaraj' ? 'selected' : ''}>Yosvaraj</option>
-                        <option ${sub.assoc === 'Sanjay' ? 'selected' : ''}>Sanjay</option>
-                      </select>
-                    </div>
-                    <button onclick="assignSubtaskPrompt('${t.id}', '${sub.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-3 py-1 rounded-md shadow-sm transition">ASSIGN ➔</button>
-                    <button onclick="openLogProgressModal('${t.id}', '${sub.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-md shadow-sm transition flex items-center space-x-1">
-                      <i data-lucide="file-text" class="w-3 h-3"></i><span>Log</span>
-                    </button>
-                  </div>
+        const subtasksHtml = (t.subtasks && t.subtasks.length > 0) ? `
+          <div class="bg-indigo-50/20 px-4 sm:px-6 py-2.5 border-t border-slate-100 space-y-2 border-l-4 border-l-indigo-600">
+            ${t.subtasks.map(sub => `
+              <div class="flex flex-wrap items-center justify-between text-xs py-1 border-b border-indigo-100/40 last:border-0 gap-2">
+                <div class="flex items-center space-x-2">
+                  <span class="text-indigo-400 font-mono">├─</span>
+                  <span class="font-bold text-indigo-700 font-mono">${sub.id}</span>
+                  <span class="font-semibold text-slate-800">${sub.name}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${sub.status}</span>
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-700 font-mono">${sub.logged}/${sub.target} ${sub.unit}</span>
                 </div>
-              `;
-            }).join('')}
+                <div class="flex items-center space-x-2 text-[11px]">
+                  <span class="text-slate-500">Date: <strong class="text-slate-800">${sub.date}</strong></span>
+                  <span class="text-slate-500">Shift: <strong class="text-blue-600">${sub.shift}</strong></span>
+                  <span class="text-slate-500">Inc: <strong class="text-slate-800">${sub.inc}</strong></span>
+                  <span class="text-slate-500">Assoc: <strong class="text-slate-800">${sub.assoc}</strong></span>
+                  <button onclick="openLogRigModal('${t.id}', '${sub.id}')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-md shadow-xs transition">
+                    Log Units ➔
+                  </button>
+                </div>
+              </div>
+            `).join('')}
           </div>
         ` : '';
 
         return `
-          <div class="hover:bg-slate-50/50 transition">
-            <div class="px-6 py-4 dvp-grid text-xs">
-              <div class="font-bold text-blue-600 font-mono tracking-tight">${t.id}</div>
-              <div class="text-center font-bold text-slate-700 bg-slate-100 rounded-md py-0.5 px-1.5 mx-auto">${t.prio}</div>
+          <div class="hover:bg-slate-50/60 transition">
+            <div class="hidden lg:grid px-5 py-3 dvp-grid text-xs">
+              <div class="font-mono font-bold text-blue-600">${t.id}</div>
+              <div class="text-center font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px]">${t.prio}</div>
               <div class="font-bold text-purple-700 truncate" title="${t.bin}">${t.bin}</div>
               <div class="text-center">
-                <a href="${t.drive}" target="_blank" class="inline-flex items-center space-x-1 bg-sky-100 hover:bg-sky-200 text-sky-800 px-2 py-1 rounded-lg font-bold text-xs transition">
-                  <i data-lucide="folder" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i><span>Drive</span>
+                <a href="${t.drive}" target="_blank" class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 font-bold text-[10px] hover:bg-sky-100 transition">
+                  <span>Drive</span>
                 </a>
               </div>
-              <div class="font-bold text-slate-900 flex items-center space-x-1 flex-wrap">
+              <div class="font-bold text-slate-900 flex items-center space-x-1.5 flex-wrap">
                 <span>${t.name}</span>
-                <button onclick="openSubtaskModal('${t.id}')" class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded-md hover:bg-indigo-200 transition">+ (${t.subtasks ? t.subtasks.length : 0} Steps)</button>
+                <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+                  ${t.subtasks ? t.subtasks.length : 0} steps
+                </span>
               </div>
-              <div class="text-slate-600 leading-tight truncate" title="${t.objective}">${t.objective}</div>
-              <div class="font-semibold text-slate-800 truncate">${t.lead}</div>
-              <div class="text-center font-bold text-blue-600">${t.progress}%</div>
-              <div class="text-center"><span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${statusPills}">${t.status}</span></div>
-              <div class="text-center font-bold text-blue-600">${t.shift}</div>
+              <div class="text-slate-600 truncate" title="${t.objective}">${t.objective}</div>
+              <div class="font-semibold text-slate-700 truncate">${t.lead}</div>
+              <div class="text-center font-bold text-blue-600 font-mono">${t.progress}%</div>
+              <div class="text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${t.status}</span></div>
+              <div class="text-center font-bold text-slate-700 text-[11px]">${t.shift}</div>
               <div class="text-right flex items-center justify-end space-x-1">
-                <button onclick="openSubtaskModal('${t.id}')" class="p-1 rounded-lg bg-indigo-100 text-indigo-700 hover:bg-indigo-200"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
-                <button onclick="deleteTask('${t.id}')" class="p-1 rounded-lg bg-rose-100 text-rose-700 hover:bg-rose-200"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                <button onclick="quickAddSubtaskToLine('${t.id}')" class="p-1 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100" title="Add Step">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="deleteTaskLine('${t.id}')" class="p-1 rounded-lg bg-rose-50 text-rose-700 hover:bg-rose-100" title="Delete">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
               </div>
             </div>
+
+            <!-- Mobile Layout -->
+            <div class="lg:hidden p-3.5 space-y-2">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="font-mono font-bold text-blue-600">${t.id}</span>
+                  <span class="font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px]">${t.prio}</span>
+                  <span class="font-bold text-purple-700">${t.bin}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusBadge}">${t.status}</span>
+              </div>
+              <h4 class="font-bold text-slate-900 text-xs">${t.name}</h4>
+              <p class="text-[11px] text-slate-500">${t.objective}</p>
+              <div class="flex items-center justify-between pt-1 border-t text-[11px]">
+                <span>Progress: <strong class="text-blue-600">${t.progress}%</strong></span>
+                <div class="flex items-center space-x-2">
+                  <button onclick="quickAddSubtaskToLine('${t.id}')" class="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md font-bold">+ Step</button>
+                  <button onclick="deleteTaskLine('${t.id}')" class="text-rose-600 font-bold">Delete</button>
+                </div>
+              </div>
+            </div>
+
             ${subtasksHtml}
           </div>
         `;
@@ -995,349 +1267,538 @@
       lucide.createIcons();
     }
 
-    function renderWorkbench() {
-      const todoList = document.getElementById('kanban-todo-list');
-      const inprogList = document.getElementById('kanban-inprogress-list');
-      const blockedList = document.getElementById('kanban-blocked-list');
-      todoList.innerHTML = ''; inprogList.innerHTML = ''; blockedList.innerHTML = '';
+    function renderAllSubtasksMatrix() {
+      const tbody = document.getElementById('all-subtasks-tbody');
+      let rows = '';
+      state.tasks.forEach(t => {
+        if (!t.subtasks) return;
+        t.subtasks.forEach(sub => {
+          rows += `
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="p-3 font-mono font-bold text-indigo-700">${sub.id}</td>
+              <td class="p-3 font-bold text-slate-900">${t.name} <span class="text-slate-400 font-mono text-[11px]">(${t.bin})</span></td>
+              <td class="p-3 font-semibold text-slate-800">${sub.name}</td>
+              <td class="p-3 font-mono font-bold text-purple-700">${sub.logged}/${sub.target} ${sub.unit}</td>
+              <td class="p-3 font-bold text-blue-600">${sub.shift}</td>
+              <td class="p-3 text-slate-600">${sub.date}</td>
+              <td class="p-3 text-slate-700 font-semibold">${sub.inc}</td>
+              <td class="p-3 text-slate-700">${sub.assoc}</td>
+              <td class="p-3 text-[11px] text-amber-900 font-semibold">${sub.chamber || 'None'} / ${sub.cycler || 'None'}</td>
+              <td class="p-3 text-center">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${sub.status === 'Completed' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${sub.status}</span>
+              </td>
+              <td class="p-3 text-right">
+                <button onclick="openLogRigModal('${t.id}', '${sub.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-[10px] px-2.5 py-1 rounded-md shadow-xs transition">
+                  Log ➔
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      });
+      tbody.innerHTML = rows || `<tr><td colspan="11" class="p-8 text-center text-slate-400">No subtasks recorded yet.</td></tr>`;
+    }
+
+    function renderShiftWorkbench() {
+      const todo = document.getElementById('kanban-todo');
+      const inprog = document.getElementById('kanban-inprog');
+      const blocked = document.getElementById('kanban-blocked');
+      todo.innerHTML = ''; inprog.innerHTML = ''; blocked.innerHTML = '';
+
+      let cTodo = 0, cProg = 0, cBlock = 0;
 
       state.tasks.forEach(task => {
         if (!task.subtasks) return;
         task.subtasks.forEach(sub => {
-          if (sub.shift !== state.workbenchShift && sub.status === 'Completed') return;
           const card = document.createElement('div');
-          card.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2 border-l-4 border-l-blue-600 hover:shadow-md transition";
+          card.className = "bg-white border border-slate-200 rounded-xl p-3 space-y-2 shadow-xs hover:shadow-md transition";
           card.innerHTML = `
-            <div class="flex items-center justify-between"><span class="text-xs font-bold text-blue-600 font-mono">${sub.id}</span><span class="text-xs font-bold text-slate-900">${task.bin}</span></div>
+            <div class="flex items-center justify-between">
+              <span class="font-mono font-bold text-blue-600 text-xs">${sub.id}</span>
+              <span class="font-bold text-purple-700 text-xs">${task.bin}</span>
+            </div>
             <h4 class="text-xs font-bold text-slate-900 leading-snug">${sub.name}</h4>
-            <div class="text-[11px] text-slate-500 font-medium">Progress: ${sub.logged} / ${sub.target} ${sub.unit}</div>
-            <div class="text-[11px] font-bold text-emerald-700">Incharge: ${sub.inc} | Assoc: ${sub.assoc}</div>
-            <div class="text-[11px] font-bold text-amber-900">Chamber: ${sub.chamber || 'None'} | Cycler: ${sub.cycler || 'None'}</div>
-            <button onclick="openLogProgressModal('${task.id}', '${sub.id}')" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2 rounded-xl shadow-sm transition">Log Progress & Chamber</button>
+            <div class="text-[11px] text-slate-500">Progress: <strong class="text-slate-800 font-mono">${sub.logged}/${sub.target} ${sub.unit}</strong></div>
+            <div class="text-[10px] text-slate-500 flex items-center justify-between">
+              <span>Inc: <strong class="text-slate-700">${sub.inc}</strong></span>
+              <span>Assoc: <strong class="text-slate-700">${sub.assoc}</strong></span>
+            </div>
+            <div class="text-[10px] text-amber-900 font-semibold truncate">Rig: ${sub.chamber || 'None'} | ${sub.cycler || 'None'}</div>
+            <button onclick="openLogRigModal('${task.id}', '${sub.id}')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-[11px] font-bold py-1.5 rounded-lg transition">
+              Log Progress & Rig
+            </button>
           `;
-          if (sub.status === 'Completed' || sub.status === 'Running') inprogList.appendChild(card);
-          else if (sub.status === 'Blocked') blockedList.appendChild(card);
-          else todoList.appendChild(card);
+
+          if (sub.status === 'Running' || sub.status === 'Completed') {
+            inprog.appendChild(card);
+            cProg++;
+          } else if (sub.status === 'Blocked') {
+            blocked.appendChild(card);
+            cBlock++;
+          } else {
+            todo.appendChild(card);
+            cTodo++;
+          }
         });
       });
+
+      document.getElementById('badge-todo').innerText = cTodo;
+      document.getElementById('badge-inprog').innerText = cProg;
+      document.getElementById('badge-blocked').innerText = cBlock;
+    }
+
+    // Equipment Floor: 6 Thermal Chambers, 5 EA, 2 ITECH, 2 NEWARE
+    function renderEquipmentFloor() {
+      const container = document.getElementById('equipment-grid');
+      const filtered = state.equipment.filter(eq => eq.lab === state.activeDept);
+
+      container.innerHTML = filtered.map(eq => {
+        const isRunning = eq.status === 'Running';
+        return `
+          <div class="bg-white rounded-2xl border ${isRunning ? 'border-emerald-300 bg-emerald-50/15' : 'border-slate-200/80'} p-3.5 shadow-xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold text-slate-400">${eq.id}</span>
+              <span class="inline-flex items-center text-xs font-bold ${isRunning ? 'text-emerald-700' : 'text-slate-400'}">
+                <span class="w-2 h-2 rounded-full ${isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} mr-1.5"></span>
+                ${eq.status}
+              </span>
+            </div>
+
+            <div>
+              <h4 class="text-xs font-extrabold text-slate-900 leading-snug">${eq.name}</h4>
+              <p class="text-[11px] text-slate-500 mt-0.5">Pack Mounted: <strong class="${isRunning ? 'text-emerald-800' : 'text-slate-700'}">${eq.pack}</strong></p>
+              <p class="text-[11px] text-slate-500 truncate">Test: <strong class="text-slate-700">${eq.test}</strong></p>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between space-x-2">
+              <a href="${eq.grafana}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-[11px] transition">
+                📈 Grafana
+              </a>
+              <a href="${eq.drive}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] transition">
+                📁 Drive
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderComponentsRegistry() {
+      const tbody = document.getElementById('component-list-tbody');
+      tbody.innerHTML = state.components.map((c, i) => {
+        const activeCount = state.tasks.filter(t => t.component === c.name).length;
+        return `
+          <tr class="hover:bg-slate-50/60">
+            <td class="p-2.5 font-bold text-slate-900">${c.name}</td>
+            <td class="p-2.5 font-semibold text-blue-600">${c.dept}</td>
+            <td class="p-2.5 font-bold text-purple-700">${c.category}</td>
+            <td class="p-2.5 font-mono font-bold text-slate-600">${activeCount} active</td>
+            <td class="p-2.5 text-right">
+              <button onclick="removeComponent(${i})" class="text-rose-500 hover:text-rose-700 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+      populateDropdowns();
       lucide.createIcons();
     }
 
-    function renderLabView() {
-      const container = document.getElementById('equipment-grid');
-      const filtered = state.equipment.filter(eq => eq.lab === state.activeLab);
-      container.innerHTML = filtered.map(eq => `
-        <div class="bg-white p-4 rounded-2xl border ${eq.status === 'Running' ? 'border-emerald-300 bg-emerald-50/20' : 'border-slate-200'} shadow-sm space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-slate-500">${eq.id}</span>
-            <span class="inline-flex items-center text-xs font-bold ${eq.status === 'Running' ? 'text-emerald-700' : 'text-slate-400'}">
-              <span class="w-2.5 h-2.5 rounded-full ${eq.status === 'Running' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} mr-1.5"></span>${eq.status}
-            </span>
-          </div>
-          <div>
-            <h4 class="text-xs font-bold text-slate-900">${eq.name}</h4>
-            <p class="text-[11px] text-slate-500 mt-0.5">Pack Mounted: <strong class="text-slate-800">${eq.pack}</strong></p>
-            <p class="text-[11px] text-slate-500">Active Test: <strong class="text-slate-700">${eq.test}</strong></p>
-          </div>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between space-x-2">
-            <a href="${eq.grafana}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-orange-50 text-orange-700 font-bold text-[11px]">📈 Grafana</a>
-            <a href="${eq.drive}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-sky-50 text-sky-700 font-bold text-[11px]">📁 Drive</a>
-          </div>
-        </div>
-      `).join('');
+    function registerNewComponent() {
+      const name = document.getElementById('new-comp-name').value.trim();
+      const dept = document.getElementById('new-comp-dept').value;
+      const category = document.getElementById('new-comp-cat').value;
+      if (!name) return alert('Enter component name');
+
+      state.components.push({ name, dept, category });
+      document.getElementById('new-comp-name').value = '';
+      saveState();
+      renderComponentsRegistry();
     }
 
-    function renderRoster() {
-      const tbody = document.getElementById('roster-table-body');
-      const deptFilter = document.getElementById('roster-dept-filter')?.value || 'All';
-      const filtered = state.roster.filter(emp => deptFilter === 'All' || emp.dept === deptFilter);
+    function removeComponent(idx) {
+      state.components.splice(idx, 1);
+      saveState();
+      renderComponentsRegistry();
+    }
 
-      tbody.innerHTML = filtered.map(emp => {
+    function populateDropdowns() {
+      const dvpFilter = document.getElementById('dvp-comp-filter');
+      const tfComp = document.getElementById('tf-comp-select');
+      const opts = state.components.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+      if (dvpFilter) dvpFilter.innerHTML = `<option value="All">All Components</option>` + opts;
+      if (tfComp) tfComp.innerHTML = opts;
+    }
+
+    function renderRosterMatrix() {
+      const tbody = document.getElementById('roster-matrix-tbody');
+      const deptFilter = document.getElementById('roster-dept-filter')?.value || 'All';
+      const filtered = state.roster.filter(p => deptFilter === 'All' || p.dept === deptFilter);
+
+      tbody.innerHTML = filtered.map(p => {
         let daysHtml = '';
-        if (!emp.schedule) emp.schedule = {};
-        const defaultBadge = emp.shift.replace('Shift ', '');
+        if (!p.schedule) p.schedule = {};
 
         for (let d = 1; d <= 30; d++) {
-          const shiftVal = emp.schedule[`d${d}`] || defaultBadge;
-          let pillColor = 'bg-amber-100 text-amber-800';
-          if (shiftVal === 'B') pillColor = 'bg-sky-100 text-sky-800';
-          if (shiftVal === 'C') pillColor = 'bg-purple-100 text-purple-800';
-          if (shiftVal === 'OFF') pillColor = 'bg-slate-200 text-slate-600';
+          const val = p.schedule[`d${d}`] || 'P';
+          let pill = 'bg-emerald-100 text-emerald-800';
+          if (val === 'A') pill = 'bg-rose-100 text-rose-800';
+          if (val === 'SA') pill = 'bg-amber-100 text-amber-800';
+          if (val === 'SB') pill = 'bg-sky-100 text-sky-800';
+          if (val === 'SC') pill = 'bg-purple-100 text-purple-800';
+          if (val === 'O') pill = 'bg-slate-200 text-slate-600';
 
           daysHtml += `
-            <td class="py-2 px-0.5 text-center">
-              <button onclick="cycleEmployeeShift('${emp.id}', ${d})" class="w-6 h-6 rounded font-bold text-[10px] ${pillColor}">
-                ${shiftVal === 'OFF' ? 'O' : shiftVal}
+            <td class="p-1 text-center">
+              <button onclick="toggleAttendanceCell('${p.id}', ${d})" title="Day ${d}: ${val} (Click to toggle)" class="w-6 h-6 rounded text-[10px] font-bold ${pill} shadow-2xs transition">
+                ${val}
               </button>
             </td>
           `;
         }
 
         return `
-          <tr class="hover:bg-slate-50 border-b border-slate-100 transition">
-            <td class="py-3 px-3 font-mono font-bold text-slate-500">${emp.id}</td>
-            <td class="py-3 px-3 font-bold text-slate-900">${emp.name}</td>
-            <td class="py-3 px-3 font-semibold text-blue-700">${emp.dept}</td>
-            <td class="py-3 px-3 text-slate-600">${emp.role}</td>
-            <td class="py-3 px-3 font-bold text-slate-800">${emp.shift}</td>
+          <tr class="hover:bg-slate-50 transition">
+            <td class="p-3 font-mono font-bold text-slate-400">${p.id}</td>
+            <td class="p-3 font-bold text-slate-900">${p.name}</td>
+            <td class="p-3 text-slate-600">${p.role}</td>
+            <td class="p-3 font-semibold text-blue-600">${p.dept}</td>
             ${daysHtml}
           </tr>
         `;
       }).join('');
     }
 
-    function cycleEmployeeShift(empId, dayNum) {
-      const emp = state.roster.find(e => e.id === empId);
-      if (!emp) return;
-      if (!emp.schedule) emp.schedule = {};
-      const current = emp.schedule[`d${dayNum}`] || emp.shift.replace('Shift ', '');
-      const cycle = { 'A': 'B', 'B': 'C', 'C': 'OFF', 'OFF': 'A' };
-      emp.schedule[`d${dayNum}`] = cycle[current] || 'A';
+    function toggleAttendanceCell(personId, day) {
+      const person = state.roster.find(p => p.id === personId);
+      if (!person) return;
+      if (!person.schedule) person.schedule = {};
+      const cur = person.schedule[`d${day}`] || 'P';
+      const order = { 'P': 'A', 'A': 'SA', 'SA': 'SB', 'SB': 'SC', 'SC': 'O', 'O': 'P' };
+      person.schedule[`d${day}`] = order[cur] || 'P';
       saveState();
+      renderRosterMatrix();
     }
 
-    let plannerSubtaskCounter = 0;
-    function openDvpPlannerModal() {
-      plannerSubtaskCounter = 0;
-      document.getElementById('planner-subtasks-container').innerHTML = '';
-      addPlannerSubtaskRow("Thermal Cycling", "Cycles", 1000, "2026-10-25", "Shift B", "Riyaz", "Yosvaraj");
-      addPlannerSubtaskRow("Pre-Capacity Check", "Hours", 24, "2026-10-25", "Shift A", "Raja", "sathya naraya");
-      openModal('modal-dvp-planner');
-      lucide.createIcons();
-    }
+    function saveNewTeamMember() {
+      const name = document.getElementById('p-name').value.trim();
+      const dept = document.getElementById('p-dept').value;
+      const role = document.getElementById('p-role').value;
+      const shift = document.getElementById('p-shift').value;
+      if (!name) return alert('Enter full name');
 
-    function addPlannerSubtaskRow(defName = "", defUnit = "Cycles", defTarget = 500, defDate = "2026-10-25", defShift = "Shift B", defInc = "Riyaz", defAssoc = "Yosvaraj") {
-      plannerSubtaskCounter++;
-      const id = plannerSubtaskCounter;
-      const row = document.createElement('div');
-      row.id = `planner-subrow-${id}`;
-      row.className = "bg-white p-3 rounded-xl border border-slate-200 flex flex-wrap items-center gap-2 text-xs";
-      row.innerHTML = `
-        <span class="font-bold text-indigo-600 w-16">Step #${id}</span>
-        <input type="text" placeholder="Step description" value="${defName}" class="p-sub-name border rounded-lg px-2 py-1.5 flex-1 min-w-[150px] font-semibold" />
-        <input type="number" placeholder="Target" value="${defTarget}" class="p-sub-target border rounded-lg px-2 py-1.5 w-20" />
-        <select class="p-sub-unit border rounded-lg px-1.5 py-1.5 bg-white font-semibold">
-          <option ${defUnit === 'Cycles' ? 'selected' : ''}>Cycles</option><option ${defUnit === 'Hours' ? 'selected' : ''}>Hours</option><option ${defUnit === 'Days' ? 'selected' : ''}>Days</option>
-        </select>
-        <input type="date" value="${defDate}" class="p-sub-date border rounded-lg px-2 py-1.5 bg-white" />
-        <select class="p-sub-shift border rounded-lg px-1.5 py-1.5 bg-white font-bold text-blue-600">
-          <option ${defShift === 'Shift A' ? 'selected' : ''}>Shift A</option><option ${defShift === 'Shift B' ? 'selected' : ''}>Shift B</option><option ${defShift === 'Shift C' ? 'selected' : ''}>Shift C</option>
-        </select>
-        <select class="p-sub-inc border rounded-lg px-1.5 py-1.5 bg-white">
-          <option ${defInc === 'Raja' ? 'selected' : ''}>Raja</option><option ${defInc === 'Riyaz' ? 'selected' : ''}>Riyaz</option><option ${defInc === 'Praveen Kumar' ? 'selected' : ''}>Praveen Kumar</option>
-        </select>
-        <select class="p-sub-assoc border rounded-lg px-1.5 py-1.5 bg-white">
-          <option ${defAssoc === 'sathya naraya' ? 'selected' : ''}>sathya naraya</option><option ${defAssoc === 'Yosvaraj' ? 'selected' : ''}>Yosvaraj</option><option ${defAssoc === 'Sanjay' ? 'selected' : ''}>Sanjay</option>
-        </select>
-        <button type="button" onclick="document.getElementById('planner-subrow-${id}').remove()" class="text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-      `;
-      document.getElementById('planner-subtasks-container').appendChild(row);
-      lucide.createIcons();
-    }
-
-    function saveDvpPlanner() {
-      const tl = document.getElementById('plan-task-tl').value;
-      const cat = document.getElementById('plan-task-cat').value;
-      const prio = document.getElementById('plan-task-prio').value;
-      const bin = document.getElementById('plan-task-bin').value.trim() || 'EL-Gen-0-98';
-      const name = document.getElementById('plan-task-name').value.trim() || 'Aggressive Thermal Profile';
-      const comp = document.getElementById('plan-task-comp').value.trim() || 'Gen-0 8P Pack';
-      const lead = document.getElementById('plan-task-lead').value.trim() || 'Yeshwanth';
-      const obj = document.getElementById('plan-task-obj').value.trim() || 'Life Cycle Validation';
-      const drive = document.getElementById('plan-task-drive').value.trim() || 'https://drive.google.com';
-      const grafana = document.getElementById('plan-task-grafana').value.trim() || 'https://grafana.internal/d/chamber-1';
-
-      const subRows = document.querySelectorAll('#planner-subtasks-container > div');
-      const subtasks = [];
-      subRows.forEach((row, idx) => {
-        subtasks.push({
-          id: `SUB-${700000 + Math.floor(Math.random() * 90000)}`,
-          name: row.querySelector('.p-sub-name').value.trim() || `Step ${idx + 1}`,
-          unit: row.querySelector('.p-sub-unit').value,
-          target: Number(row.querySelector('.p-sub-target').value) || 100,
-          logged: 0,
-          date: row.querySelector('.p-sub-date').value || '2026-10-25',
-          shift: row.querySelector('.p-sub-shift').value,
-          inc: row.querySelector('.p-sub-inc').value,
-          assoc: row.querySelector('.p-sub-assoc').value,
-          status: 'Running',
-          chamber: 'None (Unmounted)',
-          cycler: 'None (Unmounted)',
-          grafana: grafana,
-          notes: ''
-        });
+      state.roster.push({
+        id: 'EMP-' + Math.floor(100 + Math.random() * 900),
+        name, dept, role, shift, schedule: {}
       });
+      closeModal('modal-add-personnel');
+      saveState();
+      renderRosterMatrix();
+    }
+
+    function toggle5SAudit(num) {
+      state.fiveS[num] = !state.fiveS[num];
+      saveState();
+      const btn = document.getElementById(`btn-5s-${num}`);
+      if (btn) {
+        btn.className = state.fiveS[num]
+          ? "p-4 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs font-bold flex flex-col items-center"
+          : "p-4 rounded-xl border border-rose-300 bg-rose-50 text-rose-800 text-xs font-bold flex flex-col items-center";
+      }
+    }
+
+    let catChart = null, statChart = null, compChart = null;
+
+    function renderExecutiveAnalytics() {
+      // 1. Category Ratio Chart
+      const c450 = state.tasks.filter(t => t.category === '450').length || 1;
+      const cDiesel = state.tasks.filter(t => t.category === 'DIESEL').length || 1;
+      const cEL = state.tasks.filter(t => t.category === 'EL').length || 2;
+
+      const catCtx = document.getElementById('canvas-category-chart')?.getContext('2d');
+      if (catCtx) {
+        if (catChart) catChart.destroy();
+        catChart = new Chart(catCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['450 Series', 'DIESEL Module', 'EL Pack'],
+            datasets: [{ data: [c450, cDiesel, cEL], backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+      }
+
+      // 2. Execution Status Chart
+      const run = state.tasks.filter(t => t.status === 'Running').length || 2;
+      const comp = state.tasks.filter(t => t.status === 'Completed').length || 1;
+      const block = state.tasks.filter(t => t.status === 'Blocked').length || 0;
+
+      const statCtx = document.getElementById('canvas-status-chart')?.getContext('2d');
+      if (statCtx) {
+        if (statChart) statChart.destroy();
+        statChart = new Chart(statCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Running', 'Completed', 'Blocked'],
+            datasets: [{ data: [run, comp, block], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+      }
+
+      // 3. Components Allocation Chart
+      const compLabels = state.components.map(c => c.name);
+      const compCounts = state.components.map(c => state.tasks.filter(t => t.component === c.name).length || 1);
+
+      const compCtx = document.getElementById('canvas-comp-chart')?.getContext('2d');
+      if (compCtx) {
+        if (compChart) compChart.destroy();
+        compChart = new Chart(compCtx, {
+          type: 'doughnut',
+          data: {
+            labels: compLabels.slice(0, 5),
+            datasets: [{ data: compCounts.slice(0, 5), backgroundColor: ['#06b6d4', '#6366f1', '#ec4899', '#f97316', '#84cc16'], borderWidth: 0 }]
+          },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+        });
+      }
+
+      // Leaderboard
+      const incTbody = document.getElementById('leaderboard-inc-tbody');
+      const incharges = state.roster.filter(r => r.role === 'Shift Incharge');
+      incTbody.innerHTML = incharges.map(inc => {
+        const testsCount = state.tasks.filter(t => t.lead === inc.name || (t.subtasks && t.subtasks.some(s => s.inc === inc.name))).length;
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-2.5 font-bold text-slate-900">${inc.name}</td>
+            <td class="p-2.5 font-bold text-blue-600">${inc.shift}</td>
+            <td class="p-2.5 font-mono text-slate-700">${testsCount} lines</td>
+            <td class="p-2.5 font-bold text-emerald-600">98.5%</td>
+            <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Top Tier ★</span></td>
+          </tr>
+        `;
+      }).join('');
+
+      const assocTbody = document.getElementById('leaderboard-assoc-tbody');
+      const associates = state.roster.filter(r => r.role === 'Associate');
+      assocTbody.innerHTML = associates.map(a => {
+        let loggedUnits = 0;
+        state.tasks.forEach(t => {
+          if (t.subtasks) t.subtasks.forEach(s => { if (s.assoc === a.name) loggedUnits += Number(s.logged); });
+        });
+        return `
+          <tr class="hover:bg-slate-50">
+            <td class="p-2.5 font-bold text-slate-900">${a.name}</td>
+            <td class="p-2.5 text-blue-600 font-semibold">${a.dept}</td>
+            <td class="p-2.5 font-mono text-slate-600">8 steps</td>
+            <td class="p-2.5 font-mono font-bold text-purple-700">${loggedUnits} units</td>
+            <td class="p-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">Optimal</span></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openTaskPlannerModal(tab = 'testflow') {
+      populateDropdowns();
+      const parentSelect = document.getElementById('dvp-parent-task-select');
+      if (parentSelect) {
+        parentSelect.innerHTML = state.tasks.map(t => `<option value="${t.id}">${t.id} - ${t.name} (${t.bin})</option>`).join('');
+      }
+      setPlannerTab(tab);
+      openModal('modal-task-planner');
+      lucide.createIcons();
+    }
+
+    function setPlannerTab(tab) {
+      if (tab === 'testflow') {
+        document.getElementById('planner-tab-testflow').classList.remove('hidden');
+        document.getElementById('planner-tab-dvp').classList.add('hidden');
+        document.getElementById('tab-btn-flow').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-700 shadow-xs transition";
+        document.getElementById('tab-btn-dvp').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
+      } else {
+        document.getElementById('planner-tab-testflow').classList.add('hidden');
+        document.getElementById('planner-tab-dvp').classList.remove('hidden');
+        document.getElementById('tab-btn-flow').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition";
+        document.getElementById('tab-btn-dvp').className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-white text-indigo-700 shadow-xs transition";
+        if (document.getElementById('dvp-steps-wrapper').children.length === 0) {
+          addDvpStepRow("Thermal Stress Cycling", "Cycles", 1000);
+          addDvpStepRow("Capacity Baseline Run", "Hours", 24);
+        }
+      }
+    }
+
+    function saveTestFlowMasterLine() {
+      const tl = document.getElementById('tf-tl').value;
+      const category = document.getElementById('tf-category').value;
+      const prio = document.getElementById('tf-prio').value;
+      const bin = document.getElementById('tf-bin').value.trim() || 'EL-GEN0-101';
+      const component = document.getElementById('tf-comp-select').value;
+      const name = document.getElementById('tf-name').value.trim() || 'DVP Test Line';
+      const lead = document.getElementById('tf-lead').value.trim() || 'Yeshwanth';
+      const objective = document.getElementById('tf-objective').value.trim() || 'Validation life-cycle test';
+      const drive = document.getElementById('tf-drive').value.trim();
+      const grafana = document.getElementById('tf-grafana').value.trim();
 
       state.tasks.push({
         id: 'TSK-' + Math.floor(100000 + Math.random() * 900000),
-        tl, prio, bin, category: cat, name, objective: obj, lead, component: comp, sprint: "Sprint 22",
-        progress: 0, status: 'Running', shift: 'Multi-Shift', drive, grafana, subtasks
+        tl, category, prio, bin, component, name, lead, objective, drive, grafana,
+        progress: 0, status: 'Running', shift: state.activeShift, subtasks: []
       });
 
-      closeModal('modal-dvp-planner');
+      closeModal('modal-task-planner');
       saveState();
+      alert(`Test Flow line ${tl} registered! Now you can attach DVP steps.`);
     }
 
-    function openSubtaskModal(taskId) {
-      document.getElementById('m-sub-parentid').value = taskId;
-      openModal('modal-new-subtask');
+    let dvpStepCounter = 0;
+    function addDvpStepRow(defName = "", defUnit = "Cycles", defTarget = 500) {
+      dvpStepCounter++;
+      const id = dvpStepCounter;
+      const div = document.createElement('div');
+      div.id = `dvp-step-${id}`;
+      div.className = "bg-white border border-slate-200 p-3 rounded-xl flex flex-wrap items-center gap-2 text-xs shadow-2xs";
+      div.innerHTML = `
+        <span class="font-bold text-indigo-700 w-12 font-mono">#${id}</span>
+        <input type="text" placeholder="Step description" value="${defName}" class="step-name border rounded-lg px-2 py-1.5 flex-1 min-w-[140px] font-semibold" />
+        <input type="number" placeholder="Target" value="${defTarget}" class="step-target border rounded-lg px-2 py-1.5 w-20 font-bold" />
+        <select class="step-unit border rounded-lg px-1.5 py-1.5 bg-white font-semibold">
+          <option ${defUnit === 'Cycles' ? 'selected' : ''}>Cycles</option>
+          <option ${defUnit === 'Hours' ? 'selected' : ''}>Hours</option>
+          <option ${defUnit === 'Days' ? 'selected' : ''}>Days</option>
+        </select>
+        <input type="date" value="2026-10-25" class="step-date border rounded-lg px-2 py-1.5 bg-white" />
+        <select class="step-shift border rounded-lg px-1.5 py-1.5 bg-white font-bold text-blue-600">
+          <option>Shift A</option><option selected>Shift B</option><option>Shift C</option>
+        </select>
+        <select class="step-inc border rounded-lg px-1.5 py-1.5 bg-white">
+          <option>Raja</option><option selected>Riyaz</option><option>Praveen Kumar</option>
+        </select>
+        <select class="step-assoc border rounded-lg px-1.5 py-1.5 bg-white">
+          <option>sathya naraya</option><option selected>Yosvaraj</option><option>Sanjay</option>
+        </select>
+        <button type="button" onclick="document.getElementById('dvp-step-${id}').remove()" class="text-rose-500 hover:text-rose-700 p-1">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+      `;
+      document.getElementById('dvp-steps-wrapper').appendChild(div);
+      lucide.createIcons();
     }
 
-    function saveSubtaskModal() {
-      const parentId = document.getElementById('m-sub-parentid').value;
-      const task = state.tasks.find(t => t.id === parentId);
-      if (!task) return;
+    function saveDvpSubtasksToLine() {
+      const parentTaskId = document.getElementById('dvp-parent-task-select').value;
+      const task = state.tasks.find(t => t.id === parentTaskId);
+      if (!task) return alert('Select a master test flow first');
+
+      const rows = document.querySelectorAll('#dvp-steps-wrapper > div');
       if (!task.subtasks) task.subtasks = [];
-      const target = Number(document.getElementById('m-sub-target').value) || 100;
-      const logged = Number(document.getElementById('m-sub-logged').value) || 0;
-      task.subtasks.push({
-        id: 'SUB-' + Math.floor(700000 + Math.random() * 90000),
-        name: document.getElementById('m-sub-name').value.trim() || 'New Test Step',
-        unit: document.getElementById('m-sub-unit').value,
-        target, logged,
-        date: document.getElementById('m-sub-date').value || '2026-10-25',
-        shift: document.getElementById('m-sub-shift').value,
-        inc: document.getElementById('m-sub-inc').value,
-        assoc: document.getElementById('m-sub-assoc').value,
-        status: logged >= target ? 'Completed' : 'Running',
-        chamber: 'None (Unmounted)', cycler: 'None (Unmounted)', grafana: task.grafana, notes: ''
+
+      rows.forEach(r => {
+        const name = r.querySelector('.step-name').value.trim() || 'Test Step';
+        const target = Number(r.querySelector('.step-target').value) || 100;
+        const unit = r.querySelector('.step-unit').value;
+        const date = r.querySelector('.step-date').value || '2026-10-25';
+        const shift = r.querySelector('.step-shift').value;
+        const inc = r.querySelector('.step-inc').value;
+        const assoc = r.querySelector('.step-assoc').value;
+
+        task.subtasks.push({
+          id: 'SUB-' + Math.floor(700000 + Math.random() * 90000),
+          name, target, logged: 0, unit, date, shift, inc, assoc,
+          status: 'Running', chamber: 'None', cycler: 'None', notes: ''
+        });
       });
-      closeModal('modal-new-subtask');
+
+      closeModal('modal-task-planner');
       saveState();
+      alert(`DVP steps attached successfully to ${task.name}!`);
     }
 
-    function openLogProgressModal(taskId, subId) {
+    function quickAddSubtaskToLine(taskId) {
+      openTaskPlannerModal('dvp');
+      document.getElementById('dvp-parent-task-select').value = taskId;
+    }
+
+    function deleteTaskLine(taskId) {
+      if (confirm(`Delete test line ${taskId}?`)) {
+        state.tasks = state.tasks.filter(t => t.id !== taskId);
+        saveState();
+      }
+    }
+
+    // Progress & Rig Modal with 6 Thermal Chambers & 9 Cyclers
+    function openLogRigModal(taskId, subId) {
       const task = state.tasks.find(t => t.id === taskId);
       if (!task) return;
       const sub = task.subtasks.find(s => s.id === subId);
       if (!sub) return;
+
       document.getElementById('mlp-task-id').value = taskId;
       document.getElementById('mlp-sub-id').value = subId;
-      document.getElementById('mlp-title').innerText = `${sub.id} | ${sub.name}`;
+      document.getElementById('mlp-title').innerText = `${sub.id} • ${sub.name}`;
       document.getElementById('mlp-chamber').value = sub.chamber || 'None (Unmounted)';
       document.getElementById('mlp-cycler').value = sub.cycler || 'None (Unmounted)';
-      document.getElementById('mlp-grafana').value = sub.grafana || task.grafana || 'https://grafana.internal/d/chamber-1';
       document.getElementById('mlp-status').value = sub.status || 'Running';
-      document.getElementById('mlp-increment').value = 1;
       document.getElementById('mlp-notes').value = sub.notes || '';
       openModal('modal-log-progress');
     }
 
     function saveLogProgressModal() {
-      const taskId = document.getElementById('mlp-task-id').value;
-      const subId = document.getElementById('mlp-sub-id').value;
-      const task = state.tasks.find(t => t.id === taskId);
+      const tId = document.getElementById('mlp-task-id').value;
+      const sId = document.getElementById('mlp-sub-id').value;
+      const task = state.tasks.find(t => t.id === tId);
       if (!task) return;
-      const sub = task.subtasks.find(s => s.id === subId);
+      const sub = task.subtasks.find(s => s.id === sId);
       if (!sub) return;
-      sub.logged = Number(sub.logged) + (Number(document.getElementById('mlp-increment').value) || 0);
+
+      const inc = Number(document.getElementById('mlp-inc').value) || 0;
+      sub.logged = Number(sub.logged) + inc;
       sub.chamber = document.getElementById('mlp-chamber').value;
       sub.cycler = document.getElementById('mlp-cycler').value;
-      sub.grafana = document.getElementById('mlp-grafana').value;
       sub.status = document.getElementById('mlp-status').value;
       sub.notes = document.getElementById('mlp-notes').value;
+
+      // Update equipment status on floor
+      if (sub.chamber !== 'None (Unmounted)') {
+        const eq = state.equipment.find(e => e.name.toLowerCase().includes(sub.chamber.toLowerCase().slice(0, 9)));
+        if (eq) { eq.status = 'Running'; eq.pack = task.bin; eq.test = `${task.name} (${sub.id})`; }
+      }
+      if (sub.cycler !== 'None (Unmounted)') {
+        const cy = state.equipment.find(e => e.name.toLowerCase().includes(sub.cycler.toLowerCase().slice(0, 9)));
+        if (cy) { cy.status = 'Running'; cy.pack = task.bin; cy.test = `${task.name} (${sub.id})`; }
+      }
+
       closeModal('modal-log-progress');
       saveState();
     }
 
-    function submitShiftHandover() {
-      const toShift = document.getElementById('ho-to-shift').value;
-      state.handovers.unshift({
-        id: 'HO-' + Date.now().toString().slice(-3),
-        time: 'Just now',
-        from: document.getElementById('ho-from-shift').value,
-        to: toShift,
-        incharge: document.getElementById('ho-incharge').value,
-        extraTasks: document.getElementById('ho-extra-tasks').value,
-        message: document.getElementById('ho-next-message').value
-      });
-      state.workbenchShift = toShift;
-      document.getElementById('current-shift-indicator').innerText = `Active Shift: ${toShift}`;
-      closeModal('modal-handover-submission');
-      saveState();
+    function submitShiftHandoverForm() {
+      const to = document.getElementById('ho-to').value;
+      setActiveShift(to);
+      closeModal('modal-handover');
+      alert(`Handover signed! Active floor transitioned to ${to}.`);
     }
 
-    function saveMemberModal() {
-      const name = document.getElementById('m-mem-name').value.trim();
-      if (!name) return alert('Enter member name');
-      state.roster.push({
-        id: 'EMP-' + Math.floor(100 + Math.random() * 900),
-        name,
-        dept: document.getElementById('m-mem-dept').value,
-        role: document.getElementById('m-mem-role').value,
-        shift: document.getElementById('m-mem-shift').value,
-        schedule: {}
-      });
-      closeModal('modal-add-member');
+    function loadSampleAtherPack() {
+      state = JSON.parse(JSON.stringify(initialCleanState));
       saveState();
+      alert("Ather Validation Flow (TSK-400004 & TSK-400005) loaded with active telemetry!");
     }
 
-    function toggle5S(num) { state.fiveS[num] = !state.fiveS[num]; saveState(); }
-    function updateSubtask(taskId, subId, field, value) {
-      const task = state.tasks.find(t => t.id === taskId);
-      if (!task || !task.subtasks) return;
-      const sub = task.subtasks.find(s => s.id === subId);
-      if (sub) { sub[field] = value; saveState(); }
-    }
-    function assignSubtaskPrompt(taskId, subId) {
-      const newAssoc = prompt("Assign associate:");
-      if (newAssoc) updateSubtask(taskId, subId, 'assoc', newAssoc.trim());
-    }
-    function deleteTask(taskId) {
-      if (confirm(`Delete task ${taskId}?`)) {
-        state.tasks = state.tasks.filter(t => t.id !== taskId);
-        saveState();
-      }
-    }
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    let catChartInstance = null, statusChartInstance = null, shiftChartInstance = null;
-    function renderAnalyticsCharts() {
-      const catCtx = document.getElementById('categoryDonutChart')?.getContext('2d');
-      const statusCtx = document.getElementById('statusDonutChart')?.getContext('2d');
-      const shiftCtx = document.getElementById('shiftThroughputChart')?.getContext('2d');
-      if (!catCtx || !statusCtx || !shiftCtx) return;
-
-      if (catChartInstance) catChartInstance.destroy();
-      catChartInstance = new Chart(catCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['450', 'DIESEL', 'EL'],
-          datasets: [{ data: [state.tasks.filter(t => t.category === '450').length, state.tasks.filter(t => t.category === 'DIESEL').length, state.tasks.filter(t => t.category === 'EL').length], backgroundColor: ['#3b82f6', '#f59e0b', '#8b5cf6'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-
-      if (statusChartInstance) statusChartInstance.destroy();
-      statusChartInstance = new Chart(statusCtx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Running', 'Completed', 'Blocked'],
-          datasets: [{ data: [state.tasks.filter(t => t.status === 'Running').length, state.tasks.filter(t => t.status === 'Completed').length, state.tasks.filter(t => t.status === 'Blocked').length], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'] }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-      });
-
-      if (shiftChartInstance) shiftChartInstance.destroy();
-      shiftChartInstance = new Chart(shiftCtx, {
-        type: 'bar',
-        data: { labels: ['Shift A', 'Shift B', 'Shift C'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6'] }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-      });
-    }
-
-    function render() {
-      renderTasks();
-      renderWorkbench();
-      renderLabView();
-      renderRoster();
+    function renderAllViews() {
+      renderDvpMasterTasks();
+      renderAllSubtasksMatrix();
+      renderShiftWorkbench();
+      renderEquipmentFloor();
+      renderComponentsRegistry();
+      renderRosterMatrix();
       lucide.createIcons();
     }
 
-    // Initialize UI and pull latest cloud state
-    render();
-    syncWithCloud();
+    // Launch UI
+    renderAllViews();
+    syncWithCloudNow();
   </script>
 </body>
 </html>
