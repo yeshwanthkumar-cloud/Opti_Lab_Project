@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Opti Lab Console - Ather Energy</title>
+  <title>Opti Lab Console - Ather Energy Validation</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,6 +34,7 @@
       </div>
 
       <div class="flex items-center space-x-2">
+        <!-- Global Shift Selector -->
         <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-semibold">
           <span class="text-[10px] font-bold text-slate-400 px-2 uppercase">Shift</span>
           <button onclick="setActiveShift('Shift A')" id="btn-shift-A" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">A</button>
@@ -41,24 +42,37 @@
           <button onclick="setActiveShift('Shift C')" id="btn-shift-C" class="px-2.5 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">C</button>
         </div>
 
+        <!-- Department Switcher (Battery vs Vibration) -->
         <div class="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs font-semibold">
           <button id="dept-btn-battery" onclick="switchDept('Battery Lab')" class="px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition">Battery Lab</button>
           <button id="dept-btn-vib" onclick="switchDept('Vibration Team')" class="px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition">Vibration Team</button>
         </div>
 
-        <button onclick="syncCloud()" class="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span id="cloud-status-text">Synced</span>
+        <!-- Excel Export -->
+        <button onclick="exportToExcelCSV()" class="hidden md:inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition" title="Export Live Data to CSV">
+          <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+          <span>Export Excel</span>
         </button>
 
-        <button onclick="openModal('modal-create-task')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3 py-2 rounded-xl shadow-xs transition flex items-center space-x-1">
+        <!-- Cloud Sync -->
+        <button onclick="syncCloud()" class="hidden sm:inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200 hover:bg-slate-200 transition">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="cloud-status-text">Cloud Synced</span>
+        </button>
+
+        <!-- Create Actions -->
+        <button onclick="openModal('modal-create-flow')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition flex items-center space-x-1">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-          <span>New Task</span>
+          <span>Create Flow</span>
+        </button>
+        <button onclick="openModal('modal-add-component')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3 py-2 rounded-xl shadow-xs transition flex items-center space-x-1">
+          <i data-lucide="package-plus" class="w-3.5 h-3.5"></i>
+          <span>Add Component</span>
         </button>
       </div>
     </div>
 
-    <!-- TABS NAVIGATION BAR (CLEAN NAMES ONLY) -->
+    <!-- TABS NAVIGATION BAR -->
     <div class="px-4 sm:px-6 bg-white border-t border-slate-100 overflow-x-auto custom-scroll max-w-[1680px] mx-auto">
       <nav class="flex space-x-1.5 py-1.5 min-w-max text-xs font-semibold">
         <button onclick="setTab('dashboard')" id="nav-dashboard" class="px-3.5 py-1.5 font-bold rounded-lg bg-blue-50 text-blue-700 border border-blue-200 transition flex items-center space-x-1.5">
@@ -131,24 +145,34 @@
         </div>
       </div>
 
+      <!-- Real Analytics Charts -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Category Ratio</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="dash-chart-cat"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="dash-cat-container">
+            <canvas id="dash-chart-cat"></canvas>
+            <div id="dash-cat-empty" class="text-xs text-slate-400 hidden italic">No test lines logged yet</div>
+          </div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Execution Status</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="dash-chart-stat"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="dash-stat-container">
+            <canvas id="dash-chart-stat"></canvas>
+            <div id="dash-stat-empty" class="text-xs text-slate-400 hidden italic">No active tests</div>
+          </div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Shift Execution Output</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="dash-chart-shift"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="dash-shift-container">
+            <canvas id="dash-chart-shift"></canvas>
+            <div id="dash-shift-empty" class="text-xs text-slate-400 hidden italic">0 units executed</div>
+          </div>
         </div>
       </div>
 
       <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-xs">
         <div class="flex items-center justify-between">
-          <h3 class="text-sm font-bold text-slate-900">Active Test Lines</h3>
+          <h3 class="text-sm font-bold text-slate-900">Active Test Lines (<span id="dash-dept-label">Battery Lab</span>)</h3>
           <button onclick="setTab('planner')" class="text-xs font-bold text-blue-600 hover:underline">Open Planner</button>
         </div>
         <div class="overflow-x-auto">
@@ -179,9 +203,10 @@
       <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center space-x-3">
           <h2 class="text-sm sm:text-base font-extrabold text-slate-900" id="shift-title">Shift B</h2>
+          <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200" id="wb-dept-pill">Battery Lab</span>
         </div>
         <div class="flex items-center space-x-3 text-xs">
-          <span class="text-slate-600">Incharge: <strong class="text-slate-900 font-bold" id="shift-lead-name">Riyaz</strong></span>
+          <span class="text-slate-600">Shift Incharge: <strong class="text-slate-900 font-bold" id="shift-lead-name">Riyaz</strong></span>
           <span class="text-slate-300">|</span>
           <span class="text-slate-600">Running Tasks: <strong class="text-blue-600 font-bold" id="shift-running-count">0</strong></span>
         </div>
@@ -227,10 +252,10 @@
         </div>
       </div>
 
-      <!-- Section 2: Attendance -->
+      <!-- Section 2: Attendance (Shift Incharge + Department Associates) -->
       <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
         <div class="flex items-center justify-between">
-          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Shift Attendance</h3>
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Shift Attendance (<span id="att-dept-name">Battery Lab</span>)</h3>
           <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200" id="att-summary-text">0 / 0 Present</span>
         </div>
         <div id="shift-attendance-cards" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5"></div>
@@ -351,11 +376,15 @@
     <div id="view-planner" class="space-y-4 hidden">
       <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <h3 class="text-sm font-bold text-slate-900">Task Planner</h3>
+          <h3 class="text-sm font-bold text-slate-900">Task Planner (<span id="planner-dept-label">Battery Lab</span>)</h3>
           <div class="flex items-center space-x-2">
-            <button onclick="openModal('modal-create-task')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1">
+            <button onclick="openModal('modal-create-flow')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              <span>New Task</span>
+              <span>Create Flow</span>
+            </button>
+            <button onclick="openModal('modal-add-component')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1">
+              <i data-lucide="package-plus" class="w-3.5 h-3.5"></i>
+              <span>Add Component</span>
             </button>
             <button onclick="openModal('modal-add-subtask')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs flex items-center space-x-1">
               <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
@@ -386,7 +415,7 @@
       </div>
     </div>
 
-    <!-- ==================== TAB 4: EQUIPMENT ==================== -->
+    <!-- ==================== TAB 4: EQUIPMENT (EXACT 3 SHAKERS IN VIBRATION) ==================== -->
     <div id="view-equipment" class="space-y-5 hidden">
       <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <h2 class="text-base font-bold text-slate-900" id="equipment-title">Battery Lab Equipment</h2>
@@ -396,22 +425,23 @@
         </div>
       </div>
 
-      <!-- Thermal Chambers -->
-      <div class="space-y-2">
-        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Thermal Chambers (6)</h3>
-        <div id="grid-chambers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      <!-- Battery View: 6 Chambers + 9 Cyclers -->
+      <div id="battery-equipment-container" class="space-y-4">
+        <div class="space-y-2">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Thermal Chambers (6)</h3>
+          <div id="grid-chambers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Cyclers (5 EA, 2 ITECH, 2 NEWARE)</h3>
+          <div id="grid-cyclers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
       </div>
 
-      <!-- Cycler Stations -->
-      <div class="space-y-2 pt-2">
-        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Cyclers (5 EA, 2 ITECH, 2 NEWARE)</h3>
-        <div id="grid-cyclers" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
-      </div>
-
-      <!-- Vibration Shakers -->
-      <div id="section-shakers" class="space-y-2 pt-2 hidden">
-        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Vibration Shakers (2)</h3>
-        <div id="grid-shakers" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+      <!-- Vibration View: EXACT 3 SHAKERS (1.5 Ton, 3 Ton SDYN, 3 Ton GWS) -->
+      <div id="vibration-equipment-container" class="space-y-2 hidden">
+        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide">Vibration Shaker Rigs (3 Rigs)</h3>
+        <div id="grid-shakers" class="grid grid-cols-1 sm:grid-cols-3 gap-3.5"></div>
       </div>
     </div>
 
@@ -419,7 +449,10 @@
     <div id="view-roster" class="space-y-4 hidden">
       <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-xs">
         <div class="flex flex-wrap items-center justify-between gap-3">
-          <h2 class="text-base font-bold text-slate-900">Shift Roster</h2>
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Shift Roster</h2>
+            <p class="text-xs text-slate-500">Universal Shift Incharges with Department-Specific Associates</p>
+          </div>
           <button onclick="openModal('modal-add-personnel')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl shadow-xs">
             + Add Member
           </button>
@@ -436,6 +469,7 @@
                 <script>
                   for (let i = 1; i <= 30; i++) document.write(`<th class="p-2 text-center w-8 text-[10px]">D${i}</th>`);
                 </script>
+                <th class="p-3 text-right">Delete</th>
               </tr>
             </thead>
             <tbody id="roster-tbody" class="divide-y divide-slate-100 font-medium"></tbody>
@@ -449,15 +483,24 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Category Ratio</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="analytics-chart-cat"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="an-cat-container">
+            <canvas id="analytics-chart-cat"></canvas>
+            <div id="an-cat-empty" class="text-xs text-slate-400 hidden italic">No data yet</div>
+          </div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Execution Status</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="analytics-chart-stat"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="an-stat-container">
+            <canvas id="analytics-chart-stat"></canvas>
+            <div id="an-stat-empty" class="text-xs text-slate-400 hidden italic">No data yet</div>
+          </div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-2 shadow-xs">
           <h3 class="text-xs font-bold uppercase text-slate-700">Shift Execution Output</h3>
-          <div class="h-44 relative flex items-center justify-center"><canvas id="analytics-chart-shift"></canvas></div>
+          <div class="h-44 relative flex items-center justify-center" id="an-shift-container">
+            <canvas id="analytics-chart-shift"></canvas>
+            <div id="an-shift-empty" class="text-xs text-slate-400 hidden italic">0 units executed</div>
+          </div>
         </div>
       </div>
 
@@ -475,7 +518,7 @@
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 p-4 space-y-3 shadow-xs">
-          <h3 class="text-xs font-bold uppercase text-slate-800">Associates Output</h3>
+          <h3 class="text-xs font-bold uppercase text-slate-800">Associates Output (<span id="an-assoc-dept">Battery Lab</span>)</h3>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase">
@@ -522,90 +565,116 @@
   <!-- MODALS                                                   -->
   <!-- ======================================================== -->
 
-  <!-- MODAL: CREATE TASK (WITH SUBTASKS & SHIFTS) -->
-  <div id="modal-create-task" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 space-y-4 shadow-xl text-xs flex flex-col max-h-[92vh]">
+  <!-- MODAL: 1. CREATE FLOW -->
+  <div id="modal-create-flow" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 text-sm">Create Task</h3>
-        <button onclick="closeModal('modal-create-task')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <h3 class="font-bold text-slate-900 text-sm">Create Flow</h3>
+        <button onclick="closeModal('modal-create-flow')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <div class="space-y-3 overflow-y-auto pr-1 flex-1 custom-scroll">
-        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2.5">
-          <div class="grid grid-cols-3 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Line ID</label>
-              <select id="m-tl" class="w-full border rounded-xl p-2 font-bold text-blue-700 bg-white">
-                <option>TL-1</option><option>TL-2</option><option>TL-3</option><option>TL-4</option><option>TL-5</option>
-                <option>TL-6</option><option>TL-7</option><option>TL-8</option><option>TL-9</option><option>TL-10</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Category</label>
-              <select id="m-cat" class="w-full border rounded-xl p-2 font-bold text-purple-700 bg-white">
-                <option>450</option><option>DIESEL</option><option selected>EL</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Priority</label>
-              <select id="m-prio" class="w-full border rounded-xl p-2 font-bold bg-white">
-                <option>P1</option><option>P2</option><option>P3</option>
-              </select>
-            </div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Flow Line</label>
+            <select id="fl-tl" class="w-full border rounded-xl p-2 font-bold text-blue-700 bg-white">
+              <option>TL-1</option><option>TL-2</option><option>TL-3</option><option>TL-4</option><option>TL-5</option>
+              <option>TL-6</option><option>TL-7</option><option>TL-8</option><option>TL-9</option><option>TL-10</option>
+            </select>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Pack BIN</label>
-              <input type="text" id="m-bin" placeholder="e.g. EL-Gen-0-101" class="w-full border rounded-xl p-2 font-bold" />
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Component</label>
-              <input type="text" id="m-comp" placeholder="e.g. Gen-0 8P Pack" class="w-full border rounded-xl p-2 font-semibold" />
-            </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Category</label>
+            <select id="fl-cat" class="w-full border rounded-xl p-2 font-bold text-purple-700 bg-white">
+              <option>450</option><option>DIESEL</option><option selected>EL</option><option>OTHER</option>
+            </select>
           </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Test Name</label>
-              <input type="text" id="m-name" placeholder="e.g. Thermal Life Cycle" class="w-full border rounded-xl p-2 font-semibold" />
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Lead Engineer</label>
-              <input type="text" id="m-lead" value="Yeshwanth" class="w-full border rounded-xl p-2 font-semibold" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Google Drive Link</label>
-              <input type="url" id="m-drive" value="https://drive.google.com" class="w-full border rounded-xl p-2 font-mono text-blue-600" />
-            </div>
-            <div>
-              <label class="block font-bold text-slate-700 mb-1">Grafana Link</label>
-              <input type="url" id="m-grafana" value="https://grafana.internal/d/chamber-1" class="w-full border rounded-xl p-2 font-mono text-orange-600" />
-            </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Priority</label>
+            <select id="fl-prio" class="w-full border rounded-xl p-2 font-bold bg-white">
+              <option>P1</option><option>P2</option><option>P3</option>
+            </select>
           </div>
         </div>
 
-        <div class="space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="font-bold text-slate-800 uppercase text-[11px]">Subtasks</span>
-            <button type="button" onclick="addSubtaskRow()" class="text-blue-600 font-bold hover:underline">+ Add Step</button>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Pack BIN</label>
+            <input type="text" id="fl-bin" placeholder="e.g. EL-Gen-0-101" class="w-full border rounded-xl p-2 font-bold" />
           </div>
-          <div id="subtasks-container" class="space-y-1.5"></div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Component</label>
+            <select id="fl-comp" class="w-full border rounded-xl p-2 bg-white font-semibold"></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Test Name</label>
+            <input type="text" id="fl-name" placeholder="e.g. 15-Day Thermal & Life Run" class="w-full border rounded-xl p-2 font-semibold" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Lead Engineer</label>
+            <input type="text" id="fl-lead" value="Yeshwanth" class="w-full border rounded-xl p-2 font-semibold" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Drive Link</label>
+            <input type="url" id="fl-drive" value="https://drive.google.com" class="w-full border rounded-xl p-2 font-mono text-blue-600" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Grafana Link</label>
+            <input type="url" id="fl-grafana" value="https://grafana.internal/d/chamber-1" class="w-full border rounded-xl p-2 font-mono text-orange-600" />
+          </div>
         </div>
       </div>
 
       <div class="flex justify-end space-x-2 pt-2 border-t">
-        <button onclick="closeModal('modal-create-task')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
-        <button onclick="saveNewTask()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Save Task</button>
+        <button onclick="closeModal('modal-create-flow')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveNewFlow()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Save Flow</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: ASSIGN SUBTASK STEP -->
+  <!-- MODAL: 2. ADD COMPONENT -->
+  <div id="modal-add-component" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-xl text-xs">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-bold text-slate-900 text-sm">Add Component</h3>
+        <button onclick="closeModal('modal-add-component')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-3">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Component Name</label>
+          <input type="text" id="cp-name" placeholder="e.g. Gen-0 8P Pack, BMS Rev 4" class="w-full border rounded-xl p-2.5" />
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Platform Category</label>
+          <select id="cp-cat" class="w-full border rounded-xl p-2.5 bg-white font-bold text-blue-700">
+            <option>450</option><option>DIESEL</option><option selected>EL</option><option>OTHER</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Department</label>
+          <select id="cp-dept" class="w-full border rounded-xl p-2.5 bg-white font-semibold">
+            <option value="Battery Lab">Battery Lab</option>
+            <option value="Vibration Team">Vibration Team</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end space-x-2 pt-2 border-t">
+        <button onclick="closeModal('modal-add-component')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
+        <button onclick="saveNewComponent()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-1.5 rounded-xl shadow-xs">Save Component</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: 3. ASSIGN SUBTASK STEP -->
   <div id="modal-add-subtask" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
     <div class="bg-white rounded-3xl max-w-lg w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 text-sm">Assign Subtask Step</h3>
+        <h3 class="font-bold text-slate-900 text-sm">Assign Step to Shift</h3>
         <button onclick="closeModal('modal-add-subtask')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="space-y-3">
@@ -615,7 +684,7 @@
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Step Name</label>
-          <input type="text" id="ast-name" placeholder="e.g. 1C Cycling" class="w-full border rounded-xl p-2 font-semibold" />
+          <input type="text" id="ast-name" placeholder="e.g. 1C Constant Cycling" class="w-full border rounded-xl p-2 font-semibold" />
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
@@ -637,13 +706,8 @@
             </select>
           </div>
           <div>
-            <label class="block font-bold text-slate-800 mb-1">Chamber / Rig</label>
-            <select id="ast-chamber" class="w-full border rounded-xl p-2 bg-white">
-              <option>None</option>
-              <option>Chamber 1</option><option>Chamber 2</option><option>Chamber 3</option>
-              <option>Chamber 4</option><option>Chamber 5</option><option>Chamber 6</option>
-              <option>1.5-Ton Shaker</option><option>3.0-Ton Shaker</option>
-            </select>
+            <label class="block font-bold text-slate-800 mb-1">Mount Station</label>
+            <select id="ast-chamber" class="w-full border rounded-xl p-2 bg-white font-semibold"></select>
           </div>
         </div>
       </div>
@@ -654,33 +718,19 @@
     </div>
   </div>
 
-  <!-- MODAL: LOG PROGRESS -->
+  <!-- MODAL: 4. LOG PROGRESS & OBSERVATIONS -->
   <div id="modal-log-progress" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
     <div class="bg-white rounded-3xl max-w-md w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-bold text-slate-900 text-sm" id="mlp-title">Log Progress</h3>
+        <h3 class="font-bold text-slate-900 text-sm" id="mlp-title">Log Progress & Observations</h3>
         <button onclick="closeModal('modal-log-progress')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <input type="hidden" id="mlp-task-id" />
       <input type="hidden" id="mlp-sub-id" />
       <div class="space-y-3">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">Thermal Chamber</label>
-          <select id="mlp-chamber" class="w-full border rounded-xl p-2 bg-white">
-            <option>None</option>
-            <option>Chamber 1</option><option>Chamber 2</option><option>Chamber 3</option>
-            <option>Chamber 4</option><option>Chamber 5</option><option>Chamber 6</option>
-            <option>1.5-Ton Shaker</option><option>3.0-Ton Shaker</option>
-          </select>
-        </div>
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Cycler Station</label>
-          <select id="mlp-cycler" class="w-full border rounded-xl p-2 bg-white">
-            <option>None</option>
-            <option>EA Cycler 1</option><option>EA Cycler 2</option><option>EA Cycler 3</option><option>EA Cycler 4</option><option>EA Cycler 5</option>
-            <option>ITECH Cycler 1</option><option>ITECH Cycler 2</option>
-            <option>Neware Cycler 1</option><option>Neware Cycler 2</option>
-          </select>
+          <label class="block font-bold text-slate-700 mb-1" id="mlp-mount-label">Equipment Station</label>
+          <select id="mlp-station" class="w-full border rounded-xl p-2 bg-white"></select>
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Add Units Executed</label>
@@ -694,6 +744,11 @@
             <option value="Blocked">Blocked 🔴</option>
           </select>
         </div>
+        <!-- Write Shift Observation -->
+        <div class="bg-blue-50/50 p-2.5 rounded-xl border border-blue-200">
+          <label class="block font-bold text-blue-900 mb-1">Shift Observation / Test Note</label>
+          <textarea id="mlp-observation" rows="2" placeholder="Record cell delta voltage, temperature rise, contact resistance, or test remarks..." class="w-full bg-white border border-slate-200 rounded-xl p-2 focus:outline-none"></textarea>
+        </div>
       </div>
       <div class="flex justify-end space-x-2 pt-2 border-t">
         <button onclick="closeModal('modal-log-progress')" class="px-3 py-1.5 rounded-xl text-slate-600 hover:bg-slate-100">Cancel</button>
@@ -702,7 +757,24 @@
     </div>
   </div>
 
-  <!-- MODAL: ADD PERSONNEL -->
+  <!-- MODAL: 5. VIEW OBSERVATIONS (EYE BUTTON MODAL) -->
+  <div id="modal-view-observations" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-5 space-y-4 shadow-xl text-xs flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between border-b pb-3">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm" id="mvo-title">Test Observations History</h3>
+          <span class="text-[11px] text-slate-500" id="mvo-subtitle"></span>
+        </div>
+        <button onclick="closeModal('modal-view-observations')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="mvo-feed" class="space-y-2 overflow-y-auto pr-1 flex-1 custom-scroll"></div>
+      <div class="flex justify-end pt-2 border-t">
+        <button onclick="closeModal('modal-view-observations')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-1.5 rounded-xl">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: 6. ADD PERSONNEL -->
   <div id="modal-add-personnel" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
     <div class="bg-white rounded-3xl max-w-sm w-full p-5 space-y-4 shadow-xl text-xs">
       <div class="flex items-center justify-between border-b pb-3">
@@ -717,13 +789,16 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">Department</label>
           <select id="mb-dept" class="w-full border rounded-xl p-2 bg-white font-semibold">
-            <option>Battery Lab</option><option>Vibration Team</option><option>BMS Hardware</option>
+            <option value="Battery Lab">Battery Lab</option>
+            <option value="Vibration Team">Vibration Team</option>
           </select>
         </div>
         <div>
           <label class="block font-bold text-slate-700 mb-1">Role</label>
           <select id="mb-role" class="w-full border rounded-xl p-2 bg-white font-semibold">
-            <option>Shift Incharge</option><option>Associate</option><option>Test Engineer</option>
+            <option>Associate</option>
+            <option>Test Engineer</option>
+            <option>Shift Incharge</option>
           </select>
         </div>
         <div>
@@ -749,40 +824,68 @@
       activeDept: "Battery Lab",
       fiveSChecked: {},
       handovers: [],
+      components: [
+        // Battery Components
+        { name: "Gen-0 8P Battery Pack", cat: "EL", dept: "Battery Lab" },
+        { name: "450 Gen 3 Battery Pack", cat: "450", dept: "Battery Lab" },
+        { name: "DIESEL Module Assembly", cat: "DIESEL", dept: "Battery Lab" },
+        // Vibration Components
+        { name: "450 Chassis Frame Unit", cat: "450", dept: "Vibration Team" },
+        { name: "Powertrain Mount Bracket", cat: "EL", dept: "Vibration Team" },
+        { name: "Sub-Frame Structural Lug", cat: "DIESEL", dept: "Vibration Team" }
+      ],
       tasks: [],
       equipment: [
-        { id: "TC-01", name: "Chamber 1", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-1", drive: "https://drive.google.com" },
-        { id: "TC-02", name: "Chamber 2", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-2", drive: "https://drive.google.com" },
-        { id: "TC-03", name: "Chamber 3", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-3", drive: "https://drive.google.com" },
-        { id: "TC-04", name: "Chamber 4", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-4", drive: "https://drive.google.com" },
-        { id: "TC-05", name: "Chamber 5", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-5", drive: "https://drive.google.com" },
-        { id: "TC-06", name: "Chamber 6", type: "Chamber", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-6", drive: "https://drive.google.com" },
-        { id: "CY-EA-01", name: "EA Cycler 1", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-1", drive: "https://drive.google.com" },
-        { id: "CY-EA-02", name: "EA Cycler 2", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-2", drive: "https://drive.google.com" },
-        { id: "CY-EA-03", name: "EA Cycler 3", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-3", drive: "https://drive.google.com" },
-        { id: "CY-EA-04", name: "EA Cycler 4", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-4", drive: "https://drive.google.com" },
-        { id: "CY-EA-05", name: "EA Cycler 5", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-5", drive: "https://drive.google.com" },
-        { id: "CY-IT-01", name: "ITECH Cycler 1", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/itech-1", drive: "https://drive.google.com" },
-        { id: "CY-IT-02", name: "ITECH Cycler 2", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/itech-2", drive: "https://drive.google.com" },
-        { id: "CY-NW-01", name: "Neware Cycler 1", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/neware-1", drive: "https://drive.google.com" },
-        { id: "CY-NW-02", name: "Neware Cycler 2", type: "Cycler", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/neware-2", drive: "https://drive.google.com" },
-        { id: "SH-01", name: "1.5-Ton Shaker", type: "Shaker", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Hours", grafana: "https://grafana.internal/d/shaker-1", drive: "https://drive.google.com" },
-        { id: "SH-02", name: "3.0-Ton Shaker", type: "Shaker", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Hours", grafana: "https://grafana.internal/d/shaker-2", drive: "https://drive.google.com" }
+        // Battery Lab: 6 Thermal Chambers
+        { id: "TC-01", name: "Chamber 1", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-1", drive: "https://drive.google.com" },
+        { id: "TC-02", name: "Chamber 2", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-2", drive: "https://drive.google.com" },
+        { id: "TC-03", name: "Chamber 3", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-3", drive: "https://drive.google.com" },
+        { id: "TC-04", name: "Chamber 4", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-4", drive: "https://drive.google.com" },
+        { id: "TC-05", name: "Chamber 5", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-5", drive: "https://drive.google.com" },
+        { id: "TC-06", name: "Chamber 6", type: "Chamber", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ch-6", drive: "https://drive.google.com" },
+
+        // Battery Lab: 5 EA Cyclers
+        { id: "CY-EA-01", name: "EA Cycler 1", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-1", drive: "https://drive.google.com" },
+        { id: "CY-EA-02", name: "EA Cycler 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-2", drive: "https://drive.google.com" },
+        { id: "CY-EA-03", name: "EA Cycler 3", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-3", drive: "https://drive.google.com" },
+        { id: "CY-EA-04", name: "EA Cycler 4", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-4", drive: "https://drive.google.com" },
+        { id: "CY-EA-05", name: "EA Cycler 5", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/ea-5", drive: "https://drive.google.com" },
+
+        // Battery Lab: 2 ITECH Cyclers
+        { id: "CY-IT-01", name: "ITECH Cycler 1", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/itech-1", drive: "https://drive.google.com" },
+        { id: "CY-IT-02", name: "ITECH Cycler 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/itech-2", drive: "https://drive.google.com" },
+
+        // Battery Lab: 2 NEWARE Cyclers
+        { id: "CY-NW-01", name: "Neware Cycler 1", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/neware-1", drive: "https://drive.google.com" },
+        { id: "CY-NW-02", name: "Neware Cycler 2", type: "Cycler", lab: "Battery Lab", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Cycles", grafana: "https://grafana.internal/d/neware-2", drive: "https://drive.google.com" },
+
+        // Vibration Team: EXACT 3 SHAKERS
+        { id: "SH-01", name: "1.5 Ton Shaker", type: "Shaker", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Hours", grafana: "https://grafana.internal/d/shaker-1", drive: "https://drive.google.com" },
+        { id: "SH-02", name: "3 Ton SDYN Shaker", type: "Shaker", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Hours", grafana: "https://grafana.internal/d/shaker-sdyn", drive: "https://drive.google.com" },
+        { id: "SH-03", name: "3 Ton GWS Shaker", type: "Shaker", lab: "Vibration Team", status: "Idle", pack: "None", test: "None", current: 0, target: 0, unit: "Hours", grafana: "https://grafana.internal/d/shaker-gws", drive: "https://drive.google.com" }
       ],
       roster: [
-        { id: "EMP-101", name: "Raja", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift A", schedule: {}, present: true },
-        { id: "EMP-102", name: "Riyaz", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift B", schedule: {}, present: true },
-        { id: "EMP-103", name: "Praveen Kumar", role: "Shift Incharge", dept: "Battery Lab", shift: "Shift C", schedule: {}, present: true },
-        { id: "EMP-201", name: "sathya naraya", role: "Associate", dept: "Battery Lab", shift: "Shift A", schedule: {}, present: true },
-        { id: "EMP-202", name: "Yosvaraj", role: "Associate", dept: "Battery Lab", shift: "Shift B", schedule: {}, present: true },
-        { id: "EMP-203", name: "Sanjay", role: "Associate", dept: "Vibration Team", shift: "Shift C", schedule: {}, present: true }
+        // Universal Incharges (Cross-department)
+        { id: "INC-01", name: "Raja", role: "Shift Incharge", dept: "All", shift: "Shift A", schedule: {}, present: true },
+        { id: "INC-02", name: "Riyaz", role: "Shift Incharge", dept: "All", shift: "Shift B", schedule: {}, present: true },
+        { id: "INC-03", name: "Praveen Kumar", role: "Shift Incharge", dept: "All", shift: "Shift C", schedule: {}, present: true },
+        
+        // Battery Lab Associates
+        { id: "BAT-01", name: "sathya naraya", role: "Associate", dept: "Battery Lab", shift: "Shift A", schedule: {}, present: true },
+        { id: "BAT-02", name: "Yosvaraj", role: "Associate", dept: "Battery Lab", shift: "Shift B", schedule: {}, present: true },
+        { id: "BAT-03", name: "Dinesh", role: "Associate", dept: "Battery Lab", shift: "Shift C", schedule: {}, present: true },
+
+        // Vibration Team Associates
+        { id: "VIB-01", name: "Sanjay", role: "Associate", dept: "Vibration Team", shift: "Shift A", schedule: {}, present: true },
+        { id: "VIB-02", name: "Karthik", role: "Associate", dept: "Vibration Team", shift: "Shift B", schedule: {}, present: true },
+        { id: "VIB-03", name: "Manjunath", role: "Associate", dept: "Vibration Team", shift: "Shift C", schedule: {}, present: true }
       ]
     };
 
-    let state = JSON.parse(localStorage.getItem('opti_lab_clean_v14')) || defaultState;
+    let state = JSON.parse(localStorage.getItem('opti_lab_clean_v16')) || defaultState;
 
     function saveState() {
-      localStorage.setItem('opti_lab_clean_v14', JSON.stringify(state));
+      localStorage.setItem('opti_lab_clean_v16', JSON.stringify(state));
       render();
       try {
         fetch(ATHER_CLOUD_URL, {
@@ -803,14 +906,14 @@
           const d = await res.json();
           if (d && Array.isArray(d.tasks)) {
             state = d;
-            localStorage.setItem('opti_lab_clean_v14', JSON.stringify(state));
+            localStorage.setItem('opti_lab_clean_v16', JSON.stringify(state));
             render();
-            if (pill) pill.innerText = "Synced";
+            if (pill) pill.innerText = "Cloud Synced ✓";
             return;
           }
         }
       } catch (e) {}
-      if (pill) pill.innerText = "Synced";
+      if (pill) pill.innerText = "Cloud Synced";
     }
 
     function setActiveShift(s) {
@@ -833,12 +936,24 @@
       state.activeDept = d;
       document.getElementById('dept-btn-battery').className = (d === 'Battery Lab') ? "px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition" : "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
       document.getElementById('dept-btn-vib').className = (d === 'Vibration Team') ? "px-3 py-1 rounded-lg bg-white text-blue-700 font-bold shadow-xs transition" : "px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 transition";
-      document.getElementById('equipment-title').innerText = `${d} Equipment`;
-      const sh = document.getElementById('section-shakers');
-      if (sh) {
-        if (d === 'Vibration Team') sh.classList.remove('hidden');
-        else sh.classList.add('hidden');
+      
+      document.getElementById('equipment-title').innerText = `${d} Equipment Floor`;
+      document.getElementById('dash-dept-label').innerText = d;
+      document.getElementById('wb-dept-pill').innerText = d;
+      document.getElementById('planner-dept-label').innerText = d;
+      document.getElementById('att-dept-name').innerText = d;
+      document.getElementById('an-assoc-dept').innerText = d;
+
+      const batEq = document.getElementById('battery-equipment-container');
+      const vibEq = document.getElementById('vibration-equipment-container');
+      if (d === 'Vibration Team') {
+        batEq.classList.add('hidden');
+        vibEq.classList.remove('hidden');
+      } else {
+        batEq.classList.remove('hidden');
+        vibEq.classList.add('hidden');
       }
+
       saveState();
     }
 
@@ -869,8 +984,10 @@
     // 1. DASHBOARD
     let dashCat = null, dashStat = null, dashShift = null;
     function renderDashboard() {
+      const deptTasks = state.tasks.filter(t => t.dept === state.activeDept);
+
       let r = 0, c = 0, b = 0;
-      state.tasks.forEach(t => {
+      deptTasks.forEach(t => {
         if (t.status === 'Running') r++;
         if (t.status === 'Completed') c++;
         if (t.status === 'Blocked') b++;
@@ -878,14 +995,24 @@
       document.getElementById('dash-running').innerText = r;
       document.getElementById('dash-completed').innerText = c;
       document.getElementById('dash-blocked').innerText = b;
-      document.getElementById('dash-total').innerText = state.tasks.length;
+      document.getElementById('dash-total').innerText = deptTasks.length;
 
-      const c450 = state.tasks.filter(t => t.category === '450').length || 1;
-      const cDiesel = state.tasks.filter(t => t.category === 'DIESEL').length || 1;
-      const cEL = state.tasks.filter(t => t.category === 'EL').length || 1;
+      // Category Donut
+      const c450 = deptTasks.filter(t => t.category === '450').length;
+      const cDiesel = deptTasks.filter(t => t.category === 'DIESEL').length;
+      const cEL = deptTasks.filter(t => t.category === 'EL').length;
+      const totalCat = c450 + cDiesel + cEL;
 
-      const catCtx = document.getElementById('dash-chart-cat')?.getContext('2d');
-      if (catCtx) {
+      const catCanvas = document.getElementById('dash-chart-cat');
+      const catEmpty = document.getElementById('dash-cat-empty');
+      if (totalCat === 0) {
+        catCanvas.classList.add('hidden');
+        catEmpty.classList.remove('hidden');
+        if (dashCat) { dashCat.destroy(); dashCat = null; }
+      } else {
+        catCanvas.classList.remove('hidden');
+        catEmpty.classList.add('hidden');
+        const catCtx = catCanvas.getContext('2d');
         if (dashCat) dashCat.destroy();
         dashCat = new Chart(catCtx, {
           type: 'doughnut',
@@ -894,41 +1021,61 @@
         });
       }
 
-      const statCtx = document.getElementById('dash-chart-stat')?.getContext('2d');
-      if (statCtx) {
+      // Status Donut
+      const totalStat = r + c + b;
+      const statCanvas = document.getElementById('dash-chart-stat');
+      const statEmpty = document.getElementById('dash-stat-empty');
+      if (totalStat === 0) {
+        statCanvas.classList.add('hidden');
+        statEmpty.classList.remove('hidden');
+        if (dashStat) { dashStat.destroy(); dashStat = null; }
+      } else {
+        statCanvas.classList.remove('hidden');
+        statEmpty.classList.add('hidden');
+        const statCtx = statCanvas.getContext('2d');
         if (dashStat) dashStat.destroy();
         dashStat = new Chart(statCtx, {
           type: 'doughnut',
-          data: { labels: ['Running', 'Completed', 'Blocked'], datasets: [{ data: [r || 1, c || 1, b || 0], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'], borderWidth: 0 }] },
+          data: { labels: ['Running', 'Completed', 'Blocked'], datasets: [{ data: [r, c, b], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'], borderWidth: 0 }] },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
         });
       }
 
+      // Shift Output
       let sA = 0, sB = 0, sC = 0;
-      state.tasks.forEach(t => {
+      deptTasks.forEach(t => {
         if (t.subtasks) t.subtasks.forEach(s => {
           if (s.shift === 'Shift A') sA += Number(s.logged);
           if (s.shift === 'Shift B') sB += Number(s.logged);
           if (s.shift === 'Shift C') sC += Number(s.logged);
         });
       });
-
-      const shiftCtx = document.getElementById('dash-chart-shift')?.getContext('2d');
-      if (shiftCtx) {
+      const totalShift = sA + sB + sC;
+      const shiftCanvas = document.getElementById('dash-chart-shift');
+      const shiftEmpty = document.getElementById('dash-shift-empty');
+      if (totalShift === 0) {
+        shiftCanvas.classList.add('hidden');
+        shiftEmpty.classList.remove('hidden');
+        if (dashShift) { dashShift.destroy(); dashShift = null; }
+      } else {
+        shiftCanvas.classList.remove('hidden');
+        shiftEmpty.classList.add('hidden');
+        const shiftCtx = shiftCanvas.getContext('2d');
         if (dashShift) dashShift.destroy();
         dashShift = new Chart(shiftCtx, {
           type: 'bar',
-          data: { labels: ['Shift A', 'Shift B', 'Shift C'], datasets: [{ label: 'Units', data: [sA || 10, sB || 15, sC || 8], backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6'] }] },
+          data: { labels: ['Shift A', 'Shift B', 'Shift C'], datasets: [{ label: 'Units', data: [sA, sB, sC], backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6'] }] },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
       }
 
+      // Summary Table
       const tbody = document.getElementById('dash-table-tbody');
-      if (state.tasks.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">No active test lines. Click "New Task" to create.</td></tr>`;
+      if (deptTasks.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-slate-400">No active test lines in ${state.activeDept}. Click "Create Flow" to begin.</td></tr>`;
         return;
       }
-      tbody.innerHTML = state.tasks.map(t => `
+      tbody.innerHTML = deptTasks.map(t => `
         <tr class="hover:bg-slate-50 transition">
           <td class="p-2.5 font-mono font-bold text-blue-600">${t.id}</td>
           <td class="p-2.5 font-bold">${t.tl}</td>
@@ -948,7 +1095,7 @@
       `).join('');
     }
 
-    // 2. SHIFT WORKBENCH (TASKS, ATTENDANCE & 5S)
+    // 2. SHIFT WORKBENCH
     function renderWorkbench() {
       const todo = document.getElementById('list-todo');
       const inprog = document.getElementById('list-inprog');
@@ -956,8 +1103,9 @@
       todo.innerHTML = ''; inprog.innerHTML = ''; blocked.innerHTML = '';
 
       let cTodo = 0, cProg = 0, cBlock = 0;
+      const deptTasks = state.tasks.filter(t => t.dept === state.activeDept);
 
-      state.tasks.forEach(task => {
+      deptTasks.forEach(task => {
         if (!task.subtasks) return;
         task.subtasks.forEach(sub => {
           const isTargetMet = Number(sub.logged) >= Number(sub.target);
@@ -966,12 +1114,19 @@
 
           if (!isAssigned && !isRollover && isTargetMet) return;
 
+          const observationsCount = (sub.observations && sub.observations.length) ? sub.observations.length : 0;
+
           const card = document.createElement('div');
           card.className = "bg-white border border-slate-200 rounded-xl p-3 space-y-2 shadow-xs hover:shadow-md transition text-xs";
           card.innerHTML = `
             <div class="flex items-center justify-between">
               <span class="font-bold text-blue-700 font-mono">${task.tl} • ${sub.id}</span>
-              <span class="font-bold text-purple-700">${task.bin}</span>
+              <div class="flex items-center space-x-1">
+                <span class="font-bold text-purple-700 mr-1">${task.bin}</span>
+                <button onclick="viewObservations('${task.id}', '${sub.id}')" class="p-1 rounded bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700 transition" title="View Observations (${observationsCount})">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
             <h4 class="font-bold text-slate-900">${sub.name}</h4>
             <div class="text-[11px] text-slate-600 flex items-center justify-between">
@@ -981,14 +1136,14 @@
             <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
               <div class="bg-blue-600 h-1.5 rounded-full" style="width: ${Math.min(100, Math.round((sub.logged / sub.target) * 100))}%"></div>
             </div>
-            <div class="text-[10px] text-amber-900 font-semibold truncate">Rig: ${sub.chamber || 'None'} | ${sub.cycler || 'None'}</div>
+            <div class="text-[10px] text-amber-900 font-semibold truncate">Station: ${sub.station || 'None'}</div>
             <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-[10px]">
               <a href="${sub.grafana || task.grafana || '#'}" target="_blank" class="text-orange-700 font-bold hover:underline">Grafana</a>
               <a href="${sub.drive || task.drive || '#'}" target="_blank" class="text-blue-700 font-bold hover:underline">Drive</a>
               <span class="text-slate-400 font-semibold">${sub.assoc || 'Technician'}</span>
             </div>
             <button onclick="openLogProgress('${task.id}', '${sub.id}')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-[11px] font-bold py-1.5 rounded-lg transition">
-              Log Progress
+              Log Progress & Note
             </button>
           `;
 
@@ -1010,9 +1165,9 @@
       document.getElementById('badge-blocked').innerText = cBlock;
       document.getElementById('shift-running-count').innerText = cProg;
 
-      // Attendance
+      // Attendance: Incharge (Global) + Dept-specific Associates
       const attGrid = document.getElementById('shift-attendance-cards');
-      const shiftMembers = state.roster.filter(m => m.shift === state.activeShift);
+      const shiftMembers = state.roster.filter(m => m.shift === state.activeShift && (m.dept === 'All' || m.dept === state.activeDept));
       let presCount = 0;
 
       attGrid.innerHTML = shiftMembers.map(m => {
@@ -1032,6 +1187,7 @@
       document.getElementById('att-summary-text').innerText = `${presCount} / ${shiftMembers.length} Present`;
 
       load5SCheckboxes();
+      lucide.createIcons();
     }
 
     function togglePersonAtt(id) {
@@ -1039,7 +1195,7 @@
       if (p) { p.present = !p.present; saveState(); }
     }
 
-    // 5S POINTS LOGIC
+    // 5S VERBATIM CHECKLIST LOGIC
     function load5SCheckboxes() {
       if (!state.fiveSChecked) state.fiveSChecked = {};
       let allChecked = true;
@@ -1107,6 +1263,7 @@
       state.handovers.unshift({
         id: 'HO-' + Date.now().toString().slice(-4),
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dept: state.activeDept,
         from: curShift,
         to: nextShift,
         incharge: document.getElementById('shift-lead-name').innerText,
@@ -1131,21 +1288,22 @@
     function renderPlanner() {
       populateDropdowns();
       const tbody = document.getElementById('planner-table-tbody');
-      if (state.tasks.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400">No tasks planned yet. Click "New Task" to create.</td></tr>`;
+      const deptTasks = state.tasks.filter(t => t.dept === state.activeDept);
+
+      if (deptTasks.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400">No test flows created for ${state.activeDept}. Click "Create Flow" to begin.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = state.tasks.map(t => {
+      tbody.innerHTML = deptTasks.map(t => {
         const subtasksSummary = (t.subtasks && t.subtasks.length > 0)
           ? `<div class="space-y-1">
-              ${t.subtasks.slice(0, 3).map(st => `
+              ${t.subtasks.map(st => `
                 <div class="text-[10px] text-slate-700 flex items-center justify-between bg-slate-50 px-2 py-0.5 rounded">
                   <span class="truncate font-medium">${st.name} (${st.target} ${st.unit})</span>
                   <span class="font-bold text-blue-700">${st.shift}</span>
                 </div>
               `).join('')}
-              ${t.subtasks.length > 3 ? `<span class="text-[9px] text-slate-400 font-semibold italic">+ ${t.subtasks.length - 3} more</span>` : ''}
             </div>`
           : '<span class="text-slate-400 italic">No subtasks</span>';
 
@@ -1162,7 +1320,7 @@
                 <a href="${t.drive || '#'}" target="_blank" class="px-2 py-0.5 rounded bg-sky-50 text-sky-700 font-bold text-[10px] hover:bg-sky-100 transition">Drive</a>
               </div>
             </td>
-            <td class="p-2.5 w-64">${subtasksSummary}</td>
+            <td class="p-2.5 w-72">${subtasksSummary}</td>
             <td class="p-2.5 font-mono font-bold text-blue-600">${t.progress}%</td>
             <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${t.status === 'Running' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'}">${t.status}</span></td>
             <td class="p-2.5 text-right"><button onclick="deleteFlow('${t.id}')" class="text-rose-500 hover:text-rose-700 font-bold">Delete</button></td>
@@ -1171,48 +1329,73 @@
       }).join('');
     }
 
-    // 4. EQUIPMENT
+    // 4. EQUIPMENT (BATTERY: CHAMBERS/CYCLERS, VIBRATION: EXACT 3 SHAKERS)
     function renderEquipment() {
-      const chGrid = document.getElementById('grid-chambers');
-      const cyGrid = document.getElementById('grid-cyclers');
-      const shGrid = document.getElementById('grid-shakers');
+      if (state.activeDept === 'Battery Lab') {
+        const chGrid = document.getElementById('grid-chambers');
+        const cyGrid = document.getElementById('grid-cyclers');
+        chGrid.innerHTML = ''; cyGrid.innerHTML = '';
 
-      chGrid.innerHTML = ''; cyGrid.innerHTML = ''; shGrid.innerHTML = '';
+        state.equipment.filter(e => e.lab === 'Battery Lab').forEach(eq => {
+          const isRunning = eq.status === 'Running';
+          const cardHtml = `
+            <div class="bg-white rounded-2xl border ${isRunning ? 'border-emerald-300 bg-emerald-50/15' : 'border-slate-200'} p-3.5 shadow-xs space-y-2 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-400 font-mono text-[11px]">${eq.id}</span>
+                <span class="inline-flex items-center text-[11px] font-bold ${isRunning ? 'text-emerald-700' : 'text-slate-400'}">
+                  <span class="w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} mr-1"></span>${eq.status}
+                </span>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-slate-900">${eq.name}</h4>
+                <p class="text-[11px] text-slate-600">Pack Running: <strong class="${isRunning ? 'text-emerald-800' : 'text-slate-700'}">${eq.pack}</strong></p>
+                <p class="text-[11px] text-slate-500 truncate">Test Line: <strong class="text-slate-700">${eq.test}</strong></p>
+              </div>
+              <div class="text-[11px] font-mono font-bold text-purple-700 bg-purple-50 p-1 rounded flex justify-between">
+                <span>Units:</span>
+                <span>${eq.current || 0} / ${eq.target || 0} ${eq.unit}</span>
+              </div>
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between space-x-2">
+                <a href="${eq.grafana || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-[11px] transition">Grafana</a>
+                <a href="${eq.drive || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] transition">Drive</a>
+              </div>
+            </div>
+          `;
+          if (eq.type === 'Chamber') chGrid.innerHTML += cardHtml;
+          else if (eq.type === 'Cycler') cyGrid.innerHTML += cardHtml;
+        });
+      } else {
+        // Vibration Team: EXACT 3 SHAKERS
+        const shGrid = document.getElementById('grid-shakers');
+        shGrid.innerHTML = '';
 
-      state.equipment.forEach(eq => {
-        const isRunning = eq.status === 'Running';
-        const cardHtml = `
-          <div class="bg-white rounded-2xl border ${isRunning ? 'border-emerald-300 bg-emerald-50/15' : 'border-slate-200'} p-3.5 shadow-xs space-y-2 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="font-bold text-slate-400 font-mono text-[11px]">${eq.id}</span>
-              <span class="inline-flex items-center text-[11px] font-bold ${isRunning ? 'text-emerald-700' : 'text-slate-400'}">
-                <span class="w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} mr-1"></span>${eq.status}
-              </span>
+        state.equipment.filter(e => e.lab === 'Vibration Team').forEach(eq => {
+          const isRunning = eq.status === 'Running';
+          shGrid.innerHTML += `
+            <div class="bg-white rounded-2xl border ${isRunning ? 'border-emerald-300 bg-emerald-50/15' : 'border-slate-200'} p-4 shadow-xs space-y-2.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-400 font-mono text-[11px]">${eq.id}</span>
+                <span class="inline-flex items-center text-[11px] font-bold ${isRunning ? 'text-emerald-700' : 'text-slate-400'}">
+                  <span class="w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'} mr-1"></span>${eq.status}
+                </span>
+              </div>
+              <div>
+                <h4 class="font-extrabold text-base text-slate-900">${eq.name}</h4>
+                <p class="text-xs text-slate-600 mt-0.5">Component: <strong class="${isRunning ? 'text-emerald-800' : 'text-slate-700'}">${eq.pack}</strong></p>
+                <p class="text-[11px] text-slate-500 truncate">Vibration Profile: <strong class="text-slate-700">${eq.test}</strong></p>
+              </div>
+              <div class="text-[11px] font-mono font-bold text-amber-700 bg-amber-50 p-1.5 rounded-lg flex justify-between">
+                <span>Sweep Progress:</span>
+                <span>${eq.current || 0} / ${eq.target || 0} ${eq.unit}</span>
+              </div>
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between space-x-2">
+                <a href="${eq.grafana || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-[11px] transition">Grafana Live</a>
+                <a href="${eq.drive || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] transition">Drive Sweep</a>
+              </div>
             </div>
-            <div>
-              <h4 class="font-extrabold text-slate-900">${eq.name}</h4>
-              <p class="text-[11px] text-slate-600">Pack: <strong class="${isRunning ? 'text-emerald-800' : 'text-slate-700'}">${eq.pack}</strong></p>
-              <p class="text-[11px] text-slate-500 truncate">Test: <strong class="text-slate-700">${eq.test}</strong></p>
-            </div>
-            <div class="text-[11px] font-mono font-bold text-purple-700 bg-purple-50 p-1 rounded flex justify-between">
-              <span>Units:</span>
-              <span>${eq.current || 0} / ${eq.target || 0} ${eq.unit}</span>
-            </div>
-            <div class="pt-2 border-t border-slate-100 flex items-center justify-between space-x-2">
-              <a href="${eq.grafana || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-[11px] transition">
-                Grafana
-              </a>
-              <a href="${eq.drive || '#'}" target="_blank" class="flex-1 text-center py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] transition">
-                Drive
-              </a>
-            </div>
-          </div>
-        `;
-
-        if (eq.type === 'Chamber') chGrid.innerHTML += cardHtml;
-        else if (eq.type === 'Cycler') cyGrid.innerHTML += cardHtml;
-        else if (eq.type === 'Shaker') shGrid.innerHTML += cardHtml;
-      });
+          `;
+        });
+      }
     }
 
     // 5. SHIFT ROSTER
@@ -1241,11 +1424,17 @@
             <td class="p-3 font-mono font-bold text-slate-400">${p.id}</td>
             <td class="p-3 font-bold text-slate-900">${p.name}</td>
             <td class="p-3 text-slate-600">${p.role}</td>
-            <td class="p-3 font-semibold text-blue-600">${p.dept}</td>
+            <td class="p-3 font-semibold ${p.dept === 'All' ? 'text-purple-600' : 'text-blue-600'}">${p.dept}</td>
             ${days}
+            <td class="p-3 text-right">
+              <button onclick="deleteRosterMember('${p.id}')" class="text-rose-500 hover:text-rose-700 p-1" title="Delete Member">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
           </tr>
         `;
       }).join('');
+      lucide.createIcons();
     }
 
     function rotateShiftSchedule(personId, day) {
@@ -1259,15 +1448,35 @@
       renderRoster();
     }
 
+    function deleteRosterMember(id) {
+      const p = state.roster.find(x => x.id === id);
+      if (confirm(`Remove ${p ? p.name : 'personnel'} from shift roster?`)) {
+        state.roster = state.roster.filter(x => x.id !== id);
+        saveState();
+        renderRoster();
+      }
+    }
+
     // 6. ANALYTICS
     let anCat = null, anStat = null, anShift = null;
     function renderAnalytics() {
-      const c450 = state.tasks.filter(t => t.category === '450').length || 1;
-      const cDiesel = state.tasks.filter(t => t.category === 'DIESEL').length || 1;
-      const cEL = state.tasks.filter(t => t.category === 'EL').length || 1;
+      const deptTasks = state.tasks.filter(t => t.dept === state.activeDept);
 
-      const catCtx = document.getElementById('analytics-chart-cat')?.getContext('2d');
-      if (catCtx) {
+      const c450 = deptTasks.filter(t => t.category === '450').length;
+      const cDiesel = deptTasks.filter(t => t.category === 'DIESEL').length;
+      const cEL = deptTasks.filter(t => t.category === 'EL').length;
+      const totalCat = c450 + cDiesel + cEL;
+
+      const catCanvas = document.getElementById('analytics-chart-cat');
+      const catEmpty = document.getElementById('an-cat-empty');
+      if (totalCat === 0) {
+        catCanvas.classList.add('hidden');
+        catEmpty.classList.remove('hidden');
+        if (anCat) { anCat.destroy(); anCat = null; }
+      } else {
+        catCanvas.classList.remove('hidden');
+        catEmpty.classList.add('hidden');
+        const catCtx = catCanvas.getContext('2d');
         if (anCat) anCat.destroy();
         anCat = new Chart(catCtx, {
           type: 'doughnut',
@@ -1277,41 +1486,58 @@
       }
 
       let r = 0, c = 0, b = 0;
-      state.tasks.forEach(t => {
+      deptTasks.forEach(t => {
         if (t.status === 'Running') r++;
         if (t.status === 'Completed') c++;
         if (t.status === 'Blocked') b++;
       });
-
-      const statCtx = document.getElementById('analytics-chart-stat')?.getContext('2d');
-      if (statCtx) {
+      const totalStat = r + c + b;
+      const statCanvas = document.getElementById('analytics-chart-stat');
+      const statEmpty = document.getElementById('an-stat-empty');
+      if (totalStat === 0) {
+        statCanvas.classList.add('hidden');
+        statEmpty.classList.remove('hidden');
+        if (anStat) { anStat.destroy(); anStat = null; }
+      } else {
+        statCanvas.classList.remove('hidden');
+        statEmpty.classList.add('hidden');
+        const statCtx = statCanvas.getContext('2d');
         if (anStat) anStat.destroy();
         anStat = new Chart(statCtx, {
           type: 'doughnut',
-          data: { labels: ['Running', 'Completed', 'Blocked'], datasets: [{ data: [r || 1, c || 1, b || 0], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'], borderWidth: 0 }] },
+          data: { labels: ['Running', 'Completed', 'Blocked'], datasets: [{ data: [r, c, b], backgroundColor: ['#10b981', '#3b82f6', '#f43f5e'], borderWidth: 0 }] },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
         });
       }
 
       let sA = 0, sB = 0, sC = 0;
-      state.tasks.forEach(t => {
+      deptTasks.forEach(t => {
         if (t.subtasks) t.subtasks.forEach(s => {
           if (s.shift === 'Shift A') sA += Number(s.logged);
           if (s.shift === 'Shift B') sB += Number(s.logged);
           if (s.shift === 'Shift C') sC += Number(s.logged);
         });
       });
-
-      const shiftCtx = document.getElementById('analytics-chart-shift')?.getContext('2d');
-      if (shiftCtx) {
+      const totalShift = sA + sB + sC;
+      const shiftCanvas = document.getElementById('analytics-chart-shift');
+      const shiftEmpty = document.getElementById('an-shift-empty');
+      if (totalShift === 0) {
+        shiftCanvas.classList.add('hidden');
+        shiftEmpty.classList.remove('hidden');
+        if (anShift) { anShift.destroy(); anShift = null; }
+      } else {
+        shiftCanvas.classList.remove('hidden');
+        shiftEmpty.classList.add('hidden');
+        const shiftCtx = shiftCanvas.getContext('2d');
         if (anShift) anShift.destroy();
         anShift = new Chart(shiftCtx, {
           type: 'bar',
-          data: { labels: ['Shift A', 'Shift B', 'Shift C'], datasets: [{ label: 'Units', data: [sA || 10, sB || 15, sC || 8], backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6'] }] },
+          data: { labels: ['Shift A', 'Shift B', 'Shift C'], datasets: [{ label: 'Units', data: [sA, sB, sC], backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6'] }] },
           options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
       }
 
+      // Incharge Leaderboard (Global)
       const incTbody = document.getElementById('analytics-inc-tbody');
       const incharges = state.roster.filter(m => m.role === 'Shift Incharge');
       incTbody.innerHTML = incharges.map(inc => {
@@ -1326,11 +1552,12 @@
         `;
       }).join('');
 
+      // Associate Leaderboard (Current Dept Only)
       const assocTbody = document.getElementById('analytics-assoc-tbody');
-      const associates = state.roster.filter(m => m.role === 'Associate');
+      const associates = state.roster.filter(m => m.role === 'Associate' && m.dept === state.activeDept);
       assocTbody.innerHTML = associates.map(a => {
         let loggedUnits = 0, stepsCount = 0;
-        state.tasks.forEach(t => {
+        deptTasks.forEach(t => {
           if (t.subtasks) t.subtasks.forEach(s => {
             if (s.assoc === a.name) {
               loggedUnits += Number(s.logged);
@@ -1354,7 +1581,7 @@
       const tbody = document.getElementById('history-tasks-tbody');
       let rows = '';
 
-      state.tasks.forEach(task => {
+      state.tasks.filter(t => t.dept === state.activeDept).forEach(task => {
         if (!task.subtasks) return;
         task.subtasks.forEach(sub => {
           if (sub.status === 'Completed' || Number(sub.logged) >= Number(sub.target)) {
@@ -1365,7 +1592,7 @@
                 <td class="p-2.5 font-mono">${sub.logged} / ${sub.target} ${sub.unit}</td>
                 <td class="p-2.5 text-slate-700">${sub.assoc || 'Technician'}</td>
                 <td class="p-2.5 font-bold text-blue-600">${sub.shift}</td>
-                <td class="p-2.5 text-slate-500">${sub.chamber || 'None'}</td>
+                <td class="p-2.5 text-slate-500">${sub.station || 'None'}</td>
                 <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">Done</span></td>
               </tr>
             `;
@@ -1373,123 +1600,91 @@
         });
       });
 
-      tbody.innerHTML = rows || `<tr><td colspan="7" class="p-6 text-center text-slate-400">No completed tasks yet. Completed steps will appear here.</td></tr>`;
+      tbody.innerHTML = rows || `<tr><td colspan="7" class="p-6 text-center text-slate-400">No completed tasks yet in ${state.activeDept}.</td></tr>`;
 
       const feed = document.getElementById('history-handover-feed');
-      feed.innerHTML = (state.handovers && state.handovers.length > 0) ? state.handovers.map(h => `
+      const deptHandovers = state.handovers.filter(h => !h.dept || h.dept === state.activeDept);
+      feed.innerHTML = (deptHandovers.length > 0) ? deptHandovers.map(h => `
         <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs space-y-1.5 text-xs">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-blue-700">${h.from} ➔ ${h.to}</span>
+            <span class="font-bold text-blue-700">${h.from} ➔ ${h.to} (${h.dept || state.activeDept})</span>
             <span class="text-slate-400 font-mono text-[10px]">${h.time}</span>
           </div>
-          <p class="text-slate-800"><strong>Incharge:</strong> ${h.incharge}</p>
+          <p class="text-slate-800"><strong>Shift Incharge:</strong> ${h.incharge}</p>
           <p class="text-slate-600 bg-blue-50/50 p-2 rounded-xl border border-blue-100">
             <strong class="text-blue-800 block">Extra Tasks:</strong> ${h.extraTasks}
           </p>
           <p class="text-amber-900 bg-amber-50/50 p-2 rounded-xl border border-amber-100">
-            <strong class="text-amber-800 block">Message:</strong> ${h.message}
+            <strong class="text-amber-800 block">Message to Next Shift:</strong> ${h.message}
           </p>
         </div>
-      `).join('') : `<p class="text-slate-400 text-xs italic">No shift handovers logged yet.</p>`;
+      `).join('') : `<p class="text-slate-400 text-xs italic">No shift handovers logged yet for ${state.activeDept}.</p>`;
     }
 
-    // BUILDER ACTIONS
-    let subtaskCounter = 0;
-    function addSubtaskRow(defName = "", defTarget = 100, defUnit = "Cycles", defShift = "Shift A") {
-      subtaskCounter++;
-      const id = subtaskCounter;
-      const div = document.createElement('div');
-      div.id = `sub-row-${id}`;
-      div.className = "bg-white p-2 rounded-xl border border-slate-200 flex flex-wrap items-center gap-2 text-xs";
-      div.innerHTML = `
-        <span class="font-bold text-blue-600 font-mono w-8">#${id}</span>
-        <input type="text" placeholder="Step description" value="${defName}" class="sr-name border rounded-lg px-2 py-1 flex-1 min-w-[140px] font-semibold" />
-        <input type="number" placeholder="Target" value="${defTarget}" class="sr-target border rounded-lg px-2 py-1 w-16 font-bold" />
-        <select class="sr-unit border rounded-lg px-1.5 py-1 bg-white font-semibold">
-          <option ${defUnit === 'Cycles' ? 'selected' : ''}>Cycles</option>
-          <option ${defUnit === 'Hours' ? 'selected' : ''}>Hours</option>
-        </select>
-        <select class="sr-shift border rounded-lg px-2 py-1 bg-white font-bold text-blue-700">
-          <option ${defShift === 'Shift A' ? 'selected' : ''}>Shift A</option>
-          <option ${defShift === 'Shift B' ? 'selected' : ''}>Shift B</option>
-          <option ${defShift === 'Shift C' ? 'selected' : ''}>Shift C</option>
-        </select>
-        <button type="button" onclick="document.getElementById('sub-row-${id}').remove()" class="text-rose-500 font-bold p-1">✕</button>
-      `;
-      document.getElementById('subtasks-container').appendChild(div);
-    }
-
-    function saveNewTask() {
-      const tl = document.getElementById('m-tl').value;
-      const cat = document.getElementById('m-cat').value;
-      const prio = document.getElementById('m-prio').value;
-      const bin = document.getElementById('m-bin').value.trim() || 'EL-101';
-      const comp = document.getElementById('m-comp').value.trim() || 'Battery Pack';
-      const name = document.getElementById('m-name').value.trim() || `${tl} Validation`;
-      const lead = document.getElementById('m-lead').value.trim() || 'Yeshwanth';
-      const drive = document.getElementById('m-drive').value.trim() || 'https://drive.google.com';
-      const grafana = document.getElementById('m-grafana').value.trim() || 'https://grafana.internal/d/chamber-1';
-
-      const rows = document.querySelectorAll('#subtasks-container > div');
-      const subtasks = [];
-      const incMap = { 'Shift A': 'Raja', 'Shift B': 'Riyaz', 'Shift C': 'Praveen Kumar' };
-      const assocMap = { 'Shift A': 'sathya naraya', 'Shift B': 'Yosvaraj', 'Shift C': 'Sanjay' };
-
-      rows.forEach((r, idx) => {
-        const sName = r.querySelector('.sr-name').value.trim() || `Step ${idx + 1}`;
-        const target = Number(r.querySelector('.sr-target').value) || 100;
-        const unit = r.querySelector('.sr-unit').value;
-        const shift = r.querySelector('.sr-shift').value;
-
-        subtasks.push({
-          id: `SUB-${101 + idx}`,
-          name: sName,
-          target: target,
-          logged: 0,
-          unit: unit,
-          shift: shift,
-          inc: incMap[shift] || 'Riyaz',
-          assoc: assocMap[shift] || 'Yosvaraj',
-          chamber: 'None',
-          cycler: 'None',
-          status: 'Running'
-        });
-      });
+    // ACTIONS: CREATE FLOW & COMPONENT
+    function saveNewFlow() {
+      const tl = document.getElementById('fl-tl').value;
+      const cat = document.getElementById('fl-cat').value;
+      const prio = document.getElementById('fl-prio').value;
+      const bin = document.getElementById('fl-bin').value.trim() || 'BIN-001';
+      const comp = document.getElementById('fl-comp').value;
+      const name = document.getElementById('fl-name').value.trim() || `${tl} Validation Flow`;
+      const lead = document.getElementById('fl-lead').value.trim() || 'Yeshwanth';
+      const drive = document.getElementById('fl-drive').value.trim() || 'https://drive.google.com';
+      const grafana = document.getElementById('fl-grafana').value.trim() || 'https://grafana.internal/d/chamber-1';
 
       state.tasks.push({
         id: 'TSK-' + Math.floor(1000 + Math.random() * 9000),
-        tl, category: cat, prio, bin, name, component: comp, lead,
+        tl, category: cat, prio, bin, component: comp, name, lead,
+        dept: state.activeDept,
         drive, grafana, progress: 0, status: 'Running',
-        shift: subtasks[0] ? subtasks[0].shift : state.activeShift,
-        subtasks
+        shift: state.activeShift,
+        subtasks: []
       });
 
-      closeModal('modal-create-task');
+      closeModal('modal-create-flow');
       saveState();
-      alert(`Task ${tl} saved!`);
+      alert(`Flow ${tl} registered for ${state.activeDept}! Now assign steps.`);
+    }
+
+    function saveNewComponent() {
+      const name = document.getElementById('cp-name').value.trim();
+      const cat = document.getElementById('cp-cat').value;
+      const dept = document.getElementById('cp-dept').value;
+      if (!name) return alert('Enter component name');
+
+      if (!state.components) state.components = [];
+      state.components.push({ name, cat, dept });
+      closeModal('modal-add-component');
+      populateDropdowns();
+      saveState();
+      alert(`Component "${name}" added to ${dept}!`);
     }
 
     function saveAssignedSubtask() {
       const parentId = document.getElementById('ast-parent').value;
       const task = state.tasks.find(t => t.id === parentId);
-      if (!task) return alert('Select a task');
+      if (!task) return alert('Select a flow line');
 
       const name = document.getElementById('ast-name').value.trim() || 'Test Step';
       const target = Number(document.getElementById('ast-target').value) || 100;
       const unit = document.getElementById('ast-unit').value;
       const shift = document.getElementById('ast-shift').value;
-      const chamber = document.getElementById('ast-chamber').value;
+      const station = document.getElementById('ast-chamber').value;
 
       const incMap = { 'Shift A': 'Raja', 'Shift B': 'Riyaz', 'Shift C': 'Praveen Kumar' };
-      const assocMap = { 'Shift A': 'sathya naraya', 'Shift B': 'Yosvaraj', 'Shift C': 'Sanjay' };
+      const deptAssocs = state.roster.filter(m => m.dept === state.activeDept && m.shift === shift);
+      const assoc = deptAssocs[0] ? deptAssocs[0].name : 'Floor Associate';
 
       if (!task.subtasks) task.subtasks = [];
       task.subtasks.push({
         id: 'SUB-' + Math.floor(100 + Math.random() * 900),
         name, target, logged: 0, unit, shift,
         inc: incMap[shift] || 'Riyaz',
-        assoc: assocMap[shift] || 'Yosvaraj',
-        chamber, cycler: 'None', status: 'Running'
+        assoc: assoc,
+        station: station,
+        observations: [],
+        status: 'Running'
       });
 
       closeModal('modal-add-subtask');
@@ -1505,14 +1700,14 @@
       if (!name) return alert('Enter name');
 
       state.roster.push({
-        id: 'EMP-' + Math.floor(100 + Math.random() * 900),
+        id: (dept === 'Vibration Team' ? 'VIB-' : 'BAT-') + Math.floor(100 + Math.random() * 900),
         name, dept, role, shift, schedule: {}, present: true
       });
       closeModal('modal-add-personnel');
       saveState();
     }
 
-    // LOG PROGRESS
+    // LOG PROGRESS & OBSERVATIONS
     function openLogProgress(taskId, subId) {
       const task = state.tasks.find(t => t.id === taskId);
       if (!task) return;
@@ -1522,10 +1717,10 @@
       document.getElementById('mlp-task-id').value = taskId;
       document.getElementById('mlp-sub-id').value = subId;
       document.getElementById('mlp-title').innerText = `${sub.name}`;
-      document.getElementById('mlp-chamber').value = sub.chamber || 'None';
-      document.getElementById('mlp-cycler').value = sub.cycler || 'None';
+      document.getElementById('mlp-station').value = sub.station || 'None';
       document.getElementById('mlp-status').value = sub.status || 'Running';
       document.getElementById('mlp-increment').value = 10;
+      document.getElementById('mlp-observation').value = '';
       openModal('modal-log-progress');
     }
 
@@ -1539,16 +1734,27 @@
 
       const inc = Number(document.getElementById('mlp-increment').value) || 0;
       sub.logged = Number(sub.logged) + inc;
-      sub.chamber = document.getElementById('mlp-chamber').value;
-      sub.cycler = document.getElementById('mlp-cycler').value;
+      sub.station = document.getElementById('mlp-station').value;
       sub.status = document.getElementById('mlp-status').value;
+
+      // Capture shift observation if written
+      const note = document.getElementById('mlp-observation').value.trim();
+      if (note) {
+        if (!sub.observations) sub.observations = [];
+        sub.observations.unshift({
+          shift: state.activeShift,
+          author: document.getElementById('shift-lead-name').innerText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          note: note
+        });
+      }
 
       if (sub.logged >= sub.target) {
         sub.status = 'Completed';
       }
 
       state.equipment.forEach(eq => {
-        if (eq.name === sub.chamber || eq.name === sub.cycler) {
+        if (eq.name === sub.station) {
           eq.status = 'Running';
           eq.pack = task.bin;
           eq.test = `${task.tl}: ${sub.name}`;
@@ -1567,6 +1773,58 @@
       saveState();
     }
 
+    // VIEW OBSERVATIONS (EYE BUTTON)
+    function viewObservations(taskId, subId) {
+      const task = state.tasks.find(t => t.id === taskId);
+      if (!task) return;
+      const sub = task.subtasks.find(s => s.id === subId);
+      if (!sub) return;
+
+      document.getElementById('mvo-title').innerText = `${task.tl} • ${sub.name}`;
+      document.getElementById('mvo-subtitle').innerText = `Pack BIN: ${task.bin} | Station: ${sub.station || 'None'}`;
+
+      const feed = document.getElementById('mvo-feed');
+      if (sub.observations && sub.observations.length > 0) {
+        feed.innerHTML = sub.observations.map(obs => `
+          <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-1 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-blue-700">${obs.shift} • Incharge: ${obs.author}</span>
+              <span class="text-slate-400 font-mono text-[10px]">${obs.time}</span>
+            </div>
+            <p class="text-slate-800">${obs.note}</p>
+          </div>
+        `).join('');
+      } else {
+        feed.innerHTML = `<p class="p-6 text-center text-slate-400 italic">No shift observations recorded yet. Click "Log Progress" to write a note.</p>`;
+      }
+
+      openModal('modal-view-observations');
+    }
+
+    // EXCEL EXPORT (CSV SPREADSHEET)
+    function exportToExcelCSV() {
+      let csv = "Dept,Flow_ID,Test_Line,Pack_BIN,Component,Step_ID,Step_Name,Target,Logged,Unit,Shift,Status,Station,Observations_Count\n";
+
+      state.tasks.forEach(task => {
+        if (task.subtasks && task.subtasks.length > 0) {
+          task.subtasks.forEach(sub => {
+            const obsCount = sub.observations ? sub.observations.length : 0;
+            const line = `"${task.dept}","${task.id}","${task.tl}","${task.bin}","${task.component}","${sub.id}","${sub.name}",${sub.target},${sub.logged},"${sub.unit}","${sub.shift}","${sub.status}","${sub.station || 'None'}",${obsCount}\n`;
+            csv += line;
+          });
+        }
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `Ather_Lab_Validation_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     function deleteFlow(id) {
       if (confirm(`Delete ${id}?`)) {
         state.tasks = state.tasks.filter(t => t.id !== id);
@@ -1575,19 +1833,29 @@
     }
 
     function populateDropdowns() {
+      // Flow selection filtered by department
       const p = document.getElementById('ast-parent');
-      if (p) p.innerHTML = state.tasks.map(t => `<option value="${t.id}">${t.tl} - ${t.name} (${t.bin})</option>`).join('');
+      const deptTasks = state.tasks.filter(t => t.dept === state.activeDept);
+      if (p) p.innerHTML = deptTasks.map(t => `<option value="${t.id}">${t.tl} - ${t.name} (${t.bin})</option>`).join('');
+
+      // Components filtered by department
+      const flComp = document.getElementById('fl-comp');
+      if (flComp && state.components) {
+        const deptComps = state.components.filter(c => c.dept === state.activeDept);
+        flComp.innerHTML = deptComps.map(c => `<option value="${c.name}">${c.name} (${c.cat})</option>`).join('');
+      }
+
+      // Equipment Station filtered by department
+      const astStation = document.getElementById('ast-chamber');
+      const mlpStation = document.getElementById('mlp-station');
+      const deptEq = state.equipment.filter(e => e.lab === state.activeDept);
+      const stationOpts = `<option value="None">None (Unmounted)</option>` + deptEq.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
+      if (astStation) astStation.innerHTML = stationOpts;
+      if (mlpStation) mlpStation.innerHTML = stationOpts;
     }
 
     function openModal(id) {
       populateDropdowns();
-      if (id === 'modal-create-task') {
-        document.getElementById('subtasks-container').innerHTML = '';
-        subtaskCounter = 0;
-        addSubtaskRow("Pre-Capacity Soak", 24, "Hours", "Shift A");
-        addSubtaskRow("1C Constant Fast Cycling", 150, "Cycles", "Shift B");
-        addSubtaskRow("Thermal Stress Run", 100, "Cycles", "Shift C");
-      }
       document.getElementById(id).classList.remove('hidden');
     }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
